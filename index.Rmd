@@ -24,11 +24,20 @@ csl: chicago-fullnote-bibliography.csl
 
 <!-- Libraries -->
 ```{r library, echo=FALSE, warning=FALSE, message=FALSE}
-library(readr)
+library(tidyverse)
+library(knitr)
+library(rmarkdown)
+library(lubridate)
+library(timevis)
 ```
 
 <!-- Import Data -->
 ```{r data-import, echo=FALSE, warning=FALSE, message=FALSE}
-risk_oracle <- read_csv(file = "data/RR_Main_Report_View.csv")
+risk <- read_csv(file = "data/RR_Main_Report_View.csv")
+
+# Set date fields
+risk <- mutate(risk, start_date = lubridate::as_datetime(risk$START_DATE))
+risk <- mutate(risk, end_date   = lubridate::as_datetime(risk$END_DATE))
+risk <- mutate(risk, level_date = lubridate::as_datetime(risk$LEVEL_DATE))
 ```
 
