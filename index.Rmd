@@ -23,8 +23,7 @@ csl: chicago-fullnote-bibliography.csl
 
 
 <!-- Libraries -->
-<<<<<<< HEAD
-```{r data-import, echo=FALSE}
+```{r library, echo=FALSE}
 library(readr)
 ```
 
