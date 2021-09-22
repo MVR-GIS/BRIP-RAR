@@ -14,4 +14,21 @@ biblio-style: apalike
 csl: chicago-fullnote-bibliography.csl
 ---
 
-# About {-}
+# Introduction {-}
+
+## Project 
+* P2 project name: Brandon Rd-Great Lakes/Miss Rvr Interbasin
+* P2 project number: 482782
+* P2 program code: 451617
+
+
+<!-- Libraries -->
+```{r data-import, echo=FALSE}
+library(readr)
+```
+
+<!-- Import Data -->
+```{r data-import, echo=FALSE}
+risk_oracle <- read_csv(file = "data/risk_items.csv")
+```
+
