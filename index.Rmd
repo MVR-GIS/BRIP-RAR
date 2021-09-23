@@ -28,11 +28,14 @@ library(tidyverse)
 library(knitr)
 library(rmarkdown)
 library(lubridate)
+library(tools)
+library(kableExtra)
+library(pander)
 library(timevis)
 ```
 
 <!-- Wrangle Data -->
-```{r wrangle-data, echo=FALSE, warning=FALSE, message=FALSE}
+```{r wrangle-risk, echo=FALSE, warning=FALSE, message=FALSE}
 risk_oracle <- read_csv(file = "data/RR_Main_Report_View.csv")
 
 # Set date fields
@@ -46,11 +49,22 @@ risk <- risk %>%
   rename(cost_risk_color = CONDITIONAL_FORMATTING) %>%
   rename(schedule_risk_color = CONDITIONAL_FORMATTING2)
 
+# Ensure colors are lowercase
+risk$cost_risk_color     <- tolower(risk$cost_risk_color)
+risk$schedule_risk_color <- tolower(risk$schedule_risk_color)
+
+# Convert factor variables to title case
+risk$RISKCATEGORY <- toTitleCase(tolower(risk$RISKCATEGORY))
+
 # Remove unused fields
 risk <- risk %>%
   select(!c(PDT_DISC_CONC, PDT_DISC_LIKELI_IMPACT, 
             PDT_DISC_RISK_MANAG_STRATEGY, ACTION_ITEMS, LESSONS_LEARNED, 
             START_DATE, END_DATE, LEVEL_DATE, FK_TABLE_ID))
+
+# Create hyperlink to Risk_No
+risk <- risk %>%
+  mutate(risk_no = paste0("[", risk$RISK_NO, "](#", risk$RISK_NO, ")"))
 
 # Reorder fields
 risk <- risk %>%
@@ -61,6 +75,11 @@ risk <- risk %>%
   relocate(schedule_risk_color, .after = SCHEDULE_RISK) %>%
   relocate(TIMING_OF_DELAY, .after = RISK_STRATEGY) %>%
   relocate(start_date, .after = CONCERNS) %>%
-  relocate(end_date, .after = start_date)
+  relocate(end_date, .after = start_date) %>%
+  relocate(risk_no, .after = RISK_NO)
+
+# Sort
+risk <- risk %>%
+  arrange(RISK_NO)
 ```
 

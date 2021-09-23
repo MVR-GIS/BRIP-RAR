@@ -5,28 +5,29 @@
 
 ```
 
-[TR-9a](#TR-9a)
-
 ## Risks
 ```{r risk-table, echo=FALSE, warning=FALSE, message=FALSE}
-#risk_short <- dplyr::select(.data = risk, RISK_NO, CONCERNS, RISK_STRATEGY, 
-#                                         COST_RISK, SCHEDULE_RISK)
-risk_short <- dplyr::transmute(.data = risk, 
-                               RISK_NO = paste0("[", risk$RISK_NO, "](#",
-                                                risk$RISK_NO, ")"),
-                               CONCERNS = CONCERNS,
-                               RISK_STRATEGY = RISK_STRATEGY,
-                               COST_RISK = COST_RISK,
-                               SCHEDULE_RISK = SCHEDULE_RISK)
+
+risk_df <- risk %>%
+  select(risk_no, CONCERNS, RISKCATEGORY, RISK_STRATEGY, 
+         COST_RISK, cost_risk_color,
+         SCHEDULE_RISK, schedule_risk_color)
 
 col_names <- c("Risk No.", "Description", "Risk Strategy", "Cost Risk", 
                "Schedule Risk")
 
-kable(x = risk_short,
-      format = "html",
-      col.names = col_names)
-
-
+kbl(select(risk_df, risk_no, CONCERNS, RISK_STRATEGY, COST_RISK, SCHEDULE_RISK), 
+    col.names = col_names) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
+                                      "responsive"),
+                font_size = 11,
+                fixed_thead = TRUE) %>%
+  pack_rows(index = table(risk_df$RISKCATEGORY),
+            label_row_css = "background-color: #dad8d8; color: #000000;") %>%
+  column_spec(4, color = "black",
+              background = risk_df$cost_risk_color) %>%
+  column_spec(5, color = "black",
+              background = risk_df$schedule_risk_color)
 ```
 
 
