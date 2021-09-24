@@ -1,7 +1,8 @@
 bookdown::bs4_book:
-  css: style.css
+  css: ["style.css", "style_1.css"]
   theme:
     primary: "#4D6F8D"
+  split_bib: true
 bookdown::pdf_book:
   includes:
     in_header: preamble.tex

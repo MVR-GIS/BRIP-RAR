@@ -1,0 +1,94 @@
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+# Subset for the current risk item
+risk_item <- risk %>%
+  dplyr::filter(risk_no == x)
+```
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+pander::pandoc.header(risk_item$risk_no, level = 2)
+pander::pandoc.p(risk_item$CONCERNS)
+```
+
+::::: {.grid-5w-2h}
+::: {.var-name}
+Start Date
+:::
+::: {.var-value}
+`r risk_item$start_date`
+:::
+::: {.var-name}
+End Date
+:::
+::: {.var-value}
+`r risk_item$end_date`
+:::
+::: {.var-name}
+Risk Category
+:::
+::: {.var-value}
+`r risk_item$RISKCATEGORY`
+:::
+::: {.var-name}
+Engagement Level
+:::
+::: {.var-value}
+`r risk_item$ENG_LEVEL`
+:::
+::::: 
+
+
+::::: {.grid-5w-2h}
+::: {.var-name}
+Risk Strategy
+:::
+::: {.var-value}
+`r risk_item$RISK_STRATEGY`
+:::
+::: {.var-name}
+Component
+:::
+::: {.var-value}
+`r risk_item$COMPONENT`
+:::
+::: {.var-name}
+Discipline
+:::
+::: {.var-value}
+`r risk_item$DISCIPLINE`
+:::
+::: {.var-name}
+Risk Opportunity Event
+:::
+::: {.var-value}
+`r risk_item$RISK_OPPORTUNITY_EVENT`
+:::
+::: {.var-name}
+Timing of Delay
+:::
+::: {.var-value}
+`r risk_item$TIMING_OF_DELAY`
+:::
+:::::
+
+
+::::: {.grid-5w-2h}
+::: {.var-name}
+POC
+:::
+::: {.var-value}
+`r risk_item$RESPONSIBLE_POC`
+:::
+::: {.var-name}
+Last Review Date
+:::
+::: {.var-value}
+`r risk_item$POC_REVIEW_DATE`
+:::
+:::::
+
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+pander::pandoc.p('')
+```

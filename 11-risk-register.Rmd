@@ -9,14 +9,15 @@
 ```{r risk-table, echo=FALSE, warning=FALSE, message=FALSE}
 
 risk_df <- risk %>%
-  select(risk_no, CONCERNS, RISKCATEGORY, RISK_STRATEGY, 
+  select(risk_no_link, CONCERNS, RISKCATEGORY, RISK_STRATEGY, 
          COST_RISK, cost_risk_color,
          SCHEDULE_RISK, schedule_risk_color)
 
 col_names <- c("Risk No.", "Description", "Risk Strategy", "Cost Risk", 
                "Schedule Risk")
 
-kbl(select(risk_df, risk_no, CONCERNS, RISK_STRATEGY, COST_RISK, SCHEDULE_RISK), 
+kbl(select(risk_df, 
+           risk_no_link, CONCERNS, RISK_STRATEGY, COST_RISK, SCHEDULE_RISK), 
     col.names = col_names) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
                                       "responsive"),

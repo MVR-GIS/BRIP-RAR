@@ -1,4 +1,11 @@
 # Risk Items
 
-## TR-9a {#TR-9a}
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+res <- lapply(risk$risk_no, function(x) {
+  knitr::knit_child("reports/risk-item-report.Rmd", 
+                    envir = environment(), 
+                    quiet = TRUE)
+})
+cat(unlist(res), sep = '\n')
+```
 

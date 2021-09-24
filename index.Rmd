@@ -56,15 +56,35 @@ risk$schedule_risk_color <- tolower(risk$schedule_risk_color)
 # Convert factor variables to title case
 risk$RISKCATEGORY <- toTitleCase(tolower(risk$RISKCATEGORY))
 
+# Cleanup risk number for sorting
+risk <- risk %>%
+  mutate(risk_no_risk_cat_code = str_extract(RISK_NO, "\\w+\\b")) %>%
+  mutate(risk_no_number_string = str_extract(RISK_NO, "\\b\\w+$")) %>%
+  mutate(risk_no_number = str_extract(risk_no_number_string, "\\d+")) %>%
+  mutate(risk_no_letter_na = str_extract(risk_no_number_string, "\\D+")) %>%
+  mutate(risk_no_letter = replace_na(risk_no_letter_na,
+                                     replace = "")) %>%
+  mutate(risk_no_padded = str_pad(risk_no_number, 
+                                  width = 2, 
+                                  side = "left",
+                                  pad = "0")) %>%
+  mutate(risk_no = str_c( risk_no_risk_cat_code, 
+                          "-",
+                          risk_no_padded,
+                          risk_no_letter))
+
 # Remove unused fields
 risk <- risk %>%
   select(!c(PDT_DISC_CONC, PDT_DISC_LIKELI_IMPACT, 
             PDT_DISC_RISK_MANAG_STRATEGY, ACTION_ITEMS, LESSONS_LEARNED, 
-            START_DATE, END_DATE, LEVEL_DATE, FK_TABLE_ID))
+            START_DATE, END_DATE, LEVEL_DATE, FK_TABLE_ID,
+            risk_no_risk_cat_code, risk_no_number_string, risk_no_number,
+            risk_no_letter_na, risk_no_letter, risk_no_padded))
 
 # Create hyperlink to Risk_No
 risk <- risk %>%
-  mutate(risk_no = paste0("[", risk$RISK_NO, "](#", risk$RISK_NO, ")"))
+  mutate(risk_no_link = paste0("[", risk$risk_no, "](#", 
+                               tolower(risk$risk_no), ")"))
 
 # Reorder fields
 risk <- risk %>%
@@ -76,10 +96,11 @@ risk <- risk %>%
   relocate(TIMING_OF_DELAY, .after = RISK_STRATEGY) %>%
   relocate(start_date, .after = CONCERNS) %>%
   relocate(end_date, .after = start_date) %>%
-  relocate(risk_no, .after = RISK_NO)
+  relocate(risk_no, .after = RISK_NO) %>%
+  relocate(risk_no_link, .after = risk_no)
 
 # Sort
 risk <- risk %>%
-  arrange(RISK_NO)
+  arrange(risk_no)
 ```
 
