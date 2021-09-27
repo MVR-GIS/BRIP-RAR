@@ -6,7 +6,10 @@ risk_item <- risk %>%
 
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-pander::pandoc.header(risk_item$risk_no, level = 2)
+pander::pandoc.p(paste("## ", 
+                 risk_item$risk_no_link, 
+                 " {.unnumbered}"))
+#pander::pandoc.header(risk_item$risk_no, level = 2)
 pander::pandoc.p(risk_item$CONCERNS)
 ```
 
