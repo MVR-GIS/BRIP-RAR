@@ -13,6 +13,7 @@ pander::pandoc.p(paste("## ",
 pander::pandoc.p(risk_item$CONCERNS)
 ```
 
+
 ::::: {.grid-5w-2h}
 ::: {.var-name}
 Start Date
@@ -73,6 +74,15 @@ Timing of Delay
 `r risk_item$TIMING_OF_DELAY`
 :::
 :::::
+
+```{r}
+risk_cost_schedule <- risk_item %>%
+  select(COST_LIKELIHOOD, COST_IMPACT, COST_IMPACT_PER_PROJECT, COST_RISK,
+         SCHEDULE_LIKELIHOOD, SCHEDULE_IMPACT, SCHEDULE_IMPACT_PER_PROJECT, 
+         SCHEDULE_RISK)
+
+
+```
 
 
 ::::: {.grid-5w-2h}
