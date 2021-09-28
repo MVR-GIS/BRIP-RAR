@@ -21,7 +21,7 @@ kbl(select(risk_df,
     col.names = col_names) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
                                       "responsive"),
-                font_size = 11,
+                font_size = 12,
                 fixed_thead = TRUE) %>%
   pack_rows(index = table(risk_df$RISKCATEGORY),
             label_row_css = "background-color: #dad8d8; color: #000000;") %>%
