@@ -19,10 +19,12 @@
   font-size: 0.8em;
   color: #303030;
   text-align: left;
-  padding: 1px;
+  padding: 2px;
+  line-height: 1em;
+  height: 1fr;
   border-radius: 2px;
   border: 1px solid #C0C0C0;
-  background-color: #C0C0C0;
+  background-color: #dad8d8;
 }
 
 .section-box {
@@ -47,7 +49,7 @@
 .grid-5w-2h {
   display: grid;
   grid-template-columns: repeat(5, auto);
-  grid-template-rows: 10px 20px;
+  grid-template-rows: 15px min-content;
   grid-auto-flow: column;
   grid-gap: 10px;
   border-radius: 5px;
