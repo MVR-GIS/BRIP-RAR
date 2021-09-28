@@ -65,10 +65,10 @@ risk <- risk %>%
   mutate(risk_no_letter = replace_na(risk_no_letter_na,
                                      replace = "")) %>%
   mutate(risk_no_padded = str_pad(risk_no_number, 
-                                  width = 2, 
+                                  width = 3, 
                                   side = "left",
                                   pad = "0")) %>%
-  mutate(risk_no = str_c( risk_no_risk_cat_code, 
+  mutate(risk_no = str_c(risk_no_risk_cat_code, 
                           "-",
                           risk_no_padded,
                           risk_no_letter))
@@ -102,5 +102,48 @@ risk <- risk %>%
 # Sort
 risk <- risk %>%
   arrange(risk_no)
+```
+
+```{r wrangle-events, echo=FALSE, warning=FALSE, message=FALSE}
+events_oracle <- read_csv(file = "data/Events_20210928.csv")
+
+# Set date fields
+events <- events_oracle %>%
+  mutate(level_date = lubridate::as_datetime(LEVEL_DATE)) %>%
+  mutate(created_date   = lubridate::as_datetime(CREATED_DATE)) %>%
+  mutate(last_edited_date = lubridate::as_datetime(LAST_EDITED_DATE)) 
+
+# Cleanup risk number for sorting
+events <- events %>%
+  mutate(fk_table_id_cat_code = str_extract(FK_TABLE_ID, "\\w+\\b")) %>%
+  mutate(fk_table_id_number_string = str_extract(FK_TABLE_ID, "\\b\\w+$")) %>%
+  mutate(fk_table_id_number = str_extract(fk_table_id_number_string, "\\d+")) %>%
+  mutate(fk_table_id_letter_na = str_extract(fk_table_id_number_string, "\\D+")) %>%
+  mutate(fk_table_id_letter = replace_na(fk_table_id_letter_na,
+                                         replace = "")) %>%
+  mutate(fk_table_id_padded = str_pad(fk_table_id_number, 
+                                      width = 3, 
+                                      side = "left",
+                                      pad = "0")) %>%
+  mutate(fk_table_id = str_c(fk_table_id_cat_code, 
+                             "-",
+                             fk_table_id_padded,
+                             fk_table_id_letter))
+
+# Remove unused fields
+events <- events %>%
+  select(!c(fk_table_id_cat_code, fk_table_id_number_string, fk_table_id_number,
+             fk_table_id_letter_na, fk_table_id_letter, fk_table_id_padded))
+```
+
+```{r wrangle-discussion, echo=FALSE, warning=FALSE, message=FALSE}
+discussion_oracle <- read_csv(file = "data/DiscussionLog_20210928.csv")
+
+# Set date fields
+discussion <- discussion_oracle %>%
+  mutate(log_date = lubridate::as_datetime(LOG_DATE)) %>%
+  mutate(created_date   = lubridate::as_datetime(CREATED_DATE)) %>%
+  mutate(last_edited_date = lubridate::as_datetime(LAST_EDITED_DATE)) %>%
+  mutate(poc_review_date = lubridate::as_datetime(POC_REVIEW_DATE))
 ```
 
