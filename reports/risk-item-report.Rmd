@@ -4,7 +4,6 @@ risk_item <- risk %>%
   dplyr::filter(risk_no == x)
 ```
 
-
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 pander::pandoc.p(paste("## ", 
                  risk_item$risk_no_link, 
@@ -13,7 +12,7 @@ pander::pandoc.p(paste("## ",
 pander::pandoc.p(risk_item$CONCERNS)
 ```
 
-
+<!-- Risk Attributes -->
 ::::: {.grid-5w-2h}
 ::: {.var-name}
 Start Date
@@ -40,7 +39,6 @@ Engagement Level
 `r risk_item$ENG_LEVEL`
 :::
 ::::: 
-
 
 ::::: {.grid-5w-2h}
 ::: {.var-name}
@@ -126,7 +124,6 @@ kbl(filter(cost_schedule_risk, variable != "Risk Color"),
                                   "white"))))
 ```
 
-
 ::::: {.grid-5w-2h}
 ::: {.var-name}
 POC
@@ -142,8 +139,13 @@ Last Review Date
 :::
 :::::
 
+<!-- Engagement Level History -->
+
+<!-- Discussion Items -->
+
 
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-pander::pandoc.p('')
+pander::pandoc.horizontal.rule()
+pander::pandoc.p("")
 ```
