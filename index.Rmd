@@ -102,6 +102,9 @@ risk <- risk %>%
 # Sort
 risk <- risk %>%
   arrange(risk_no)
+
+# Cleanup
+rm(risk_oracle)
 ```
 
 ```{r wrangle-events, echo=FALSE, warning=FALSE, message=FALSE}
@@ -132,8 +135,24 @@ events <- events %>%
 
 # Remove unused fields
 events <- events %>%
-  select(!c(fk_table_id_cat_code, fk_table_id_number_string, fk_table_id_number,
-             fk_table_id_letter_na, fk_table_id_letter, fk_table_id_padded))
+  select(!c(LEVEL_DATE, CREATED_DATE, LAST_EDITED_DATE, 
+            fk_table_id_cat_code, fk_table_id_number_string, fk_table_id_number,
+            fk_table_id_letter_na, fk_table_id_letter, fk_table_id_padded))
+
+# Reorder fields
+events <- events %>%
+  relocate(fk_table_id, .after = FK_TABLE_ID) %>%
+  relocate(DESCRIPTION, .after = fk_table_id) %>%
+  relocate(level_date, .after = ENG_LEVEL) %>%
+  relocate(created_date, .after = CREATED_USER) %>%
+  relocate(last_edited_date, .after = LAST_EDITED_USER)
+
+# Sort
+events <- events %>%
+  arrange(TABLE_NAME, level_date)
+
+# Cleanup
+rm(events_oracle)
 ```
 
 ```{r wrangle-discussion, echo=FALSE, warning=FALSE, message=FALSE}
@@ -145,5 +164,40 @@ discussion <- discussion_oracle %>%
   mutate(created_date   = lubridate::as_datetime(CREATED_DATE)) %>%
   mutate(last_edited_date = lubridate::as_datetime(LAST_EDITED_DATE)) %>%
   mutate(poc_review_date = lubridate::as_datetime(POC_REVIEW_DATE))
+
+discussion <- discussion %>%
+  mutate(fk_table_id_cat_code = str_extract(FK_TABLE_ID, "\\w+\\b")) %>%
+  mutate(fk_table_id_number_string = str_extract(FK_TABLE_ID, "\\b\\w+$")) %>%
+  mutate(fk_table_id_number = str_extract(fk_table_id_number_string, "\\d+")) %>%
+  mutate(fk_table_id_letter_na = str_extract(fk_table_id_number_string, "\\D+")) %>%
+  mutate(fk_table_id_letter = replace_na(fk_table_id_letter_na,
+                                         replace = "")) %>%
+  mutate(fk_table_id_padded = str_pad(fk_table_id_number, 
+                                      width = 3, 
+                                      side = "left",
+                                      pad = "0")) %>%
+  mutate(fk_table_id = str_c(fk_table_id_cat_code, 
+                             "-",
+                             fk_table_id_padded,
+                             fk_table_id_letter))
+
+# Remove unused fields
+discussion <- discussion %>%
+  select(!c(LOG_DATE, CREATED_DATE, LAST_EDITED_DATE, POC_REVIEW_DATE,
+            fk_table_id_cat_code, fk_table_id_number_string, fk_table_id_number,
+            fk_table_id_letter_na, fk_table_id_letter, fk_table_id_padded))
+
+# Reorder fields
+discussion <- discussion %>%
+  relocate(fk_table_id, .after = FK_TABLE_ID) %>%
+  relocate(log_date, .after = LOGGED_BY) %>%
+  relocate(created_date, .after = CREATED_USER) %>%
+  relocate(last_edited_date, .after = LAST_EDITED_USER) %>%
+  relocate(RESPONSIBLE_POC, .after = log_date) %>%
+  relocate(poc_review_date, .after = RESPONSIBLE_POC) %>%
+  relocate(ACTIVE, .after = poc_review_date)
+
+# Cleanup
+rm(discussion_oracle)
 ```
 
