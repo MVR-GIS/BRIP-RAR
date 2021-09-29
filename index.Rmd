@@ -17,7 +17,6 @@ csl: chicago-fullnote-bibliography.csl
 * P2 project number: 482782
 * P2 program code: 451617
 
-
 <!-- Libraries -->
 ```{r library, echo=FALSE, warning=FALSE, message=FALSE}
 library(tidyverse)
@@ -28,6 +27,16 @@ library(tools)
 library(kableExtra)
 library(pander)
 library(timevis)
+```
+
+<!-- chunk options -->
+```{r chunk-opts], echo=FALSE, warning=FALSE, message=FALSE}
+options(width = 60)
+
+knitr::opts_chunk$set(
+  comment = "#>",
+  collapse = TRUE
+  )
 ```
 
 <!-- Wrangle Data -->
@@ -202,4 +211,3 @@ domains_oracle <- read_csv(file = "data/Domains_20210928.csv")
 
 
 ```
-
