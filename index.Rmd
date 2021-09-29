@@ -2,13 +2,9 @@
 title: "Brandon Road Interbasin Project Risk Analysis Report"
 author: "USACE Rock Island District"
 date: "`r Sys.Date()`"
-
 site: bookdown::bookdown_site
 documentclass: book
-# url: report url 
-# cover-image: images/cover.jpg
 description: "Report description goes here."
-
 bibliography: [book.bib, packages.bib]
 biblio-style: apalike
 csl: chicago-fullnote-bibliography.csl
@@ -40,9 +36,9 @@ risk_oracle <- read_csv(file = "data/RR_Main_Report_View.csv")
 
 # Set date fields
 risk <- risk_oracle %>%
-  mutate(start_date = lubridate::as_datetime(START_DATE)) %>%
-  mutate(end_date   = lubridate::as_datetime(END_DATE)) %>%
-  mutate(level_date = lubridate::as_datetime(LEVEL_DATE))
+  mutate(start_date = lubridate::as_date(START_DATE)) %>%
+  mutate(end_date   = lubridate::as_date(END_DATE)) %>%
+  mutate(level_date = lubridate::as_date(LEVEL_DATE))
 
 # Rename fields
 risk <- risk %>%
@@ -112,9 +108,9 @@ events_oracle <- read_csv(file = "data/Events_20210928.csv")
 
 # Set date fields
 events <- events_oracle %>%
-  mutate(level_date = lubridate::as_datetime(LEVEL_DATE)) %>%
-  mutate(created_date   = lubridate::as_datetime(CREATED_DATE)) %>%
-  mutate(last_edited_date = lubridate::as_datetime(LAST_EDITED_DATE)) 
+  mutate(level_date = lubridate::as_date(LEVEL_DATE)) %>%
+  mutate(created_date   = lubridate::as_date(CREATED_DATE)) %>%
+  mutate(last_edited_date = lubridate::as_date(LAST_EDITED_DATE)) 
 
 # Cleanup risk number for sorting
 events <- events %>%
@@ -161,9 +157,9 @@ discussion_oracle <- read_csv(file = "data/DiscussionLog_20210928.csv")
 # Set date fields
 discussion <- discussion_oracle %>%
   mutate(log_date = lubridate::as_datetime(LOG_DATE)) %>%
-  mutate(created_date   = lubridate::as_datetime(CREATED_DATE)) %>%
-  mutate(last_edited_date = lubridate::as_datetime(LAST_EDITED_DATE)) %>%
-  mutate(poc_review_date = lubridate::as_datetime(POC_REVIEW_DATE))
+  mutate(created_date   = lubridate::as_date(CREATED_DATE)) %>%
+  mutate(last_edited_date = lubridate::as_date(LAST_EDITED_DATE)) %>%
+  mutate(poc_review_date = lubridate::as_date(POC_REVIEW_DATE))
 
 discussion <- discussion %>%
   mutate(fk_table_id_cat_code = str_extract(FK_TABLE_ID, "\\w+\\b")) %>%
@@ -199,5 +195,11 @@ discussion <- discussion %>%
 
 # Cleanup
 rm(discussion_oracle)
+```
+
+```{r wrangle-domains, echo=FALSE, warning=FALSE, message=FALSE}
+domains_oracle <- read_csv(file = "data/Domains_20210928.csv")
+
+
 ```
 

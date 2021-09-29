@@ -13,12 +13,10 @@ risk_df <- risk %>%
          COST_RISK, cost_risk_color,
          SCHEDULE_RISK, schedule_risk_color)
 
-col_names <- c("Risk No.", "Description", "Risk Strategy", "Cost Risk", 
-               "Schedule Risk")
-
 kbl(select(risk_df, 
            risk_no_link, CONCERNS, RISK_STRATEGY, COST_RISK, SCHEDULE_RISK), 
-    col.names = col_names) %>%
+    col.names = c("Risk No.", "Description", "Risk Strategy", "Cost Risk", 
+               "Schedule Risk")) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
                                       "responsive"),
                 font_size = 12,

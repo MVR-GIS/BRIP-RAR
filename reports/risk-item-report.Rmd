@@ -1,31 +1,62 @@
-```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-# Subset for the current risk item
+<!-- Wrangle report data -->
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Set iterator variable for testing. Comment out in production. 
+#<- "CA-003"
+
+# Subset the risks df for the current risk item
 risk_item <- risk %>%
   dplyr::filter(risk_no == x)
+
+# Subset the events df for the current risk item
+events_item <- events %>%
+  dplyr::filter(TABLE_NAME == "RISK_REGISTER") %>%
+  dplyr::filter(fk_table_id == x)
+
+# Subset the discussion df for the current risk item
+discussion_item <- discussion %>%
+  dplyr::filter(TABLE_NAME == "RISK_REGISTER") %>%
+  dplyr::filter(fk_table_id == x)
 ```
 
-```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-pander::pandoc.p(paste("## ", 
-                 risk_item$risk_no_link, 
-                 " {.unnumbered}"))
-#pander::pandoc.header(risk_item$risk_no, level = 2)
-pander::pandoc.p(risk_item$CONCERNS)
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Transpose cost fields to long format
+cost_risk <- risk_item %>%
+  select(COST_LIKELIHOOD, COST_IMPACT, COST_IMPACT_PER_PROJECT, 
+         COST_RISK, cost_risk_color) %>%
+  pivot_longer(cols = starts_with(c("COST", "cost")), 
+               names_to = "cost_variable", 
+               values_to = "cost") %>%
+  mutate(variable = substring(cost_variable, 6, 23)) %>%
+  mutate(variable = str_replace_all(variable, "_", " ")) %>%
+  mutate(variable = str_to_lower(variable)) %>%
+  mutate(variable = str_to_title(variable))
+
+# Transpose schedule fields to long format
+schedule_risk <- risk_item %>%
+  select(SCHEDULE_LIKELIHOOD, SCHEDULE_IMPACT, SCHEDULE_IMPACT_PER_PROJECT, 
+         SCHEDULE_RISK, schedule_risk_color) %>%
+  pivot_longer(cols = starts_with(c("SCHEDULE", "schedule")), 
+               names_to = "schedule_variable", 
+               values_to = "schedule") %>%
+  mutate(variable = substring(schedule_variable, 10, 27)) %>%
+  mutate(variable = str_replace_all(variable, "_", " ")) %>%
+  mutate(variable = str_to_lower(variable)) %>%
+  mutate(variable = str_to_title(variable))
+
+# Combine cost and schedule values into a single table
+cost_schedule_risk <- cost_risk %>%
+  select(variable, cost) %>%
+  inner_join(select(schedule_risk, variable, schedule))
 ```
 
-<!-- Risk Attributes -->
+::::::::::: {.item-box}
+
+## `r risk_item$risk_no` {.unnumbered}  
+`r risk_item$CONCERNS`
+:::::::: {.section-box}
+<!-- Risk Attributes line 1 -->
 ::::: {.grid-5w-2h}
-::: {.var-name}
-Start Date
-:::
-::: {.var-value}
-`r risk_item$start_date`
-:::
-::: {.var-name}
-End Date
-:::
-::: {.var-value}
-`r risk_item$end_date`
-:::
 ::: {.var-name}
 Risk Category
 :::
@@ -38,8 +69,21 @@ Engagement Level
 ::: {.var-value}
 `r risk_item$ENG_LEVEL`
 :::
+::: {.var-name}
+Start Date
+:::
+::: {.var-value}
+`r risk_item$start_date`
+:::
+::: {.var-name}
+End Date
+:::
+::: {.var-value}
+`r risk_item$end_date`
+:::
 ::::: 
 
+<!-- Risk Attributes line 2-->
 ::::: {.grid-5w-2h}
 ::: {.var-name}
 Risk Strategy
@@ -73,57 +117,7 @@ Timing of Delay
 :::
 :::::
 
-```{r, echo=FALSE, warning=FALSE, message=FALSE}
-cost_risk <- risk_item %>%
-  select(COST_LIKELIHOOD, COST_IMPACT, COST_IMPACT_PER_PROJECT, 
-         COST_RISK, cost_risk_color) %>%
-  pivot_longer(cols = starts_with(c("COST", "cost")), 
-               names_to = "cost_variable", 
-               values_to = "cost") %>%
-  mutate(variable = substring(cost_variable, 6, 23)) %>%
-  mutate(variable = str_replace_all(variable, "_", " ")) %>%
-  mutate(variable = str_to_lower(variable)) %>%
-  mutate(variable = str_to_title(variable))
-
-schedule_risk <- risk_item %>%
-  select(SCHEDULE_LIKELIHOOD, SCHEDULE_IMPACT, SCHEDULE_IMPACT_PER_PROJECT, 
-         SCHEDULE_RISK, schedule_risk_color) %>%
-  pivot_longer(cols = starts_with(c("SCHEDULE", "schedule")), 
-               names_to = "schedule_variable", 
-               values_to = "schedule") %>%
-  mutate(variable = substring(schedule_variable, 10, 27)) %>%
-  mutate(variable = str_replace_all(variable, "_", " ")) %>%
-  mutate(variable = str_to_lower(variable)) %>%
-  mutate(variable = str_to_title(variable))
-
-cost_schedule_risk <- cost_risk %>%
-  select(variable, cost) %>%
-  inner_join(select(schedule_risk, variable, schedule))
-```
-
-```{r, echo=FALSE, warning=FALSE, message=FALSE}
-col_names <- c("", "Cost", "Schedule")
-
-kbl(filter(cost_schedule_risk, variable != "Risk Color"),
-    col.names = col_names) %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
-                                      "responsive"),
-                full_width = FALSE, 
-                position = "left") %>%
-  row_spec(0, bold = TRUE) %>%
-  column_spec(1, bold = TRUE, border_right = TRUE) %>%
-  column_spec(2, color = "black",
-              background = ifelse(cost_schedule_risk$cost == "Low", "green",
-                                  ifelse(cost_schedule_risk$cost == "Moderate", "orange",
-                                  ifelse(cost_schedule_risk$cost == "High", "red",
-                                  "white")))) %>%
-  column_spec(3, color = "black",
-              background = ifelse(cost_schedule_risk$schedule == "Low", "green",
-                                  ifelse(cost_schedule_risk$schedule == "Moderate", "orange",
-                                  ifelse(cost_schedule_risk$schedule == "High", "red",
-                                  "white"))))
-```
-
+<!-- Risk Attributes line 3 -->
 ::::: {.grid-5w-2h}
 ::: {.var-name}
 POC
@@ -138,14 +132,74 @@ Last Review Date
 `r risk_item$POC_REVIEW_DATE`
 :::
 :::::
+::::::::
 
-<!-- Engagement Level History -->
+::::: {.white-box}
+`r cat(' ')`
+:::::
 
-<!-- Discussion Items -->
-
-
-
+:::::::: {.section-box}
+**Cost-Schedule Risk**  
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-pander::pandoc.horizontal.rule()
-pander::pandoc.p("")
+kbl(filter(cost_schedule_risk, variable != "Risk Color"),
+    col.names = c("", "Cost", "Schedule")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
+                                      "responsive"),
+                full_width = FALSE, 
+                position = "left") %>%
+  row_spec(0, bold = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "15em", border_right = TRUE) %>%
+  column_spec(2, color = "black",
+              width = "10em",
+              background = ifelse(cost_schedule_risk$cost == "Low", "green",
+                                  ifelse(cost_schedule_risk$cost == "Moderate", "orange",
+                                  ifelse(cost_schedule_risk$cost == "High", "red",
+                                  "#ffffff00")))) %>%
+  column_spec(3, color = "black",
+              width = "10em",
+              background = ifelse(cost_schedule_risk$schedule == "Low", "green",
+                                  ifelse(cost_schedule_risk$schedule == "Moderate", "orange",
+                                  ifelse(cost_schedule_risk$schedule == "High", "red",
+                                  "#ffffff00"))))
 ```
+::::::::
+
+::::: {.white-box}
+`r cat(' ')`
+:::::
+
+:::::::: {.section-box}
+**Risk Engagement Level History**
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+kbl(select(events_item, ENG_LEVEL, level_date, DESCRIPTION),
+    col.names = c("Level", "Date", "Reason for level change")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
+                                      "responsive")) %>%
+  column_spec(1, width = "8em") %>%
+  column_spec(2, width = "8em")
+```
+::::::::
+
+::::: {.white-box}
+`r cat(' ')`
+:::::
+
+:::::::: {.section-box}
+**Risk Disscusion Items**
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+kbl(select(discussion_item, DISCUSSION, RESPONSIBLE_POC, log_date),
+    col.names = c("Discussion Topic", "Reporter", "Date")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
+                                      "responsive")) 
+```
+::::::::
+
+<!-- Related Decisions -->
+
+<!-- Related Actions -->
+
+:::::::::::
+
+::::: {.white-box}
+`r cat(' ')`
+:::::
