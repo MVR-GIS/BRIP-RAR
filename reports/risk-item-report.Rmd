@@ -53,7 +53,8 @@ cost_schedule_risk <- cost_risk %>%
 ::::::::::: {.item-box}
 
 ## `r risk_item$risk_no` {.unnumbered}  
-`r risk_item$CONCERNS`
+`r risk_item$CONCERNS`  
+
 :::::::: {.section-box}
 <!-- Risk Attributes line 1 -->
 ::::: {.grid-5w-2h}
