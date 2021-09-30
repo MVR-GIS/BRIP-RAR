@@ -1,0 +1,59 @@
+# Feedback {.unnumbered}
+
+[get-url-parameters-javascript](https://html-online.com/articles/get-url-parameters-javascript/)
+[javascript-variable-access-in-html](https://stackoverflow.com/questions/14845710/javascript-variable-access-in-html)
+[how-do-i-use-this-javascript-variable-in-html](https://stackoverflow.com/questions/30035932/how-do-i-use-this-javascript-variable-in-html/30036015)
+
+
+```{=html}
+<script>
+  function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+    return vars;
+  }
+  function getUrlParam(parameter, defaultvalue){
+    var urlparameter = defaultvalue;
+    if(window.location.href.indexOf(parameter) > -1){
+        urlparameter = getUrlVars()[parameter];
+        }
+    return urlparameter;
+  }
+  
+  var item = getUrlParam('item','NA');
+  var item-id = getUrlParam('item-id','NA');
+  
+  window.onload = function() {
+    document.getElementById('p1').innerHTML = item-id;
+  }
+</script>
+```
+
+
+```{=html}
+<p id="p1"></p>
+<div class="card-body">
+    <form action="mailto:example@gmail.com" method="get" enctype="text/plain">
+        <div class="md-form">
+            <input type="text" id="form-Subject" name="subject" placeholder="A Subject" class="form-control" required/>
+            <label for="form-Subject"></label>
+        </div>
+        <div class="md-form">
+            <textarea id="form-text" name="body" placeholder="Specify the Item ID"
+            class="form-control"></textarea>
+            <label for="form-text"></label>
+        </div>
+        <div class="md-form">
+            <textarea id="form-text2" name="body2" placeholder="Tell us what needs to be changed for this item. "
+            class="form-control md-textarea " rows="15" style="overflow-y: scroll;"></textarea>
+            <label for="form-text2"></label>
+        </div>
+        <div class="text-right">
+            <input type="submit" name="submit" value="Submit" class="btn btn-secondary"/>
+        </div>
+    </form>
+</div>
+```
+

@@ -55,6 +55,8 @@ cost_schedule_risk <- cost_risk %>%
 ## `r risk_item$risk_no` {.unnumbered}  
 `r risk_item$CONCERNS`  
 
+[&circlearrowright;](feedback.html?item=risk&item-id=`r risk_item$risk_no`)
+
 :::::::: {.section-box}
 <!-- Risk Attributes line 1 -->
 ::::: {.grid-5w-2h}
