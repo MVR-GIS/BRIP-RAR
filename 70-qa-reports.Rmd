@@ -1,2 +1,2 @@
-# Components {-}
+# QA Reports {-}
 These reports are used to...
