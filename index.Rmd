@@ -39,6 +39,12 @@ knitr::opts_chunk$set(
   )
 ```
 
+<!-- Report Constants -->
+```{r}
+qa_email_address <- "Michael.P.Dougherty@usace.army.mil"
+```
+
+
 <!-- Wrangle Data -->
 ```{r wrangle-risk, echo=FALSE, warning=FALSE, message=FALSE}
 risk_oracle <- read_csv(file = "data/RR_Main_Report_View.csv")
@@ -211,3 +217,4 @@ domains_oracle <- read_csv(file = "data/Domains_20210928.csv")
 
 
 ```
+

@@ -6,8 +6,7 @@
 ```
 
 ## Risks
-```{r risk-table, echo=FALSE, warning=FALSE, message=FALSE}
-
+```{r risk-register-table, echo=FALSE, warning=FALSE, message=FALSE}
 risk_df <- risk %>%
   select(risk_no_link, CONCERNS, RISKCATEGORY, RISK_STRATEGY, 
          COST_RISK, cost_risk_color,
@@ -19,8 +18,7 @@ kbl(select(risk_df,
                "Schedule Risk")) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
                                       "responsive"),
-                font_size = 12,
-                fixed_thead = TRUE) %>%
+                font_size = 12) %>%
   pack_rows(index = table(risk_df$RISKCATEGORY),
             label_row_css = "background-color: #dad8d8; color: #000000;") %>%
   column_spec(4, color = "black",
