@@ -53,7 +53,7 @@
   box-sizing: border-box;
 }
 
-.header h2, .header h3 {
+.header h2, h3, h4 {
   margin: 0;
 }
 
