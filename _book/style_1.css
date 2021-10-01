@@ -53,8 +53,22 @@
   box-sizing: border-box;
 }
 
+.header h2, .header h3 {
+  margin: 0;
+}
+
+.right {
+  float: right;
+}
+
 @media print {
-  .table-striped tbody tr:nth-of-type(odd) {
+  .table-striped tbody tr:nth-of-type(odd) td {
+      background-color: rgba(0,0,0,.05) !important;
       -webkit-print-color-adjust: exact;
   }
+
+  h2, h3 {
+    page-break-inside: avoid;
+  }
+
 }
