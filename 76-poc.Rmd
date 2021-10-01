@@ -1,0 +1,31 @@
+# POC Reports
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+pocs <- unique(risk$RESPONSIBLE_POC)
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+for(poc in pocs) {
+  # Create POC header
+  pander::pandoc.header(poc, level = 2)
+  
+  # Create Risk header
+  pander::pandoc.header("Risk Items", level = 3)
+  # Subset risks for the current POC
+  poc_risk <- risk %>%
+    filter(RESPONSIBLE_POC == poc)
+  
+  # Set the heading level for risk items
+  risk_heading_level <- 4
+  
+  # Iterate through risks and produce a risk-item-report for each risk.
+  risk_item_reports <- lapply(poc_risk$risk_no, function(x) {
+    knitr::knit_child("reports/risk-item-report.Rmd", 
+                      envir = environment(), 
+                      quiet = TRUE)
+  })
+  
+  # Expand the list of risk reports
+  cat(unlist(risk_item_reports), sep = '\n')
+}
+```

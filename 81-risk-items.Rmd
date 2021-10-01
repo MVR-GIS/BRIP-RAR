@@ -1,7 +1,7 @@
 # Risk Items
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-# Set the heading level
+# Set the heading level for risk items
 risk_heading_level <- 2
 
 # Iterate through risks and produce a risk-item-report for each risk.
@@ -11,7 +11,7 @@ risk_item_reports <- lapply(risk$risk_no, function(x) {
                     quiet = TRUE)
 })
 
-# Expand the list of reports
+# Expand the list of risk reports
 cat(unlist(risk_item_reports), sep = '\n')
 ```
 
