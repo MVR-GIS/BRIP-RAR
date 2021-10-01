@@ -29,6 +29,10 @@ library(pander)
 library(timevis)
 ```
 
+```{r source, echo=FALSE, warning=FALSE, message=FALSE}
+source("R/risk_register_table.R")
+```
+
 <!-- chunk options -->
 ```{r chunk-opts], echo=FALSE, warning=FALSE, message=FALSE}
 options(width = 60)
@@ -43,7 +47,6 @@ knitr::opts_chunk$set(
 ```{r}
 qa_email_address <- "Michael.P.Dougherty@usace.army.mil"
 ```
-
 
 <!-- Wrangle Data -->
 ```{r wrangle-risk, echo=FALSE, warning=FALSE, message=FALSE}
