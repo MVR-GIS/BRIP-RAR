@@ -1,11 +1,7 @@
 <!-- Wrangle report data -->
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 # Set iterator variable for testing. Comment out in production. 
-#<- "CA-003"
-
-# Set heading level for markdown
-heading_markdown <- ifelse(risk_heading_level == 2, "##", 
-                           ifelse(risk_heading_level == 3, "###", ""))
+#x <- "CA-003"
 
 # Subset the risks df for the current risk item
 risk_item <- risk %>%
@@ -67,7 +63,12 @@ feedback_link <- paste0("mailto:", qa_email_address,
 :::
 
 ::: {.header}
-`r paste(heading_markdown, risk_item$risk_no, "{.unnumbered}")`
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+pandoc_header(text = risk_item$risk_no, 
+              level = risk_heading_level,
+              identifier = str_to_lower(risk_item$risk_no),
+              number = FALSE)
+```
 :::
 
 `r risk_item$CONCERN`

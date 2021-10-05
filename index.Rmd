@@ -31,6 +31,8 @@ library(timevis)
 
 ```{r source, echo=FALSE, warning=FALSE, message=FALSE}
 source("R/risk_register_table.R")
+source("R/atx_header.R")
+source("R/pandoc_header.R")
 ```
 
 <!-- chunk options -->
