@@ -1,8 +1,10 @@
-#' Risk Register Table
+#' @title Risk Register Table
+#'
+#' @description    Produces a risk register table of the input risk data frame.
 #'
 #' @param risk     data.frame; A data frame of risks.
 #'
-#' @return `knitr::kable` table
+#' @return `knitr::kable` table of risk items.
 #'
 risk_register_table <- function(risk) {
   risk_df <- risk %>%
