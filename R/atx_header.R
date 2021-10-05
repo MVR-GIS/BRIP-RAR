@@ -7,7 +7,7 @@
 #'
 #' @return String of ATX-style markdown header.
 #'
-atx_header_level <- function (level) {
+atx_header <- function (level) {
   if(level%%1 != 0) { stop("level must be an integer") }
   paste(rep.int("#", level), collapse = "")
 }
