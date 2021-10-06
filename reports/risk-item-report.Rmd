@@ -66,12 +66,14 @@ feedback_link <- paste0("mailto:", qa_email_address,
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 pandoc_header(text = risk_item$risk_no, 
               level = risk_heading_level,
-              identifier = str_to_lower(risk_item$risk_no),
-              number = FALSE)
+              identifier = paste0(risk_identifier_prefix, "-",
+                                  str_to_lower(risk_item$risk_no)),
+              number = FALSE,
+              list = list_risk_item)
 ```
 :::
 
-`r risk_item$CONCERN`
+`r risk_item$CONCERNS`
 
 :::::::: {.section-box}
 <!-- Risk Attributes line 1 -->

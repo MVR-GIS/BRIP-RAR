@@ -42,9 +42,9 @@ pandoc_header <- function (text,
 
   # Build space-delimited list of header attributes (and remove white space)
   attributes <- stringr::str_squish(paste(ident_attribute,
-                                          number_attribute))
-  attributes <- stringr::str_squish(paste(attributes,
                                           list_attribute))
+  attributes <- stringr::str_squish(paste(attributes,
+                                          number_attribute))
   attributes <- paste0("{", attributes, "}")
 
   # Combine header and attributes

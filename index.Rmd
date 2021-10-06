@@ -99,7 +99,7 @@ risk <- risk %>%
 
 # Create hyperlink to Risk_No
 risk <- risk %>%
-  mutate(risk_no_link = paste0("[", risk$risk_no, "](#", 
+  mutate(risk_no_link = paste0("[", risk$risk_no, "](#risk-item-", 
                                tolower(risk$risk_no), ")"))
 
 # Reorder fields

@@ -12,6 +12,7 @@ risk_register_table <- function(risk) {
            COST_RISK, cost_risk_color,
            SCHEDULE_RISK, schedule_risk_color)
 
+
   risk_register <- kbl(
     select(risk_df,
              risk_no_link, CONCERNS, RISK_STRATEGY, COST_RISK, SCHEDULE_RISK),
