@@ -36,7 +36,7 @@ source("R/pandoc_header.R")
 ```
 
 <!-- chunk options -->
-```{r chunk-opts], echo=FALSE, warning=FALSE, message=FALSE}
+```{r chunk-opts, echo=FALSE, warning=FALSE, message=FALSE}
 options(width = 60)
 
 knitr::opts_chunk$set(
@@ -46,8 +46,8 @@ knitr::opts_chunk$set(
 ```
 
 <!-- Report Constants -->
-```{r}
-qa_email_address <- "Michael.P.Dougherty@usace.army.mil"
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+qa_email_address <- "Marissa.C.Lack@usace.army.mil"
 ```
 
 <!-- Wrangle Data -->
