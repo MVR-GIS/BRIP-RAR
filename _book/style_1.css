@@ -28,6 +28,8 @@
 }
 
 .section-box {
+  font-size: smaller;
+  line-height: 1.1em;
   border-radius: 5px;
   padding: 2px;
   box-sizing: border-box;
@@ -46,9 +48,9 @@
 .grid-5w-2h {
   display: grid;
   grid-template-columns: repeat(5, auto);
-  grid-template-rows: 15px min-content;
+  grid-template-rows: 0.8em min-content;
   grid-auto-flow: column;
-  grid-gap: 10px;
+  grid-gap: 5px;
   padding: 2px;
   box-sizing: border-box;
 }
@@ -71,4 +73,8 @@
     page-break-inside: avoid;
   }
 
+}
+
+p {
+  display: inline;
 }
