@@ -1,5 +1,4 @@
 # POC Reports
-The Point of Contact (POC) report displays the risk items assigned to each POC. This report is primarily used to notify POCs of the risk management items they are responsible for updating. 
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 pocs <- unique(risk$RESPONSIBLE_POC)
