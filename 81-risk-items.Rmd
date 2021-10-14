@@ -13,7 +13,12 @@ risk_item_reports <- lapply(risk$risk_no, function(x) {
                     quiet = TRUE)
 })
 
+# Add page break divs
+page_break_div <- paste(" ", "::: {.page-break}", ":::", " ", sep = "\n")
+page_breaks <- rep(page_break_div, 
+                   length(risk$risk_no))
+
 # Expand the list of risk reports
-cat(unlist(risk_item_reports), sep = '\n')
+cat(unlist(risk_item_reports), sep = page_breaks)
 ```
 

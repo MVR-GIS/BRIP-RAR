@@ -35,5 +35,8 @@ for(poc in pocs) {
   
   # Expand the list of risk reports
   cat(unlist(risk_item_reports), sep = '\n')
+  
+  # Add a page break
+  cat(c("::: {.page-break}", ":::"), sep = '\n')
 }
 ```
