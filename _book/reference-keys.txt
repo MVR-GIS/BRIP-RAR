@@ -2,7 +2,6 @@ project
 risk-register
 summary-statistics
 risks
-discussion
 related-actions
 related-decisions
 level-1
@@ -11,6 +10,10 @@ level-2
 level-3
 level-4
 level-5
-engineered-channel
+component-reports
 poc-reports
+engineered-channel
+summary
+risks-1
+poc-reports-1
 risk-items
