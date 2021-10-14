@@ -1,2 +1,9 @@
 # QA Reports {-}
-These reports are used to...
+These reports are used to help team members perform Quality Assurance (QA) checks on the project risk data. These reports seek to accomplish this goal by providing more focused views of the data for specific teams to review. 
+
+## Component Reports
+Component reports are designed to help users focus on risks for a particular project component. Risks for other project components are filtered out to reduce clutter. 
+
+## POC Reports
+The Point of Contact (POC) report displays the risk items assigned to each POC. This report is primarily used to notify POCs of the risk management items they are responsible for updating. 
+
