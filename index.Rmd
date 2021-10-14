@@ -27,6 +27,8 @@ library(tools)
 library(kableExtra)
 library(pander)
 library(timevis)
+library(treemapify)
+library(gridExtra)
 ```
 
 ```{r source, echo=FALSE, warning=FALSE, message=FALSE}
@@ -217,9 +219,4 @@ discussion <- discussion %>%
 rm(discussion_oracle)
 ```
 
-```{r wrangle-domains, echo=FALSE, warning=FALSE, message=FALSE}
-domains_oracle <- read_csv(file = "data/Domains_20210928.csv")
-
-
-```
 
