@@ -56,7 +56,7 @@ feedback_link <- paste0("mailto:", qa_email_address,
                          %0D%0A")
 ```
 
-::::::::::: {.item-box}
+:::::::::::::: {.item-box}
 
 ::: {.right}
 [&circlearrowright;](`r feedback_link`)
@@ -153,11 +153,13 @@ Last Review Date
 `r risk_item$POC_REVIEW_DATE`
 :::
 :::::
-::::::::
 
-::::: {.white-box}
+<!-- End Risk Attributes -->
+::::::::  
+
+:::::: {.white-box}
 `r cat(' ')`
-:::::
+::::::
 
 :::::::: {.section-box}
 **Cost-Schedule Risk**  
@@ -183,11 +185,13 @@ kbl(filter(cost_schedule_risk, variable != "Risk Color"),
                                   ifelse(cost_schedule_risk$schedule == "High", "red",
                                   "#ffffff00"))))
 ```
-::::::::
 
-::::: {.white-box}
+<!-- End Cost-Schedule Risk -->
+:::::::: 
+
+:::::: {.white-box}
 `r cat(' ')`
-:::::
+::::::
 
 :::::::: {.section-box}
 **Risk Engagement Level History**
@@ -199,13 +203,15 @@ kbl(select(events_item, ENG_LEVEL, level_date, DESCRIPTION),
   column_spec(1, width = "8em") %>%
   column_spec(2, width = "8em")
 ```
-::::::::
 
-::::: {.white-box}
+<!-- End Risk Engagement Level History -->
+::::::::  
+
+:::::: {.white-box}
 `r cat(' ')`
-:::::
+::::::
 
-:::::::: {.section-box}
+:::::::: {.section-box}  
 **Risk Disscusion Items**
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 kbl(select(discussion_item, DISCUSSION, RESPONSIBLE_POC, log_date),
@@ -213,14 +219,51 @@ kbl(select(discussion_item, DISCUSSION, RESPONSIBLE_POC, log_date),
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
                                       "responsive")) 
 ```
-::::::::
 
-<!-- Related Decisions -->
+<!-- End Risk Discussion Items -->
+:::::::: 
 
-<!-- Related Actions -->
-
-:::::::::::
-
-::::: {.white-box}
+:::::: {.white-box}
 `r cat(' ')`
-:::::
+::::::
+
+:::::::::::: {.section-box}
+**Response Plan**
+
+::::::::: {.section-box}
+**Related Actions**
+
+<!-- Action table goes here -->
+
+:::::: {.white-box}
+`r cat(' ')`
+::::::
+
+<!-- End Related Actions -->
+:::::::::
+
+:::::: {.white-box}
+`r cat(' ')`
+::::::
+
+::::::::: {.section-box}
+**Related Decisions**
+
+<!-- Decisions table goes here -->
+
+:::::: {.white-box}
+`r cat(' ')`
+::::::
+
+<!-- End Related Decisions -->
+:::::::::  
+
+<!-- End Response Plan -->
+::::::::::::  
+
+<!-- End Risk Item -->
+:::::::::::::: 
+
+:::::: {.white-box}
+`r cat(' ')`
+::::::
