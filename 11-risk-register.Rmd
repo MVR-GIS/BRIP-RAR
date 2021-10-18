@@ -1,35 +1,51 @@
 # Risk Register
 
 ## Summary Statistics
-```{r, echo=FALSE, warning=FALSE, message=FALSE}
-p1 <- ggplot(count(risk, RISKCATEGORY), 
-             aes(area = n, fill = RISKCATEGORY, label = RISKCATEGORY)) +
+```{r, echo=FALSE, warning=FALSE, message=FALSE, out.width='100%'}
+risk_category <- count(risk, RISKCATEGORY) %>%
+        mutate(percent = (n / sum(n)) * 100) %>%
+        mutate(label = paste0(RISKCATEGORY, " (",
+                              round(percent, 1), "%)"))
+p1 <- ggplot(risk_category, 
+             aes(area = n, fill = label, label = label)) +
         geom_treemap() +
-        geom_treemap_text() + 
+        geom_treemap_text(reflow = TRUE, min.size = 4, grow = FALSE) + 
         scale_fill_brewer(palette = "Dark2") +
         theme(legend.position = "none") +
         ggtitle("Risk Categories")
 
-p2 <- ggplot(count(risk, COMPONENT), 
-             aes(area = n, fill = COMPONENT, label = COMPONENT)) +
+component <- count(risk, COMPONENT) %>%
+        mutate(percent = (n / sum(n)) * 100) %>%
+        mutate(label = paste0(COMPONENT, " (",
+                              round(percent, 1), "%)"))
+p2 <- ggplot(component, 
+             aes(area = n, fill = COMPONENT, label = label)) +
         geom_treemap() +
-        geom_treemap_text() + 
+        geom_treemap_text(reflow = TRUE, min.size = 4, grow = FALSE) + 
         scale_fill_brewer(palette = "Dark2") +
         theme(legend.position = "none") +
         ggtitle("Project Components")
 
-p3 <- ggplot(count(risk, RISK_STRATEGY), 
-             aes(area = n, fill = RISK_STRATEGY, label = RISK_STRATEGY)) +
+risk_strategy <- count(risk, RISK_STRATEGY) %>%
+        mutate(percent = (n / sum(n)) * 100) %>%
+        mutate(label = paste0(RISK_STRATEGY, " (",
+                              round(percent, 1), "%)"))
+p3 <- ggplot(risk_strategy, 
+             aes(area = n, fill = RISK_STRATEGY, label = label)) +
         geom_treemap() +
-        geom_treemap_text() + 
+        geom_treemap_text(reflow = TRUE, min.size = 4, grow = FALSE) + 
         scale_fill_brewer(palette = "Dark2") +
         theme(legend.position = "none") +
         ggtitle("Risk Strategy")
 
-p4 <- ggplot(count(risk, TIMING_OF_DELAY), 
-             aes(area = n, fill = TIMING_OF_DELAY, label = TIMING_OF_DELAY)) +
+timing_of_delay <- count(risk, TIMING_OF_DELAY) %>%
+        mutate(percent = (n / sum(n)) * 100) %>%
+        mutate(label = paste0(TIMING_OF_DELAY, " (",
+                              round(percent, 1), "%)"))
+p4 <- ggplot(timing_of_delay, 
+             aes(area = n, fill = TIMING_OF_DELAY, label = label)) +
         geom_treemap() +
-        geom_treemap_text() + 
+        geom_treemap_text(reflow = TRUE, min.size = 4, grow = FALSE) + 
         scale_fill_brewer(palette = "Dark2") +
         theme(legend.position = "none") +
         ggtitle("Timing of Delay")
