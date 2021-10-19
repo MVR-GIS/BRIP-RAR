@@ -1,7 +1,7 @@
 # Risk Register
 
 ## Summary Statistics
-```{r}
+```{r, echo=FALSE, warning=FALSE, message=FALSE, out.width='100%'}
 p1 <- percent_treemap(risk, RISKCATEGORY, "Risk Categories")
 p2 <- percent_treemap(risk, COMPONENT, "Project Components")
 p3 <- percent_treemap(risk, RISK_STRATEGY, "Risk Strategy")

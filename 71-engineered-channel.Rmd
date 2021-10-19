@@ -6,40 +6,11 @@
 eng_ch_risk <- filter(risk, COMPONENT == "Engineering Channel")
 ```
 
-```{r, echo=FALSE, warning=FALSE, message=FALSE}
-p1 <- ggplot(count(eng_ch_risk, RISKCATEGORY), 
-             aes(area = n, fill = RISKCATEGORY, label = RISKCATEGORY)) +
-        geom_treemap() +
-        geom_treemap_text() + 
-        scale_fill_brewer(palette = "Dark2") +
-        theme(legend.position = "none") +
-        ggtitle("Risk Categories")
-
-p2 <- ggplot(count(eng_ch_risk, COMPONENT), 
-             aes(area = n, fill = COMPONENT, label = COMPONENT)) +
-        geom_treemap() +
-        geom_treemap_text() + 
-        scale_fill_brewer(palette = "Dark2") +
-        theme(legend.position = "none") +
-        ggtitle("Project Components")
-
-p3 <- ggplot(count(eng_ch_risk, RISK_STRATEGY), 
-             aes(area = n, fill = RISK_STRATEGY, label = RISK_STRATEGY)) +
-        geom_treemap() +
-        geom_treemap_text() + 
-        scale_fill_brewer(palette = "Dark2") +
-        theme(legend.position = "none") +
-        ggtitle("Risk Strategy")
-
-p4 <- ggplot(count(eng_ch_risk, TIMING_OF_DELAY), 
-             aes(area = n, fill = TIMING_OF_DELAY, label = TIMING_OF_DELAY)) +
-        geom_treemap() +
-        geom_treemap_text() + 
-        scale_fill_brewer(palette = "Dark2") +
-        theme(legend.position = "none") +
-        ggtitle("Timing of Delay")
-
-grid.arrange(p1, p2, p3, p4, nrow = 2, ncol = 2)
+```{r, echo=FALSE, warning=FALSE, message=FALSE, out.width='100%'}
+p1 <- percent_treemap(eng_ch_risk, RISKCATEGORY, "Risk Categories")
+p3 <- percent_treemap(eng_ch_risk, RISK_STRATEGY, "Risk Strategy")
+p4 <- percent_treemap(eng_ch_risk, TIMING_OF_DELAY, "Timing of Delay")
+grid.arrange(p1, p3, p4, nrow = 2, ncol = 2)
 ```
 
 ## Risks
