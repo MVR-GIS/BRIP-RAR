@@ -1,5 +1,29 @@
 # Risk Register
 
+```{r}
+percent_tmap <- function(df, column, title) {
+  col <- enquo(column)
+  risk_category <- count(df, !!col) %>%
+        mutate(percent = (n / sum(n)) * 100) %>%
+        mutate(label = paste0(!!col, " (",
+                              round(percent, 1), "%)"))
+  p1 <- ggplot(risk_category, 
+               aes(area = n, fill = label, label = label)) +
+          geom_treemap() +
+          geom_treemap_text(reflow = TRUE, min.size = 4, grow = FALSE) + 
+          scale_fill_brewer(palette = "Dark2") +
+          theme(legend.position = "none") +
+          ggtitle(title)
+  return(risk_category)
+}
+```
+
+```{r}
+percent_tmap(risk, "RISKCATEGORY", "Risk Categories")
+```
+
+
+
 ## Summary Statistics
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, out.width='100%'}
 risk_category <- count(risk, RISKCATEGORY) %>%
