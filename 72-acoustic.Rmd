@@ -1,0 +1,21 @@
+# Acoustic Deterrent
+
+## Summary
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Filter for the Acoustic Fish Deterrent component
+acoustic_risk <- filter(risk, COMPONENT == "Acoustic Fish Deterrent")
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, out.width='100%'}
+p1 <- percent_treemap(acoustic_risk, RISKCATEGORY, "Risk Categories")
+p3 <- percent_treemap(acoustic_risk, RISK_STRATEGY, "Risk Strategy")
+p4 <- percent_treemap(acoustic_risk, TIMING_OF_DELAY, "Timing of Delay")
+grid.arrange(p1, p3, p4, nrow = 2, ncol = 2)
+```
+
+## Risks
+```{r acoustic-risk-register-table, echo=FALSE, warning=FALSE, message=FALSE}
+# Create the table
+risk_register_table(acoustic_risk)
+```
+
