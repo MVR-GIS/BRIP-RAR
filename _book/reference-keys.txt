@@ -15,5 +15,8 @@ poc-reports
 engineered-channel
 summary
 risks-1
+acoustic-deterrent
+summary-1
+risks-2
 poc-reports-1
 risk-items
