@@ -18,7 +18,7 @@ percent_treemap <- function(df, column, title) {
   p1 <- ggplot(count_df,
                aes(area = n, fill = label, label = label)) +
     geom_treemap() +
-    geom_treemap_text(reflow = TRUE, min.size = 4, grow = FALSE) +
+    geom_treemap_text(reflow = TRUE, min.size = 5, grow = FALSE) +
     scale_fill_brewer(palette = "Dark2") +
     theme(legend.position = "none") +
     ggtitle(title)
