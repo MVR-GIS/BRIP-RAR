@@ -16,8 +16,8 @@ risk_register_table <- function(risk) {
   risk_register <- kbl(
     select(risk_df,
              risk_no_link, CONCERNS, RISK_STRATEGY, COST_RISK, SCHEDULE_RISK),
-      col.names = c("Risk No.", "Description", "Risk Strategy", "Cost Risk",
-                    "Schedule Risk")) %>%
+      col.names = c("Number", "Description", "Strategy", "Cost",
+                    "Schedule")) %>%
     kable_styling(bootstrap_options = c("striped", "hover", "condensed",
                                         "responsive"),
                   font_size = 12) %>%
