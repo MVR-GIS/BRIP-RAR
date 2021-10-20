@@ -22,6 +22,7 @@ risk_register_table <- function(risk) {
                                         "responsive"),
                   font_size = 12) %>%
     pack_rows(index = table(risk_df$RISKCATEGORY),
+              indent = FALSE,
               label_row_css = "background-color: #dad8d8; color: #000000;") %>%
     column_spec(4, color = "black",
                 background = risk_df$cost_risk_color) %>%
