@@ -3,7 +3,8 @@
 ## Summary
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 # Filter for the engineered channel component
-eng_ch_risk <- filter(risk, COMPONENT == "Engineering Channel")
+eng_ch_risk <- filter(risk, COMPONENT == "Engineering Channel" | 
+                            COMPONENT == "All")
 ```
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=7, fig.height=5, out.width='100%', fig.cap = paste0("Risk Characteristics (n = ", length(unique(eng_ch_risk$RISK_NO)), ")")}
@@ -15,7 +16,7 @@ grid.arrange(p1, p3, p4, p5, nrow = 2, ncol = 2)
 ```
 
 ## Risks
-```{r engineered-channel-risk-register-table, echo=FALSE, warning=FALSE, message=FALSE}
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 # Create the table
 risk_register_table(eng_ch_risk)
 ```
