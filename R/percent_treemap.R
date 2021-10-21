@@ -10,7 +10,10 @@
 #' @return A ggplot2 object.
 #'
 percent_treemap <- function(df, column, title) {
+  # Enquote the column
   col <- enquo(column)
+
+  # Generate count of records for the specified column
   count_df <- count(df, !!col) %>%
     mutate(percent = (n / sum(n)) * 100) %>%
     mutate(label = paste0(!!col, " (",
