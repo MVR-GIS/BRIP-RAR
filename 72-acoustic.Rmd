@@ -1,12 +1,12 @@
 # Acoustic Deterrent
 
-## Summary
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 # Filter for the Acoustic Fish Deterrent component
 acoustic_risk <- filter(risk, COMPONENT == "Acoustic Fish Deterrent" | 
                               COMPONENT == "All")
 ```
 
+## Summary
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=7, fig.height=5, out.width='100%', fig.cap = paste0("Risk Characteristics (n = ", length(unique(acoustic_risk$RISK_NO)), ")")}
 p1 <- percent_treemap(acoustic_risk, RISKCATEGORY, "Risk Categories")
 p3 <- percent_treemap(acoustic_risk, RISK_STRATEGY, "Risk Strategy")

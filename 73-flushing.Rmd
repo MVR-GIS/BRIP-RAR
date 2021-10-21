@@ -1,12 +1,12 @@
 # Flushing Lock
 
-## Summary
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 # Filter for the Flushing Lock component
 flushing_risk <- filter(risk, COMPONENT == "Flushing Lock" | 
                               COMPONENT == "All")
 ```
 
+## Summary
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=7, fig.height=5, out.width='100%', fig.cap = paste0("Risk Characteristics (n = ", length(unique(flushing_risk$RISK_NO)), ")")}
 p1 <- percent_treemap(flushing_risk, RISKCATEGORY, "Risk Categories")
 p3 <- percent_treemap(flushing_risk, RISK_STRATEGY, "Risk Strategy")
