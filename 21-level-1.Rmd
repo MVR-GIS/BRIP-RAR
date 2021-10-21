@@ -1,5 +1,25 @@
 # Level 1
 
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Filter for the engineered channel component
+L1_risk <- filter(risk, eng_level == 1)
+```
+
+## Risks
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+risk_register_table(L1_risk)
+```
+
+## Summary
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=7, fig.height=9, out.width='100%', fig.cap = paste0("Risk Characteristics (n = ", length(unique(L1_risk$RISK_NO)), ")")}
+p1 <- percent_treemap(L1_risk, RISKCATEGORY, "Risk Categories")
+p2 <- percent_treemap(L1_risk, COMPONENT, "Project Components")
+p3 <- percent_treemap(L1_risk, RISK_STRATEGY, "Risk Strategy")
+p4 <- percent_treemap(L1_risk, TIMING_OF_DELAY, "Timing of Delay")
+p5 <- percent_treemap(L1_risk, DISCIPLINE, "Discpline")
+grid.arrange(p1, p2, p3, p4, p5, nrow = 3, ncol = 2)
+```
+
 ## `timevis` Timelines
 
 ```{r test-data, echo=FALSE, warning=FALSE, message=FALSE}
