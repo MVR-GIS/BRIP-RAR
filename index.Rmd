@@ -68,6 +68,10 @@ risk <- risk %>%
   rename(cost_risk_color = CONDITIONAL_FORMATTING) %>%
   rename(schedule_risk_color = CONDITIONAL_FORMATTING2)
 
+# Set engagement level integer field
+risk <- risk %>%
+  mutate(eng_level = as.numeric(str_extract(ENG_LEVEL, "\\d")))
+
 # Ensure colors are lowercase
 risk$cost_risk_color     <- tolower(risk$cost_risk_color)
 risk$schedule_risk_color <- tolower(risk$schedule_risk_color)
@@ -116,7 +120,8 @@ risk <- risk %>%
   relocate(start_date, .after = CONCERNS) %>%
   relocate(end_date, .after = start_date) %>%
   relocate(risk_no, .after = RISK_NO) %>%
-  relocate(risk_no_link, .after = risk_no)
+  relocate(risk_no_link, .after = risk_no) %>%
+  relocate(eng_level, .after = ENG_LEVEL)
 
 # Sort
 risk <- risk %>%
