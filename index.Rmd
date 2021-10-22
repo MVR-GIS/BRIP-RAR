@@ -55,13 +55,14 @@ qa_email_address <- "Marisa.C.Lack@usace.army.mil"
 
 <!-- Wrangle Data -->
 ```{r wrangle-risk, echo=FALSE, warning=FALSE, message=FALSE}
-risk_oracle <- read_csv(file = "data/RR_Main_Report_View.csv")
+risk_oracle <- read_csv(file = "data/RR_MAIN_REPORT_VIEW_20211022")
 
 # Set date fields
 risk <- risk_oracle %>%
-  mutate(start_date = lubridate::as_date(START_DATE)) %>%
-  mutate(end_date   = lubridate::as_date(END_DATE)) %>%
-  mutate(level_date = lubridate::as_date(LEVEL_DATE))
+  mutate(start_date      = lubridate::as_date(START_DATE)) %>%
+  mutate(end_date        = lubridate::as_date(END_DATE)) %>%
+  mutate(level_date      = lubridate::as_date(LEVEL_DATE)) %>%
+  mutate(poc_review_date = lubridate::as_date(POC_REVIEW_DATE))
 
 # Rename fields
 risk <- risk %>%
@@ -76,6 +77,15 @@ risk <- risk %>%
 risk$cost_risk_color     <- tolower(risk$cost_risk_color)
 risk$schedule_risk_color <- tolower(risk$schedule_risk_color)
 
+# Calculate efficacy_risk_color
+risk$efficacy_risk_color <- recode(risk$EFFICACY_RISK,
+                                   Low = "green",
+                                   Moderate = "yellow",
+                                   High = "red")
+
+# Add efficacy_impact_per_project
+risk$EFFICACY_IMPACT_PER_PROJECT <- ""
+
 # Convert factor variables to title case
 risk$RISKCATEGORY <- toTitleCase(tolower(risk$RISKCATEGORY))
 
@@ -87,6 +97,7 @@ risk <- risk %>%
   mutate(risk_no_letter_na = str_extract(risk_no_number_string, "\\D+")) %>%
   mutate(risk_no_letter = replace_na(risk_no_letter_na,
                                      replace = "")) %>%
+  mutate(risk_no_letter_lower = tolower(risk_no_letter)) %>%
   mutate(risk_no_padded = str_pad(risk_no_number, 
                                   width = 3, 
                                   side = "left",
@@ -94,15 +105,17 @@ risk <- risk %>%
   mutate(risk_no = str_c(risk_no_risk_cat_code, 
                           "-",
                           risk_no_padded,
-                          risk_no_letter))
+                          risk_no_letter_lower))
 
 # Remove unused fields
 risk <- risk %>%
-  select(!c(PDT_DISC_CONC, PDT_DISC_LIKELI_IMPACT, 
-            PDT_DISC_RISK_MANAG_STRATEGY, ACTION_ITEMS, LESSONS_LEARNED, 
-            START_DATE, END_DATE, LEVEL_DATE, FK_TABLE_ID,
+  select(!c(PDT_DISC_CONC, PDT_DISC_LIKELI_IMPACT,
+            PDT_DISC_RISK_MANAG_STRATEGY, ACTION_ITEMS, LESSONS_LEARNED,
+            START_DATE, END_DATE, LEVEL_DATE, POC_REVIEW_DATE, 
+            FK_TABLE_ID,
             risk_no_risk_cat_code, risk_no_number_string, risk_no_number,
-            risk_no_letter_na, risk_no_letter, risk_no_padded))
+            risk_no_letter_na, risk_no_letter_lower,
+            risk_no_letter, risk_no_padded))
 
 # Create hyperlink to Risk_No
 risk <- risk %>%
@@ -116,15 +129,20 @@ risk <- risk %>%
   relocate(cost_risk_color,  .after = COST_RISK) %>%
   relocate(SCHEDULE_RISK, .after = SCHEDULE_IMPACT_PER_PROJECT) %>%
   relocate(schedule_risk_color, .after = SCHEDULE_RISK) %>%
+  relocate(EFFICACY_IMPACT, .after = EFFICACY_LIKELIHOOD) %>%
+  relocate(EFFICACY_IMPACT_PER_PROJECT, .after = EFFICACY_IMPACT) %>%
+  relocate(efficacy_risk_color, .after = EFFICACY_RISK) %>%
   relocate(TIMING_OF_DELAY, .after = RISK_STRATEGY) %>%
   relocate(start_date, .after = CONCERNS) %>%
   relocate(end_date, .after = start_date) %>%
   relocate(risk_no, .after = RISK_NO) %>%
   relocate(risk_no_link, .after = risk_no) %>%
+  relocate(poc_review_date, .after = RESPONSIBLE_POC) %>%
   relocate(eng_level, .after = ENG_LEVEL)
 
-# Sort
+# Remove duplicates and sort
 risk <- risk %>%
+  distinct(risk_no, .keep_all = TRUE) %>%
   arrange(risk_no)
 
 # Cleanup
@@ -132,7 +150,7 @@ rm(risk_oracle)
 ```
 
 ```{r wrangle-events, echo=FALSE, warning=FALSE, message=FALSE}
-events_oracle <- read_csv(file = "data/Events_20210928.csv")
+events_oracle <- read_csv(file = "data/EVENTS_EVW_20211022")
 
 # Set date fields
 events <- events_oracle %>%
@@ -148,6 +166,7 @@ events <- events %>%
   mutate(fk_table_id_letter_na = str_extract(fk_table_id_number_string, "\\D+")) %>%
   mutate(fk_table_id_letter = replace_na(fk_table_id_letter_na,
                                          replace = "")) %>%
+  mutate(fk_table_id_letter_lower = tolower(fk_table_id_letter)) %>%
   mutate(fk_table_id_padded = str_pad(fk_table_id_number, 
                                       width = 3, 
                                       side = "left",
@@ -155,13 +174,14 @@ events <- events %>%
   mutate(fk_table_id = str_c(fk_table_id_cat_code, 
                              "-",
                              fk_table_id_padded,
-                             fk_table_id_letter))
+                             fk_table_id_letter_lower))
 
 # Remove unused fields
 events <- events %>%
   select(!c(LEVEL_DATE, CREATED_DATE, LAST_EDITED_DATE, 
             fk_table_id_cat_code, fk_table_id_number_string, fk_table_id_number,
-            fk_table_id_letter_na, fk_table_id_letter, fk_table_id_padded))
+            fk_table_id_letter_na, fk_table_id_letter_lower, 
+            fk_table_id_letter, fk_table_id_padded))
 
 # Reorder fields
 events <- events %>%
@@ -180,13 +200,10 @@ rm(events_oracle)
 ```
 
 ```{r wrangle-discussion, echo=FALSE, warning=FALSE, message=FALSE}
-discussion_oracle <- read_csv(file = "data/DiscussionLog_20210928.csv")
+discussion_oracle <- read_csv(file = "data/R_DISC_LOG_MAIN_REPORT_VIEW_20211022")
 
 # Set date fields
 discussion <- discussion_oracle %>%
-  mutate(log_date = lubridate::as_datetime(LOG_DATE)) %>%
-  mutate(created_date   = lubridate::as_date(CREATED_DATE)) %>%
-  mutate(last_edited_date = lubridate::as_date(LAST_EDITED_DATE)) %>%
   mutate(poc_review_date = lubridate::as_date(POC_REVIEW_DATE))
 
 discussion <- discussion %>%
@@ -196,6 +213,7 @@ discussion <- discussion %>%
   mutate(fk_table_id_letter_na = str_extract(fk_table_id_number_string, "\\D+")) %>%
   mutate(fk_table_id_letter = replace_na(fk_table_id_letter_na,
                                          replace = "")) %>%
+  mutate(fk_table_id_letter_lower = tolower(fk_table_id_letter)) %>%
   mutate(fk_table_id_padded = str_pad(fk_table_id_number, 
                                       width = 3, 
                                       side = "left",
@@ -203,26 +221,21 @@ discussion <- discussion %>%
   mutate(fk_table_id = str_c(fk_table_id_cat_code, 
                              "-",
                              fk_table_id_padded,
-                             fk_table_id_letter))
+                             fk_table_id_letter_lower))
 
 # Remove unused fields
 discussion <- discussion %>%
-  select(!c(LOG_DATE, CREATED_DATE, LAST_EDITED_DATE, POC_REVIEW_DATE,
+  select(!c(POC_REVIEW_DATE,
             fk_table_id_cat_code, fk_table_id_number_string, fk_table_id_number,
-            fk_table_id_letter_na, fk_table_id_letter, fk_table_id_padded))
+            fk_table_id_letter_na, fk_table_id_letter, fk_table_id_letter_lower, 
+            fk_table_id_padded))
 
 # Reorder fields
 discussion <- discussion %>%
   relocate(fk_table_id, .after = FK_TABLE_ID) %>%
-  relocate(log_date, .after = LOGGED_BY) %>%
-  relocate(created_date, .after = CREATED_USER) %>%
-  relocate(last_edited_date, .after = LAST_EDITED_USER) %>%
-  relocate(RESPONSIBLE_POC, .after = log_date) %>%
-  relocate(poc_review_date, .after = RESPONSIBLE_POC) %>%
-  relocate(ACTIVE, .after = poc_review_date)
+  relocate(RESPONSIBLE_POC, .after = DISCUSSION) %>%
+  relocate(poc_review_date, .after = RESPONSIBLE_POC)
 
 # Cleanup
 rm(discussion_oracle)
 ```
-
-
