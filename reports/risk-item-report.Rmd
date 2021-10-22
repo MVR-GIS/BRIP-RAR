@@ -180,7 +180,7 @@ Last Review Date
 ::::::
 
 :::::::: {.section-box}
-**Cost-Schedule Risk**  
+**Efficacy-Cost-Schedule Rating**  
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 kbl(filter(risk_rating, variable != "Risk Color"),
     col.names = c("", "Efficacy", "Cost", "Schedule")) %>%
@@ -189,21 +189,21 @@ kbl(filter(risk_rating, variable != "Risk Color"),
                 full_width = FALSE, 
                 position = "left") %>%
   row_spec(0, bold = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "15em", border_right = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "12em", border_right = TRUE) %>%
   column_spec(2, color = "black",
-              width = "10em",
+              width = "8em",
               background = ifelse(risk_rating$efficacy == "Low", "green",
                            ifelse(risk_rating$efficacy == "Moderate", "orange",
                            ifelse(risk_rating$efficacy == "High", "red",
                                   "#ffffff00")))) %>%
   column_spec(3, color = "black",
-              width = "10em",
+              width = "8em",
               background = ifelse(risk_rating$cost == "Low", "green",
                            ifelse(risk_rating$cost == "Moderate", "orange",
                            ifelse(risk_rating$cost == "High", "red",
                                   "#ffffff00")))) %>%
   column_spec(4, color = "black",
-              width = "10em",
+              width = "8em",
               background = ifelse(risk_rating$schedule == "Low", "green",
                            ifelse(risk_rating$schedule == "Moderate", "orange",
                            ifelse(risk_rating$schedule == "High", "red",
@@ -218,7 +218,7 @@ kbl(filter(risk_rating, variable != "Risk Color"),
 ::::::
 
 :::::::: {.section-box}
-**Risk Engagement Level History**
+**Engagement Level History**
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 kbl(select(events_item, ENG_LEVEL, level_date, DESCRIPTION),
     col.names = c("Level", "Date", "Reason for level change")) %>%
@@ -236,7 +236,7 @@ kbl(select(events_item, ENG_LEVEL, level_date, DESCRIPTION),
 ::::::
 
 :::::::: {.section-box}  
-**Risk Disscusion Items**
+**Discussion Items**
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 kbl(select(discussion_item, DISCUSSION, RESPONSIBLE_POC, poc_review_date),
     col.names = c("Discussion Topic", "POC", "Date")) %>%
