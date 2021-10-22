@@ -1,7 +1,7 @@
 <!-- Wrangle report data -->
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 # Set iterator variable for testing. Comment out in production. 
-#x <- "CA-003"
+#x <- "CA-001"
 
 # Subset the risks df for the current risk item
 risk_item <- risk %>%
@@ -43,10 +43,28 @@ schedule_risk <- risk_item %>%
   mutate(variable = str_to_lower(variable)) %>%
   mutate(variable = str_to_title(variable))
 
+# Transpose efficacy fields to long format
+efficacy_risk <- risk_item %>%
+  select(EFFICACY_LIKELIHOOD, EFFICACY_IMPACT, EFFICACY_IMPACT_PER_PROJECT, 
+         EFFICACY_RISK, efficacy_risk_color) %>%
+  pivot_longer(cols = starts_with(c("EFFICACY", "efficacy")), 
+               names_to = "efficacy_variable", 
+               values_to = "efficacy") %>%
+  mutate(variable = substring(efficacy_variable, 10, 27)) %>%
+  mutate(variable = str_replace_all(variable, "_", " ")) %>%
+  mutate(variable = str_to_lower(variable)) %>%
+  mutate(variable = str_to_title(variable))
+
 # Combine cost and schedule values into a single table
 cost_schedule_risk <- cost_risk %>%
   select(variable, cost) %>%
-  inner_join(select(schedule_risk, variable, schedule))
+  inner_join(select(schedule_risk, variable, schedule), 
+             by = "variable")
+
+risk_rating <- efficacy_risk %>%
+  select(variable, efficacy) %>%
+  inner_join(select(cost_schedule_risk, variable, cost, schedule),
+             by = "variable")
 ```
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
@@ -150,7 +168,7 @@ POC
 Last Review Date
 :::
 ::: {.var-value}
-`r risk_item$POC_REVIEW_DATE`
+`r risk_item$poc_review_date`
 :::
 :::::
 
@@ -164,8 +182,8 @@ Last Review Date
 :::::::: {.section-box}
 **Cost-Schedule Risk**  
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-kbl(filter(cost_schedule_risk, variable != "Risk Color"),
-    col.names = c("", "Cost", "Schedule")) %>%
+kbl(filter(risk_rating, variable != "Risk Color"),
+    col.names = c("", "Efficacy", "Cost", "Schedule")) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
                                       "responsive"),
                 full_width = FALSE, 
@@ -174,16 +192,22 @@ kbl(filter(cost_schedule_risk, variable != "Risk Color"),
   column_spec(1, bold = TRUE, width = "15em", border_right = TRUE) %>%
   column_spec(2, color = "black",
               width = "10em",
-              background = ifelse(cost_schedule_risk$cost == "Low", "green",
-                                  ifelse(cost_schedule_risk$cost == "Moderate", "orange",
-                                  ifelse(cost_schedule_risk$cost == "High", "red",
+              background = ifelse(risk_rating$efficacy == "Low", "green",
+                           ifelse(risk_rating$efficacy == "Moderate", "orange",
+                           ifelse(risk_rating$efficacy == "High", "red",
                                   "#ffffff00")))) %>%
   column_spec(3, color = "black",
               width = "10em",
-              background = ifelse(cost_schedule_risk$schedule == "Low", "green",
-                                  ifelse(cost_schedule_risk$schedule == "Moderate", "orange",
-                                  ifelse(cost_schedule_risk$schedule == "High", "red",
-                                  "#ffffff00"))))
+              background = ifelse(risk_rating$cost == "Low", "green",
+                           ifelse(risk_rating$cost == "Moderate", "orange",
+                           ifelse(risk_rating$cost == "High", "red",
+                                  "#ffffff00")))) %>%
+  column_spec(4, color = "black",
+              width = "10em",
+              background = ifelse(risk_rating$schedule == "Low", "green",
+                           ifelse(risk_rating$schedule == "Moderate", "orange",
+                           ifelse(risk_rating$schedule == "High", "red",
+                           "#ffffff00"))))
 ```
 
 <!-- End Cost-Schedule Risk -->
@@ -214,8 +238,8 @@ kbl(select(events_item, ENG_LEVEL, level_date, DESCRIPTION),
 :::::::: {.section-box}  
 **Risk Disscusion Items**
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-kbl(select(discussion_item, DISCUSSION, RESPONSIBLE_POC, log_date),
-    col.names = c("Discussion Topic", "Reporter", "Date")) %>%
+kbl(select(discussion_item, DISCUSSION, RESPONSIBLE_POC, poc_review_date),
+    col.names = c("Discussion Topic", "POC", "Date")) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
                                       "responsive")) 
 ```
