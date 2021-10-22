@@ -108,6 +108,12 @@ pre code {
   padding: 0;
 }
 
+/* Remove vertical scroll bars from bootstrap table */
+.table-responsive {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
 /* Control print formating */
 @media print {
   .table-striped tbody tr:nth-of-type(odd) td {
