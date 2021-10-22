@@ -80,7 +80,7 @@ risk$schedule_risk_color <- tolower(risk$schedule_risk_color)
 # Calculate efficacy_risk_color
 risk$efficacy_risk_color <- recode(risk$EFFICACY_RISK,
                                    Low = "green",
-                                   Moderate = "yellow",
+                                   Moderate = "orange",
                                    High = "red")
 
 # Add efficacy_impact_per_project
@@ -154,9 +154,11 @@ events_oracle <- read_csv(file = "data/EVENTS_EVW_20211022")
 
 # Set date fields
 events <- events_oracle %>%
-  mutate(level_date = lubridate::as_date(LEVEL_DATE)) %>%
-  mutate(created_date   = lubridate::as_date(CREATED_DATE)) %>%
-  mutate(last_edited_date = lubridate::as_date(LAST_EDITED_DATE)) 
+  mutate(level_date = lubridate::as_date(LEVEL_DATE))
+
+# Set engagement level integer field
+events <- events %>%
+  mutate(eng_level = as.numeric(str_extract(ENG_LEVEL, "\\d")))
 
 # Cleanup risk number for sorting
 events <- events %>%
@@ -178,7 +180,8 @@ events <- events %>%
 
 # Remove unused fields
 events <- events %>%
-  select(!c(LEVEL_DATE, CREATED_DATE, LAST_EDITED_DATE, 
+  select(!c(LEVEL_DATE, CREATED_USER, CREATED_DATE, 
+            LAST_EDITED_USER, LAST_EDITED_DATE, 
             fk_table_id_cat_code, fk_table_id_number_string, fk_table_id_number,
             fk_table_id_letter_na, fk_table_id_letter_lower, 
             fk_table_id_letter, fk_table_id_padded))
@@ -188,8 +191,7 @@ events <- events %>%
   relocate(fk_table_id, .after = FK_TABLE_ID) %>%
   relocate(DESCRIPTION, .after = fk_table_id) %>%
   relocate(level_date, .after = ENG_LEVEL) %>%
-  relocate(created_date, .after = CREATED_USER) %>%
-  relocate(last_edited_date, .after = LAST_EDITED_USER)
+  relocate(eng_level, .after = ENG_LEVEL)
 
 # Sort
 events <- events %>%
