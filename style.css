@@ -114,7 +114,7 @@ pre code {
   overflow-y: hidden;
 }
 
-/* timevis item */
+/* timevis item
 .vis-item .vis-range .vis-itemset .vis-group {
   line-height: 0.7;
   padding: 1.1px;
@@ -130,6 +130,10 @@ pre code {
 }
 .vis-time-axis .vis-grid.vis-odd {
   background: #e0ebeb;
+}
+.vis-item .vis-item.vis-line {
+  border-width: 3px;
+  padding: 1.1px;
 }
 */
 

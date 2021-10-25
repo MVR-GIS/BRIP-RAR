@@ -20,8 +20,20 @@ p5 <- percent_treemap(L1_risk, DISCIPLINE, "Discpline")
 grid.arrange(p1, p2, p3, p4, p5, nrow = 3, ncol = 2)
 ```
 
+```{css, echo=FALSE}
+<style>
+  /* alternating column backgrounds */
+  .vis-time-axis .grid.vis-odd {
+    background: #f5f5f5;
+  }
+</style>
+```
+
 ## Project Timeline
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
+item_style <- "font-size: 0.7em; line-height: 0.5; background: #ffe6b3; border-color: #006600;"
+group_style <- "font-weight: bold"
+
 risk_time <- risk %>%
   arrange(risk_no) %>%
   select(OBJECTID, risk_no, start_date, end_date, CONCERNS, 
@@ -31,14 +43,12 @@ risk_time <- risk %>%
   rename(start = start_date) %>%
   rename(end = end_date) %>%
   rename(title = CONCERNS) %>%
-  #mutate(type = "range") %>%
   mutate(group = as.numeric(factor(risk_no_risk_cat_code))) %>%
   mutate(subgroup = content) %>%
   relocate(subgroup, .after = group) %>%
   relocate(title, .after = content) %>%
   relocate(id, .before = content) %>%
-  mutate(style = "font-size: 0.8em;") %>%
-  mutate(className = ".vis-item-content2")
+  mutate(style = item_style) 
 
 risk_time_groups <- risk %>%
   arrange(risk_no) %>%
@@ -47,8 +57,7 @@ risk_time_groups <- risk %>%
   rename(content = risk_no_risk_cat_code) %>%
   rename(title = RISKCATEGORY) %>%
   relocate(id, .before = content) %>%
-  mutate(style = "font-weight: bold") %>%
-  mutate(className = ".vis-item-content3") %>%
+  mutate(style = group_style) %>%
   distinct(id, content, .keep_all = TRUE)
 
 ```
@@ -56,14 +65,14 @@ risk_time_groups <- risk %>%
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Engineering Channel Timeline"}
 timevis(risk_time,
-        height = "800px", width = "100%",
+        width = "100%", 
+        height = "700px",
         groups = risk_time_groups,
-        options = list(stack = TRUE,
+        options = list(start = "2021-01-01",
+                       end   = "2025-01-01",
+                       stack = TRUE,
                        orientation = "top",
-                       margin = 2)) %>%
-  setWindow(start = "2021-01-01",
-            end   = "2025-01-01",
-            options = list(animation = FALSE))
+                       margin = 2)) 
 ```
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
