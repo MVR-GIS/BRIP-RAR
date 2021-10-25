@@ -20,9 +20,85 @@ p5 <- percent_treemap(L1_risk, DISCIPLINE, "Discpline")
 grid.arrange(p1, p2, p3, p4, p5, nrow = 3, ncol = 2)
 ```
 
-## `timevis` Timelines
+## Project Timeline
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+risk_time <- risk %>%
+  arrange(risk_no) %>%
+  select(OBJECTID, risk_no, start_date, end_date, CONCERNS, 
+         risk_no_risk_cat_code, COMPONENT) %>%
+  rename(id = OBJECTID) %>%
+  rename(content = risk_no) %>%
+  rename(start = start_date) %>%
+  rename(end = end_date) %>%
+  rename(title = CONCERNS) %>%
+  #mutate(type = "range") %>%
+  mutate(group = as.numeric(factor(risk_no_risk_cat_code))) %>%
+  mutate(subgroup = content) %>%
+  relocate(subgroup, .after = group) %>%
+  relocate(title, .after = content) %>%
+  relocate(id, .before = content) %>%
+  mutate(style = "font-size: 0.8em;") %>%
+  mutate(className = ".vis-item-content2")
 
-```{r test-data, echo=FALSE, warning=FALSE, message=FALSE}
+risk_time_groups <- risk %>%
+  arrange(risk_no) %>%
+  select(risk_no_risk_cat_code, RISKCATEGORY, COMPONENT) %>%
+  mutate(id = as.numeric(factor(risk_no_risk_cat_code))) %>%
+  rename(content = risk_no_risk_cat_code) %>%
+  rename(title = RISKCATEGORY) %>%
+  relocate(id, .before = content) %>%
+  mutate(style = "font-weight: bold") %>%
+  mutate(className = ".vis-item-content3") %>%
+  distinct(id, content, .keep_all = TRUE)
+
+```
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Engineering Channel Timeline"}
+timevis(risk_time,
+        height = "800px", width = "100%",
+        groups = risk_time_groups,
+        options = list(stack = TRUE,
+                       orientation = "top",
+                       margin = 2)) %>%
+  setWindow(start = "2021-01-01",
+            end   = "2025-01-01",
+            options = list(animation = FALSE))
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
+timevis(data = data.frame(
+  start = c(Sys.Date(), Sys.Date(), Sys.Date() + 1, Sys.Date() + 2),
+  content = c("one", "two", "three", "four"),
+  group = c(1, 2, 1, 2)),
+  groups = data.frame(id = 1:2, content = c("G1", "G2"))
+ )
+```
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
+timedata <- data.frame(
+      id = 1:6, 
+      start = Sys.Date() + c(1, - 10, 4, 20, -10, 10),
+      end = c(rep(as.Date(NA), 4), Sys.Date(), Sys.Date() + 20),
+      group = c(1,1,1,2,2,2),
+      content = c("event 1", "event 2", "event 2", "event 1", "range 1",     "range 1"),
+      subgroup = c("1.1", "1.2", "1.2", "2.1", "2.2", "2.2")
+    )
+    
+groups <- data.frame(id = c(1,2), 
+                     content = c("g1", "g2"))
+
+timevis(data =timedata, 
+        groups = groups, 
+        options = list(stack = TRUE))
+```
+
+:::::: {.white-box}
+`r cat(' ')`
+::::::
+
+```{r test-data, echo=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
 timevisData <- data.frame(
   id = 1:11,
   content = c("Open", "Open",
@@ -49,12 +125,29 @@ timevisDataGroups <- data.frame(
 )
 ```
 
-
-```{r test-data-2, echo=FALSE, warning=FALSE, message=FALSE}
+```{r test-data-2, echo=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
 timevis::timevis(data = timevisData,
                  groups = timevisDataGroups) %>%
   timevis::centerItem(itemId = 8) %>%
   timevis::setWindow(start = "2016-05-01 01:00:00", 
-                      end = "2016-05-01 23:00:00
+                     end = "2016-05-01 23:00:00
 ")
 ```
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
+indexdate <- "2014-01-01" %>% as.Date()
+
+twelveMo <- data.frame(
+content = c(paste0(rep("predictor_"),1:12), paste0(rep("event_"),1:12)),
+start = c(seq.Date(indexdate, by= "month", length.out = 12),
+seq.Date(indexdate %m+% months(12), by= "month", length.out = 12) ),
+end = c(seq.Date(indexdate %m+% months(12), by= "month", length.out = 12),
+seq.Date(indexdate %m+% months(15), by= "month", length.out = 12)),
+group = c(rep(1:12), rep(1:12)))
+
+grps <- data.frame(id = 1:12, content = c(paste0(rep("G_"),1:12)))
+
+timevis(twelveMo, groups = grps)
+```
+
