@@ -114,6 +114,25 @@ pre code {
   overflow-y: hidden;
 }
 
+/* timevis item */
+.vis-item .vis-range .vis-itemset .vis-group {
+  line-height: 0.7;
+  padding: 1.1px;
+}
+.vis-item-content .vis-item-overflow {
+  line-height: 0.7;
+  padding: 1.1px;
+}
+.vis-item-content3 {
+  font-size: 0.7em;
+  line-height: 0.7;
+  padding: 1.1px;
+}
+.vis-time-axis .vis-grid.vis-odd {
+  background: #e0ebeb;
+}
+*/
+
 /* Control print formating */
 @media print {
   .table-striped tbody tr:nth-of-type(odd) td {
