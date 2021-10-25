@@ -59,10 +59,10 @@ risk_oracle <- read_csv(file = "data/RR_MAIN_REPORT_VIEW_20211022")
 
 # Set date fields
 risk <- risk_oracle %>%
-  mutate(start_date      = lubridate::as_date(START_DATE)) %>%
-  mutate(end_date        = lubridate::as_date(END_DATE)) %>%
-  mutate(level_date      = lubridate::as_date(LEVEL_DATE)) %>%
-  mutate(poc_review_date = lubridate::as_date(POC_REVIEW_DATE))
+  mutate(start_date      = lubridate::dmy_hms(START_DATE)) %>%
+  mutate(end_date        = lubridate::dmy_hms(END_DATE)) %>%
+  mutate(level_date      = lubridate::dmy_hms(LEVEL_DATE)) %>%
+  mutate(poc_review_date = lubridate::dmy_hms(POC_REVIEW_DATE))
 
 # Rename fields
 risk <- risk %>%
@@ -113,7 +113,7 @@ risk <- risk %>%
             PDT_DISC_RISK_MANAG_STRATEGY, ACTION_ITEMS, LESSONS_LEARNED,
             START_DATE, END_DATE, LEVEL_DATE, POC_REVIEW_DATE, 
             FK_TABLE_ID,
-            risk_no_risk_cat_code, risk_no_number_string, risk_no_number,
+            risk_no_number_string, risk_no_number,
             risk_no_letter_na, risk_no_letter_lower,
             risk_no_letter, risk_no_padded))
 
@@ -146,7 +146,7 @@ risk <- risk %>%
   arrange(risk_no)
 
 # Cleanup
-rm(risk_oracle)
+#rm(risk_oracle)
 ```
 
 ```{r wrangle-events, echo=FALSE, warning=FALSE, message=FALSE}
@@ -154,7 +154,7 @@ events_oracle <- read_csv(file = "data/EVENTS_EVW_20211022")
 
 # Set date fields
 events <- events_oracle %>%
-  mutate(level_date = lubridate::as_date(LEVEL_DATE))
+  mutate(level_date = lubridate::dmy_hms(LEVEL_DATE))
 
 # Set engagement level integer field
 events <- events %>%
@@ -206,7 +206,7 @@ discussion_oracle <- read_csv(file = "data/R_DISC_LOG_MAIN_REPORT_VIEW_20211022"
 
 # Set date fields
 discussion <- discussion_oracle %>%
-  mutate(poc_review_date = lubridate::as_date(POC_REVIEW_DATE))
+  mutate(poc_review_date = lubridate::dmy_hms(POC_REVIEW_DATE))
 
 discussion <- discussion %>%
   mutate(fk_table_id_cat_code = str_extract(FK_TABLE_ID, "\\w+\\b")) %>%
