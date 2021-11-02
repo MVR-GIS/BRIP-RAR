@@ -251,6 +251,23 @@ kbl(select(discussion_item, DISCUSSION, RESPONSIBLE_POC, poc_review_date),
 `r cat(' ')`
 ::::::
 
+::::::::: {.section-box}
+**Related Risks**
+
+<!-- Related Risks table goes here -->
+
+:::::: {.white-box}
+`r cat(' ')`
+::::::
+
+<!-- End Related Risks -->
+:::::::::
+
+
+:::::: {.white-box}
+`r cat(' ')`
+::::::
+
 :::::::::::: {.section-box}
 **Response Plan**
 
