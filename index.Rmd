@@ -36,6 +36,7 @@ source("R/risk_register_table.R")
 source("R/atx_header.R")
 source("R/pandoc_header.R")
 source("R/percent_treemap.R")
+source("R/timeline.R")
 ```
 
 <!-- chunk options -->
@@ -241,3 +242,30 @@ discussion <- discussion %>%
 # Cleanup
 rm(discussion_oracle)
 ```
+
+```{r create_timevis_df, echo=FALSE, warning=FALSE, message=FALSE}
+# Create a timevis "data" data frame of risks
+risk_time <- risk %>%
+  arrange(risk_no) %>%
+  select(OBJECTID, risk_no, start_date, end_date, risk_no_risk_cat_code, 
+         CONCERNS, COMPONENT, RESPONSIBLE_POC, eng_level) %>%
+  rename(id = OBJECTID) %>%
+  rename(content = risk_no) %>%
+  relocate(id, .before = content) %>%
+  rename(start = start_date) %>%
+  rename(end = end_date) %>%
+  rename(title = CONCERNS) %>%
+  relocate(title, .after = content) %>%
+  mutate(group = as.numeric(factor(risk_no_risk_cat_code))) %>%
+  relocate(group, .after = end)
+
+# Create a timevis "group" data frame to group risks by unique Risk Categories
+risk_time_riskcategory <- risk %>%
+  select(risk_no_risk_cat_code, RISKCATEGORY) %>%
+  mutate(id = as.numeric(factor(risk_no_risk_cat_code))) %>%
+  rename(content = risk_no_risk_cat_code) %>%
+  rename(title = RISKCATEGORY) %>%
+  relocate(id, .before = content) %>%
+  distinct(id, content, .keep_all = TRUE)
+```
+
