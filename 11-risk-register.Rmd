@@ -5,11 +5,6 @@
 risk_register_table(risk)
 ```
 
-
-## Related Actions
-
-## Related Decisions
-
 ## Summary Statistics
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=7, fig.height=9, out.width='100%', fig.cap = paste0("Risk Characteristics (n = ", length(unique(risk$RISK_NO)), ")")}
 p1 <- percent_treemap(risk, RISKCATEGORY, "Risk Categories")
@@ -18,4 +13,13 @@ p3 <- percent_treemap(risk, RISK_STRATEGY, "Risk Strategy")
 p4 <- percent_treemap(risk, TIMING_OF_DELAY, "Timing of Delay")
 p5 <- percent_treemap(risk, DISCIPLINE, "Discpline")
 grid.arrange(p1, p2, p3, p4, p5, nrow = 3, ncol = 2)
+```
+
+## Project Timeline
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Project Timeline"}
+timeline(risk_df = risk_time, 
+         groups_df = risk_time_riskcategory,
+         height = "700px",
+         start = "2021-01-01",
+         end = "2025-01-01")
 ```

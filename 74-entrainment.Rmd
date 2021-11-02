@@ -21,3 +21,12 @@ grid.arrange(p1, p3, p4, p5, nrow = 2, ncol = 2)
 risk_register_table(entrain_risk)
 ```
 
+## Project Timeline
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Project Timeline"}
+timeline(risk_df = filter(risk_time, COMPONENT == "Entrainment Deterrent" | 
+                                     COMPONENT == "All"), 
+         groups_df = risk_time_riskcategory,
+         height = "700px",
+         start = "2021-01-01",
+         end = "2025-01-01")
+```

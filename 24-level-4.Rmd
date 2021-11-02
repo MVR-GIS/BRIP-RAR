@@ -19,3 +19,12 @@ p4 <- percent_treemap(L4_risk, TIMING_OF_DELAY, "Timing of Delay")
 p5 <- percent_treemap(L4_risk, DISCIPLINE, "Discpline")
 grid.arrange(p1, p2, p3, p4, p5, nrow = 3, ncol = 2)
 ```
+
+## Project Timeline
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Project Timeline"}
+timeline(risk_df = filter(risk_time, eng_level == 4), 
+         groups_df = risk_time_riskcategory,
+         height = "700px",
+         start = "2021-01-01",
+         end = "2025-01-01")
+```
