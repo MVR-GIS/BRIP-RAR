@@ -1,0 +1,32 @@
+# Electric Barrier
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Filter for the Entrainment Deterrent component
+entrain_risk <- filter(risk, COMPONENT == "Electric Dispersal Barrier" | 
+                             COMPONENT == "All")
+```
+
+## Summary
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=7, fig.height=5, out.width='100%', fig.cap = paste0("Risk Characteristics (n = ", length(unique(entrain_risk$RISK_NO)), ")")}
+p1 <- percent_treemap(entrain_risk, RISKCATEGORY, "Risk Categories")
+p3 <- percent_treemap(entrain_risk, RISK_STRATEGY, "Risk Strategy")
+p4 <- percent_treemap(entrain_risk, TIMING_OF_DELAY, "Timing of Delay")
+p5 <- percent_treemap(entrain_risk, DISCIPLINE, "Discpline")
+grid.arrange(p1, p3, p4, p5, nrow = 2, ncol = 2)
+```
+
+## Risks
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Create the table
+risk_register_table(entrain_risk)
+```
+
+## Project Timeline
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Project Timeline"}
+timeline(risk_df = filter(risk_time, COMPONENT == "Electric Dispersal Barrier" | 
+                                     COMPONENT == "All"), 
+         groups_df = risk_time_riskcategory,
+         height = "700px",
+         start = "2021-01-01",
+         end = "2025-01-01")
+```
