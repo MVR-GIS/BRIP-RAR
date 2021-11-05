@@ -61,11 +61,11 @@ flushing-lock
 summary-7
 risks-8
 project-timeline-8
-electric-barrier
+entrainment-deterrent
 summary-8
 risks-9
 project-timeline-9
-entrainment-deterrent
+electric-barrier
 summary-9
 risks-10
 project-timeline-10
