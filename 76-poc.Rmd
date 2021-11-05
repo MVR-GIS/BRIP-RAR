@@ -27,14 +27,14 @@ for(poc in pocs) {
   
   # Iterate through risks and produce a risk-item-report for each risk.
   risk_item_reports <- lapply(poc_risk$risk_no, function(x) {
-    knitr::knit_child("reports/risk-item-report.Rmd", 
-                      envir = environment(), 
+    knitr::knit_child("reports/risk-item-report.Rmd",
+                      envir = environment(),
                       quiet = TRUE)
   })
-  
+
   # Expand the list of risk reports
   cat(unlist(risk_item_reports), sep = '\n')
-  
+
   # Add a page break
   cat(c("::: {.page-break}", ":::"), sep = '\n')
 }

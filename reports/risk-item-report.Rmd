@@ -5,17 +5,17 @@
 
 # Subset the risks df for the current risk item
 risk_item <- risk %>%
-  dplyr::filter(risk_no == x)
+  filter(risk_no == x)
 
 # Subset the events df for the current risk item
 events_item <- events %>%
-  dplyr::filter(TABLE_NAME == "RISK_REGISTER") %>%
-  dplyr::filter(fk_table_id == x)
+  filter(TABLE_NAME == "RISK_REGISTER") %>%
+  filter(fk_table_id == x)
 
 # Subset the discussion df for the current risk item
 discussion_item <- discussion %>%
-  dplyr::filter(TABLE_NAME == "RISK_REGISTER") %>%
-  dplyr::filter(fk_table_id == x)
+  filter(TABLE_NAME == "RISK_REGISTER") %>%
+  filter(fk_table_id == x)
 ```
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
