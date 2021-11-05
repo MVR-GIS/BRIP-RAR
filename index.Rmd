@@ -29,6 +29,7 @@ library(pander)
 library(timevis)
 library(treemapify)
 library(gridExtra)
+library(formattable)
 ```
 
 ```{r source, echo=FALSE, warning=FALSE, message=FALSE}
@@ -56,9 +57,9 @@ qa_email_address <- "Marisa.C.Lack@usace.army.mil"
 
 <!-- Wrangle Data -->
 ```{r wrangle-risk, echo=FALSE, warning=FALSE, message=FALSE}
-risk_oracle <- read_csv(file = "data/RR_MAIN_REPORT_VIEW_20211022")
+risk_oracle <- read_csv(file = "data/RR_MAIN_REPORT_VIEW_20211104.csv")
 
-# Set date fields
+# Convert date character fields to POSIXct and format format for date
 risk <- risk_oracle %>%
   mutate(start_date      = lubridate::dmy_hms(START_DATE)) %>%
   mutate(end_date        = lubridate::dmy_hms(END_DATE)) %>%
@@ -151,11 +152,12 @@ risk <- risk %>%
 ```
 
 ```{r wrangle-events, echo=FALSE, warning=FALSE, message=FALSE}
-events_oracle <- read_csv(file = "data/EVENTS_EVW_20211022")
+events_oracle <- read_csv(file = "data/EVENTS_EVW_20211104.csv")
 
 # Set date fields
 events <- events_oracle %>%
-  mutate(level_date = lubridate::dmy_hms(LEVEL_DATE))
+  mutate(level_date = dmy_hms(LEVEL_DATE)) %>%
+  mutate(level_date = formattable(level_date, format = "%Y-%m-%d"))
 
 # Set engagement level integer field
 events <- events %>%
@@ -203,7 +205,7 @@ rm(events_oracle)
 ```
 
 ```{r wrangle-discussion, echo=FALSE, warning=FALSE, message=FALSE}
-discussion_oracle <- read_csv(file = "data/R_DISC_LOG_MAIN_REPORT_VIEW_20211022")
+discussion_oracle <- read_csv(file = "data/R_DISC_LOG_MAIN_REPORT_VIEW_20211104.csv")
 
 # Set date fields
 discussion <- discussion_oracle %>%
