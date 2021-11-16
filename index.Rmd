@@ -17,6 +17,20 @@ csl: chicago-fullnote-bibliography.csl
 * P2 project number: 482782
 * P2 program code: 451617
 
+## Architecture
+This report using the following architecture:  
+
+* **Data Entry** - An [Oracle APEX](https://apex.oracle.com/) web-database application stores the risk analysis data and allows project risk managers to enter and edit the data. This application resides on the USACE intranet (CorpsNet) and is only available for editing to project risk managers.  
+* **Reporting** - This report is produced using [R]()  
+* **Code Repository** -   
+* **Static Website Publishing** -   
+* **Project Viewer** -   
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, out.width="100%", fig.cap="Report Architecture"}
+knitr::include_graphics(path = "diagrams/cloud_arch-workflow.drawio.svg")
+```
+
+
 <!-- Libraries -->
 ```{r library, echo=FALSE, warning=FALSE, message=FALSE}
 library(tidyverse)
