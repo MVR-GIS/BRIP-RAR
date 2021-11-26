@@ -16,6 +16,9 @@ events_item <- events %>%
 discussion_item <- discussion %>%
   filter(TABLE_NAME == "RISK_REGISTER") %>%
   filter(fk_table_id == x)
+
+related_risk_item <- related_risk %>%
+  filter(risk_no == x)
 ```
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
@@ -253,12 +256,13 @@ kbl(select(discussion_item, DISCUSSION, RESPONSIBLE_POC, poc_review_date),
 
 ::::::::: {.section-box}
 **Related Risks**
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+kbl(select(related_risk_item, related_risk_link, RELATED_RISK_CONCERN),
+    col.names = c("Number", "Description")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
+                                      "responsive"))
+```
 
-<!-- Related Risks table goes here -->
-
-:::::: {.white-box}
-`r cat(' ')`
-::::::
 
 <!-- End Related Risks -->
 :::::::::
