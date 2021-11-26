@@ -165,6 +165,69 @@ risk <- risk %>%
 #rm(risk_oracle)
 ```
 
+```{r wrangle-related-risk, echo=FALSE, warning=FALSE, message=FALSE}
+risk_related_oracle <- read_csv(file = "data/REL_RISK_RISK_MAIN_VIEW_20211105.csv")
+
+# Filter for "Active" records
+risk_related <- risk_related_oracle %>%
+  filter(ACTIVE == "Yes")
+
+# Cleanup risk number for sorting
+risk_related <- risk_related %>%
+  mutate(risk_no_risk_cat_code = str_extract(RISK_NO, "\\w+\\b")) %>%
+  mutate(risk_no_number_string = str_extract(RISK_NO, "\\b\\w+$")) %>%
+  mutate(risk_no_number = str_extract(risk_no_number_string, "\\d+")) %>%
+  mutate(risk_no_letter_na = str_extract(risk_no_number_string, "\\D+")) %>%
+  mutate(risk_no_letter = replace_na(risk_no_letter_na,
+                                     replace = "")) %>%
+  mutate(risk_no_letter_lower = tolower(risk_no_letter)) %>%
+  mutate(risk_no_padded = str_pad(risk_no_number, 
+                                  width = 3, 
+                                  side = "left",
+                                  pad = "0")) %>%
+  mutate(risk_no = str_c(risk_no_risk_cat_code, 
+                          "-",
+                          risk_no_padded,
+                          risk_no_letter_lower))
+
+# Cleanup related risk number for sorting
+risk_related <- risk_related %>%
+  mutate(rel_risk_no_risk_cat_code = str_extract(RELATED_RISK, "\\w+\\b")) %>%
+  mutate(rel_risk_no_number_string = str_extract(RELATED_RISK, "\\b\\w+$")) %>%
+  mutate(rel_risk_no_number = str_extract(rel_risk_no_number_string, "\\d+")) %>%
+  mutate(rel_risk_no_letter_na = str_extract(rel_risk_no_number_string, "\\D+")) %>%
+  mutate(rel_risk_no_letter = replace_na(rel_risk_no_letter_na,
+                                         replace = "")) %>%
+  mutate(rel_risk_no_letter_lower = tolower(rel_risk_no_letter)) %>%
+  mutate(rel_risk_no_padded = str_pad(rel_risk_no_number, 
+                                      width = 3, 
+                                      side = "left",
+                                      pad = "0")) %>%
+  mutate(related_risk = str_c(rel_risk_no_risk_cat_code, 
+                          "-",
+                          rel_risk_no_padded,
+                          rel_risk_no_letter_lower))
+
+# Remove unused fields
+risk_related <- risk_related %>%
+  select(!c(risk_no_risk_cat_code, 
+            risk_no_number_string, risk_no_number,
+            risk_no_letter_na, risk_no_letter_lower,
+            risk_no_letter, risk_no_padded,
+            rel_risk_no_risk_cat_code,
+            rel_risk_no_number_string, rel_risk_no_number,
+            rel_risk_no_letter_na, rel_risk_no_letter_lower,
+            rel_risk_no_letter, rel_risk_no_padded))
+
+# Reorder fields
+risk_related <- risk_related %>%
+  relocate(risk_no, .after = RISK_NO) %>%
+  relocate(related_risk, .after = RELATED_RISK)
+
+# Cleanup
+#rm(risk_related_oracle)
+```
+
 ```{r wrangle-events, echo=FALSE, warning=FALSE, message=FALSE}
 events_oracle <- read_csv(file = "data/EVENTS_EVW_20211104.csv")
 
