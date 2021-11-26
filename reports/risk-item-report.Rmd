@@ -267,7 +267,7 @@ if(length(risk_related_item$risk_no) > 0) {
                   position = "left") %>%
     column_spec(1, width = "10em")
 } else {
-  cat("No related risks")
+  cat("No related risks.")
 }
 ```
 
