@@ -162,7 +162,7 @@ risk <- risk %>%
   arrange(risk_no)
 
 # Cleanup
-#rm(risk_oracle)
+rm(risk_oracle)
 ```
 
 ```{r wrangle-related-risk, echo=FALSE, warning=FALSE, message=FALSE}
@@ -171,6 +171,9 @@ risk_related_oracle <- read_csv(file = "data/REL_RISK_RISK_MAIN_VIEW_20211105.cs
 # Filter for "Active" records
 risk_related <- risk_related_oracle %>%
   filter(ACTIVE == "Yes")
+
+# Convert factor variables to title case
+risk_related$RELATED_RISK_CATEGORY <- toTitleCase(tolower(risk_related$RELATED_RISK_CATEGORY))
 
 # Cleanup risk number for sorting
 risk_related <- risk_related %>%
@@ -219,13 +222,19 @@ risk_related <- risk_related %>%
             rel_risk_no_letter_na, rel_risk_no_letter_lower,
             rel_risk_no_letter, rel_risk_no_padded))
 
+# Create hyperlink to Related Risk
+risk_related <- risk_related %>%
+  mutate(related_risk_link = paste0("[", risk_related$related_risk, "](#risk-item-", 
+                               tolower(risk_related$related_risk), ")"))
+
 # Reorder fields
 risk_related <- risk_related %>%
   relocate(risk_no, .after = RISK_NO) %>%
-  relocate(related_risk, .after = RELATED_RISK)
+  relocate(related_risk, .after = RELATED_RISK) %>%
+  relocate(related_risk_link, .after = related_risk)
 
 # Cleanup
-#rm(risk_related_oracle)
+rm(risk_related_oracle)
 ```
 
 ```{r wrangle-events, echo=FALSE, warning=FALSE, message=FALSE}
