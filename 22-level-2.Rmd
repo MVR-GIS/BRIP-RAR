@@ -1,4 +1,6 @@
-# Level 2 - RECON
+# Level 2: RECON
+
+This report provides a targeted view for the RECON Team. 
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 # Filter for the engineered channel component

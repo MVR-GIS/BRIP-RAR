@@ -1,4 +1,6 @@
-# Level 1 - Project Leadership Team (PLT)
+# Level 1: PLT
+
+This report provides a targeted view for the Project Leadership Team (PLT). 
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 # Filter for the engineered channel component

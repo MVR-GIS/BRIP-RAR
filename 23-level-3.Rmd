@@ -1,4 +1,6 @@
-# Level 3 - Executive Leadership Team (ELT)
+# Level 3: ELT
+
+This report provides a targeted view for the Executive Leadership Team (ELT). 
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 # Filter for the engineered channel component
