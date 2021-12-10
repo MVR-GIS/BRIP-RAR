@@ -67,6 +67,16 @@ knitr::opts_chunk$set(
   )
 ```
 
+```{r}
+risk_oracle <- read_csv(file = "data/RR_MAIN_REPORT_VIEW_20211126.csv")
+risk_rel_risk_oracle <- read_csv(file = "data/REL_RISK_RISK_MAIN_VIEW_20211126.csv")
+events_oracle <- read_csv(file = "data/EVENTS_EVW_20211126.csv")
+discussion_oracle <- read_csv(file = "data/R_DISC_LOG_MAIN_REPORT_VIEW_20211126.csv")
+action_oracle <- read_csv(file = "data/ACTION_REGISTER_EVW_20211126.csv")
+action_rel_risk_oracle <- read_csv(file = "data/REL_RISK_ACTION_MAIN_VIEW_20211126.csv")
+
+```
+
 <!-- Report Constants -->
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 qa_email_address <- "Marisa.C.Lack@usace.army.mil"
@@ -74,8 +84,6 @@ qa_email_address <- "Marisa.C.Lack@usace.army.mil"
 
 <!-- Wrangle Data -->
 ```{r wrangle-risk, echo=FALSE, warning=FALSE, message=FALSE}
-risk_oracle <- read_csv(file = "data/RR_MAIN_REPORT_VIEW_20211126.csv")
-
 # Filter for "Active" records
 risk <- risk_oracle %>%
   filter(ACTIVE == "Yes")
@@ -153,8 +161,6 @@ risk <- risk %>%
 ```
 
 ```{r wrangle-risk-related-risk, echo=FALSE, warning=FALSE, message=FALSE}
-risk_rel_risk_oracle <- read_csv(file = "data/REL_RISK_RISK_MAIN_VIEW_20211126.csv")
-
 # Filter for "Active" records
 risk_rel_risk <- risk_rel_risk_oracle %>%
   filter(ACTIVE == "Yes")
@@ -174,8 +180,6 @@ rm(risk_rel_risk_oracle)
 ```
 
 ```{r wrangle-events, echo=FALSE, warning=FALSE, message=FALSE}
-events_oracle <- read_csv(file = "data/EVENTS_EVW_20211126.csv")
-
 # Set date fields
 events <- events_oracle %>%
   mutate(level_date = dmy_hms(LEVEL_DATE)) %>%
@@ -209,8 +213,6 @@ rm(events_oracle)
 ```
 
 ```{r wrangle-discussion, echo=FALSE, warning=FALSE, message=FALSE}
-discussion_oracle <- read_csv(file = "data/R_DISC_LOG_MAIN_REPORT_VIEW_20211126.csv")
-
 # Filter for "Active" records
 discussion <- discussion_oracle %>%
   filter(ACTIVE == "Yes")
@@ -237,8 +239,6 @@ rm(discussion_oracle)
 ```
 
 ```{r wrangle-action, echo=FALSE, warning=FALSE, message=FALSE}
-action_oracle <- read_csv(file = "data/ACTION_REGISTER_EVW_20211126.csv")
-
 # Filter for "Active" records
 action <- action_oracle %>%
   filter(ACTIVE == "Yes")
@@ -276,8 +276,6 @@ rm(action_oracle)
 ```
 
 ```{r wrangle-action-related-action, echo=FALSE, warning=FALSE, message=FALSE}
-action_rel_risk_oracle <- read_csv(file = "data/REL_RISK_ACTION_MAIN_VIEW_20211126.csv")
-
 # Relocate the ACTION columns to the beginning
 action_rel_risk <- action_rel_risk_oracle %>%
   select(contains("ACTION"), everything())
