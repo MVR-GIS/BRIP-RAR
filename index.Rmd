@@ -36,6 +36,7 @@ knitr::include_graphics(path = "diagrams/cloud_arch-workflow.drawio.svg")
 library(tidyverse)
 library(knitr)
 library(rmarkdown)
+library(rlang)
 library(lubridate)
 library(tools)
 library(kableExtra)
@@ -52,6 +53,8 @@ source("R/atx_header.R")
 source("R/pandoc_header.R")
 source("R/percent_treemap.R")
 source("R/timeline.R")
+source("R/format_id.R")
+source("R/id_link.R")
 ```
 
 <!-- chunk options -->
@@ -89,9 +92,10 @@ risk <- risk %>%
   rename(cost_risk_color = CONDITIONAL_FORMATTING) %>%
   rename(schedule_risk_color = CONDITIONAL_FORMATTING2)
 
-# Set engagement level integer field
+# Set engagement level integer, risk_cat_code
 risk <- risk %>%
-  mutate(eng_level = as.numeric(str_extract(ENG_LEVEL, "\\d")))
+  mutate(eng_level = as.numeric(str_extract(ENG_LEVEL, "\\d")),
+         risk_cat_code = str_extract(RISK_NO, "\\w+\\b"))
 
 # Ensure colors are lowercase
 risk$cost_risk_color     <- tolower(risk$cost_risk_color)
@@ -110,37 +114,17 @@ risk$EFFICACY_IMPACT_PER_PROJECT <- ""
 risk$RISKCATEGORY <- toTitleCase(tolower(risk$RISKCATEGORY))
 
 # Cleanup risk number for sorting
-risk <- risk %>%
-  mutate(risk_no_risk_cat_code = str_extract(RISK_NO, "\\w+\\b")) %>%
-  mutate(risk_no_number_string = str_extract(RISK_NO, "\\b\\w+$")) %>%
-  mutate(risk_no_number = str_extract(risk_no_number_string, "\\d+")) %>%
-  mutate(risk_no_letter_na = str_extract(risk_no_number_string, "\\D+")) %>%
-  mutate(risk_no_letter = replace_na(risk_no_letter_na,
-                                     replace = "")) %>%
-  mutate(risk_no_letter_lower = tolower(risk_no_letter)) %>%
-  mutate(risk_no_padded = str_pad(risk_no_number, 
-                                  width = 3, 
-                                  side = "left",
-                                  pad = "0")) %>%
-  mutate(risk_no = str_c(risk_no_risk_cat_code, 
-                          "-",
-                          risk_no_padded,
-                          risk_no_letter_lower))
+risk <- format_id(risk, "RISK_NO")
 
 # Remove unused fields
 risk <- risk %>%
   select(!c(PDT_DISC_CONC, PDT_DISC_LIKELI_IMPACT,
             PDT_DISC_RISK_MANAG_STRATEGY, ACTION_ITEMS, LESSONS_LEARNED,
             START_DATE, END_DATE, LEVEL_DATE, POC_REVIEW_DATE, 
-            FK_TABLE_ID,
-            risk_no_number_string, risk_no_number,
-            risk_no_letter_na, risk_no_letter_lower,
-            risk_no_letter, risk_no_padded))
+            FK_TABLE_ID))
 
 # Create hyperlink to Risk_No
-risk <- risk %>%
-  mutate(risk_no_link = paste0("[", risk$risk_no, "](#risk-item-", 
-                               tolower(risk$risk_no), ")"))
+risk <- id_link(risk, "risk_no")
 
 # Reorder fields
 risk <- risk %>%
@@ -155,10 +139,9 @@ risk <- risk %>%
   relocate(TIMING_OF_DELAY, .after = RISK_STRATEGY) %>%
   relocate(start_date, .after = CONCERNS) %>%
   relocate(end_date, .after = start_date) %>%
-  relocate(risk_no, .after = RISK_NO) %>%
-  relocate(risk_no_link, .after = risk_no) %>%
   relocate(poc_review_date, .after = RESPONSIBLE_POC) %>%
-  relocate(eng_level, .after = ENG_LEVEL)
+  relocate(eng_level, .after = ENG_LEVEL) %>%
+  relocate(risk_cat_code, .after = RISKCATEGORY)
 
 # Remove duplicates and sort
 risk <- risk %>%
@@ -169,76 +152,25 @@ risk <- risk %>%
 #rm(risk_oracle)
 ```
 
-```{r wrangle-related-risk, echo=FALSE, warning=FALSE, message=FALSE}
-risk_related_oracle <- read_csv(file = "data/REL_RISK_RISK_MAIN_VIEW_20211126.csv")
+```{r wrangle-risk-related-risk, echo=FALSE, warning=FALSE, message=FALSE}
+risk_rel_risk_oracle <- read_csv(file = "data/REL_RISK_RISK_MAIN_VIEW_20211126.csv")
 
 # Filter for "Active" records
-risk_related <- risk_related_oracle %>%
+risk_rel_risk <- risk_rel_risk_oracle %>%
   filter(ACTIVE == "Yes")
 
 # Convert factor variables to title case
-risk_related$RELATED_RISK_CATEGORY <- toTitleCase(tolower(risk_related$RELATED_RISK_CATEGORY))
+risk_rel_risk$RELATED_RISK_CATEGORY <- toTitleCase(tolower(risk_rel_risk$RELATED_RISK_CATEGORY))
 
-# Cleanup risk number for sorting
-risk_related <- risk_related %>%
-  mutate(risk_no_risk_cat_code = str_extract(RISK_NO, "\\w+\\b")) %>%
-  mutate(risk_no_number_string = str_extract(RISK_NO, "\\b\\w+$")) %>%
-  mutate(risk_no_number = str_extract(risk_no_number_string, "\\d+")) %>%
-  mutate(risk_no_letter_na = str_extract(risk_no_number_string, "\\D+")) %>%
-  mutate(risk_no_letter = replace_na(risk_no_letter_na,
-                                     replace = "")) %>%
-  mutate(risk_no_letter_lower = tolower(risk_no_letter)) %>%
-  mutate(risk_no_padded = str_pad(risk_no_number, 
-                                  width = 3, 
-                                  side = "left",
-                                  pad = "0")) %>%
-  mutate(risk_no = str_c(risk_no_risk_cat_code, 
-                          "-",
-                          risk_no_padded,
-                          risk_no_letter_lower))
-
-# Cleanup related risk number for sorting
-risk_related <- risk_related %>%
-  mutate(rel_risk_no_risk_cat_code = str_extract(RELATED_RISK, "\\w+\\b")) %>%
-  mutate(rel_risk_no_number_string = str_extract(RELATED_RISK, "\\b\\w+$")) %>%
-  mutate(rel_risk_no_number = str_extract(rel_risk_no_number_string, "\\d+")) %>%
-  mutate(rel_risk_no_letter_na = str_extract(rel_risk_no_number_string, "\\D+")) %>%
-  mutate(rel_risk_no_letter = replace_na(rel_risk_no_letter_na,
-                                         replace = "")) %>%
-  mutate(rel_risk_no_letter_lower = tolower(rel_risk_no_letter)) %>%
-  mutate(rel_risk_no_padded = str_pad(rel_risk_no_number, 
-                                      width = 3, 
-                                      side = "left",
-                                      pad = "0")) %>%
-  mutate(related_risk = str_c(rel_risk_no_risk_cat_code, 
-                          "-",
-                          rel_risk_no_padded,
-                          rel_risk_no_letter_lower))
-
-# Remove unused fields
-risk_related <- risk_related %>%
-  select(!c(risk_no_risk_cat_code, 
-            risk_no_number_string, risk_no_number,
-            risk_no_letter_na, risk_no_letter_lower,
-            risk_no_letter, risk_no_padded,
-            rel_risk_no_risk_cat_code,
-            rel_risk_no_number_string, rel_risk_no_number,
-            rel_risk_no_letter_na, rel_risk_no_letter_lower,
-            rel_risk_no_letter, rel_risk_no_padded))
+# Cleanup id numbers for sorting
+risk_rel_risk <- format_id(risk_rel_risk, "RISK_NO")
+risk_rel_risk <- format_id(risk_rel_risk, "RELATED_RISK")
 
 # Create hyperlink to Related Risk
-risk_related <- risk_related %>%
-  mutate(related_risk_link = paste0("[", risk_related$related_risk, "](#risk-item-", 
-                               tolower(risk_related$related_risk), ")"))
-
-# Reorder fields
-risk_related <- risk_related %>%
-  relocate(risk_no, .after = RISK_NO) %>%
-  relocate(related_risk, .after = RELATED_RISK) %>%
-  relocate(related_risk_link, .after = related_risk)
+risk_rel_risk <- id_link(risk_rel_risk, "related_risk")
 
 # Cleanup
-#rm(risk_related_oracle)
+rm(risk_rel_risk_oracle)
 ```
 
 ```{r wrangle-events, echo=FALSE, warning=FALSE, message=FALSE}
@@ -254,30 +186,12 @@ events <- events %>%
   mutate(eng_level = as.numeric(str_extract(ENG_LEVEL, "\\d")))
 
 # Cleanup risk number for sorting
-events <- events %>%
-  mutate(fk_table_id_cat_code = str_extract(FK_TABLE_ID, "\\w+\\b")) %>%
-  mutate(fk_table_id_number_string = str_extract(FK_TABLE_ID, "\\b\\w+$")) %>%
-  mutate(fk_table_id_number = str_extract(fk_table_id_number_string, "\\d+")) %>%
-  mutate(fk_table_id_letter_na = str_extract(fk_table_id_number_string, "\\D+")) %>%
-  mutate(fk_table_id_letter = replace_na(fk_table_id_letter_na,
-                                         replace = "")) %>%
-  mutate(fk_table_id_letter_lower = tolower(fk_table_id_letter)) %>%
-  mutate(fk_table_id_padded = str_pad(fk_table_id_number, 
-                                      width = 3, 
-                                      side = "left",
-                                      pad = "0")) %>%
-  mutate(fk_table_id = str_c(fk_table_id_cat_code, 
-                             "-",
-                             fk_table_id_padded,
-                             fk_table_id_letter_lower))
+events <- format_id(events, "FK_TABLE_ID")
 
 # Remove unused fields
 events <- events %>%
   select(!c(LEVEL_DATE, CREATED_USER, CREATED_DATE, 
-            LAST_EDITED_USER, LAST_EDITED_DATE, 
-            fk_table_id_cat_code, fk_table_id_number_string, fk_table_id_number,
-            fk_table_id_letter_na, fk_table_id_letter_lower, 
-            fk_table_id_letter, fk_table_id_padded))
+            LAST_EDITED_USER, LAST_EDITED_DATE))
 
 # Reorder fields
 events <- events %>%
@@ -291,7 +205,7 @@ events <- events %>%
   arrange(TABLE_NAME, level_date)
 
 # Cleanup
-#rm(events_oracle)
+rm(events_oracle)
 ```
 
 ```{r wrangle-discussion, echo=FALSE, warning=FALSE, message=FALSE}
@@ -305,29 +219,12 @@ discussion <- discussion_oracle %>%
 discussion <- discussion %>%
   mutate(poc_review_date = lubridate::dmy_hms(POC_REVIEW_DATE))
 
-discussion <- discussion %>%
-  mutate(fk_table_id_cat_code = str_extract(FK_TABLE_ID, "\\w+\\b")) %>%
-  mutate(fk_table_id_number_string = str_extract(FK_TABLE_ID, "\\b\\w+$")) %>%
-  mutate(fk_table_id_number = str_extract(fk_table_id_number_string, "\\d+")) %>%
-  mutate(fk_table_id_letter_na = str_extract(fk_table_id_number_string, "\\D+")) %>%
-  mutate(fk_table_id_letter = replace_na(fk_table_id_letter_na,
-                                         replace = "")) %>%
-  mutate(fk_table_id_letter_lower = tolower(fk_table_id_letter)) %>%
-  mutate(fk_table_id_padded = str_pad(fk_table_id_number, 
-                                      width = 3, 
-                                      side = "left",
-                                      pad = "0")) %>%
-  mutate(fk_table_id = str_c(fk_table_id_cat_code, 
-                             "-",
-                             fk_table_id_padded,
-                             fk_table_id_letter_lower))
+# Cleanup discussion number for sorting
+discussion <- format_id(discussion, "FK_TABLE_ID")
 
 # Remove unused fields
 discussion <- discussion %>%
-  select(!c(POC_REVIEW_DATE,
-            fk_table_id_cat_code, fk_table_id_number_string, fk_table_id_number,
-            fk_table_id_letter_na, fk_table_id_letter, fk_table_id_letter_lower, 
-            fk_table_id_padded))
+  select(!c(POC_REVIEW_DATE))
 
 # Reorder fields
 discussion <- discussion %>%
@@ -336,7 +233,7 @@ discussion <- discussion %>%
   relocate(poc_review_date, .after = RESPONSIBLE_POC)
 
 # Cleanup
-#rm(discussion_oracle)
+rm(discussion_oracle)
 ```
 
 ```{r wrangle-action, echo=FALSE, warning=FALSE, message=FALSE}
@@ -345,21 +242,65 @@ action_oracle <- read_csv(file = "data/ACTION_REGISTER_EVW_20211126.csv")
 # Filter for "Active" records
 action <- action_oracle %>%
   filter(ACTIVE == "Yes")
+
+# Convert date character fields to POSIXct and format format for date
+action <- action %>%
+  mutate(start_date      = lubridate::dmy_hms(START_DATE)) %>%
+  mutate(end_date        = lubridate::dmy_hms(END_DATE)) %>%
+  mutate(poc_review_date = lubridate::dmy_hms(POC_REVIEW_DATE))
+
+# Cleanup action number for sorting
+action <- format_id(action, "ACTION_NO")
+
+# Create hyperlink
+action <- id_link(action, "action_no")
+
+# Remove unused fields
+action <- action %>%
+  select(!c(START_DATE, END_DATE, POC_REVIEW_DATE,
+            CREATED_USER, CREATED_DATE, LAST_EDITED_USER, LAST_EDITED_DATE))
+
+# Reorder fields
+action <- action %>%
+  relocate(start_date, .after = ACTION) %>%
+  relocate(end_date, .after = start_date) %>%
+  relocate(poc_review_date, .after = RESPONSIBLE_POC)
+
+# Remove duplicates and sort
+action <- action %>%
+  distinct(action_no, .keep_all = TRUE) %>%
+  arrange(action_no)
+
+# Cleanup
+rm(action_oracle)
 ```
 
-```{r wrangle-related-action, echo=FALSE, warning=FALSE, message=FALSE}
-action_related_oracle <- read_csv(file = "data/REL_RISK_ACTION_MAIN_VIEW_20211126.csv")
+```{r wrangle-action-related-action, echo=FALSE, warning=FALSE, message=FALSE}
+action_rel_risk_oracle <- read_csv(file = "data/REL_RISK_ACTION_MAIN_VIEW_20211126.csv")
 
-# Filter for "Active" records
-action_related <- action_related_oracle %>%
-  filter(ACTIVE == "Yes")
+# Relocate the ACTION columns to the beginning
+action_rel_risk <- action_rel_risk_oracle %>%
+  select(contains("ACTION"), everything())
+
+# Convert factor variables to title case
+action_rel_risk$RISKCATEGORY <- toTitleCase(tolower(action_rel_risk$RISKCATEGORY))
+
+# Cleanup id fields for sorting
+action_rel_risk <- format_id(action_rel_risk, "ACTION_NO")
+action_rel_risk <- format_id(action_rel_risk, "RISK_NO")
+
+# Create hyperlink
+action_rel_risk <- id_link(action_rel_risk, "risk_no")
+
+# Cleanup
+rm(action_rel_risk_oracle)
 ```
 
 ```{r create_timevis_df, echo=FALSE, warning=FALSE, message=FALSE}
 # Create a timevis "data" data frame of risks
 risk_time <- risk %>%
   arrange(risk_no) %>%
-  select(OBJECTID, risk_no, start_date, end_date, risk_no_risk_cat_code, 
+  select(OBJECTID, risk_no, start_date, end_date, risk_cat_code, 
          CONCERNS, COMPONENT, RESPONSIBLE_POC, eng_level) %>%
   rename(id = OBJECTID) %>%
   rename(content = risk_no) %>%
@@ -368,14 +309,14 @@ risk_time <- risk %>%
   rename(end = end_date) %>%
   rename(title = CONCERNS) %>%
   relocate(title, .after = content) %>%
-  mutate(group = as.numeric(factor(risk_no_risk_cat_code))) %>%
+  mutate(group = as.numeric(factor(risk_cat_code))) %>%
   relocate(group, .after = end)
 
 # Create a timevis "group" data frame to group risks by unique Risk Categories
 risk_time_riskcategory <- risk %>%
-  select(risk_no_risk_cat_code, RISKCATEGORY) %>%
-  mutate(id = as.numeric(factor(risk_no_risk_cat_code))) %>%
-  rename(content = risk_no_risk_cat_code) %>%
+  select(risk_cat_code, RISKCATEGORY) %>%
+  mutate(id = as.numeric(factor(risk_cat_code))) %>%
+  rename(content = risk_cat_code) %>%
   rename(title = RISKCATEGORY) %>%
   relocate(id, .before = content) %>%
   distinct(id, content, .keep_all = TRUE)
