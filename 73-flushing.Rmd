@@ -1,9 +1,9 @@
 # Flushing Lock
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
-# Filter for the Flushing Lock component
-flushing_risk <- filter(risk, COMPONENT == "Flushing Lock" | 
-                              COMPONENT == "All")
+# Filter for the current feature
+flushing_risk <- filter(risk, FEATURE == "Flushing Lock" | 
+                              FEATURE == "All")
 ```
 
 ## Summary
@@ -23,8 +23,8 @@ risk_register_table(flushing_risk)
 
 ## Project Timeline
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Project Timeline"}
-timeline(risk_df = filter(risk_time, COMPONENT == "Flushing Lock" | 
-                                     COMPONENT == "All"), 
+timeline(risk_df = filter(risk_time, FEATURE == "Flushing Lock" | 
+                                     FEATURE == "All"), 
          groups_df = risk_time_riskcategory,
          height = "700px",
          start = "2021-01-01",

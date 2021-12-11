@@ -8,7 +8,7 @@ risk_register_table(risk)
 ## Summary Statistics
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=7, fig.height=9, out.width='100%', fig.cap = paste0("Risk Characteristics (n = ", length(unique(risk$RISK_NO)), ")")}
 p1 <- percent_treemap(risk, RISKCATEGORY, "Risk Categories")
-p2 <- percent_treemap(risk, COMPONENT, "Project Components")
+p2 <- percent_treemap(risk, FEATURE, "Project Features")
 p3 <- percent_treemap(risk, RISK_STRATEGY, "Risk Strategy")
 p4 <- percent_treemap(risk, TIMING_OF_DELAY, "Timing of Delay")
 p5 <- percent_treemap(risk, DISCIPLINE, "Discpline")

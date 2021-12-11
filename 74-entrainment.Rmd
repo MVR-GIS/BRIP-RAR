@@ -1,9 +1,9 @@
 # Entrainment Deterrent
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
-# Filter for the Entrainment Deterrent component
-entrain_risk <- filter(risk, COMPONENT == "Entrainment Deterrent" | 
-                             COMPONENT == "All")
+# Filter for the current feature
+entrain_risk <- filter(risk, FEATURE == "Entrainment Deterrent" | 
+                             FEATURE == "All")
 ```
 
 ## Summary
@@ -23,8 +23,8 @@ risk_register_table(entrain_risk)
 
 ## Project Timeline
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Project Timeline"}
-timeline(risk_df = filter(risk_time, COMPONENT == "Entrainment Deterrent" | 
-                                     COMPONENT == "All"), 
+timeline(risk_df = filter(risk_time, FEATURE == "Entrainment Deterrent" | 
+                                     FEATURE == "All"), 
          groups_df = risk_time_riskcategory,
          height = "700px",
          start = "2021-01-01",

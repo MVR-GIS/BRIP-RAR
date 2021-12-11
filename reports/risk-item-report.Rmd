@@ -18,7 +18,7 @@ discussion_item <- discussion %>%
   filter(fk_table_id == x)
 
 # Filter the related risks df for the current risk item
-risk_rel_risk_item <- risk_rel_risk %>%
+rel_risk_risk_item <- rel_risk_risk %>%
   filter(risk_no == x)
 ```
 
@@ -138,7 +138,7 @@ Risk Strategy
 Component
 :::
 ::: {.var-value}
-`r risk_item$COMPONENT`
+`r risk_item$FEATURE`
 :::
 ::: {.var-name}
 Discipline
@@ -224,12 +224,16 @@ kbl(filter(risk_rating, variable != "Risk Color"),
 :::::::: {.section-box}
 **Engagement Level History**
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-kbl(select(events_item, ENG_LEVEL, level_date, DESCRIPTION),
-    col.names = c("Level", "Date", "Reason for level change")) %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
+if(length(events_item$FK_TABLE_ID) > 0) {
+  kbl(select(events_item, ENG_LEVEL, level_date, DESCRIPTION),
+      col.names = c("Level", "Date", "Reason for level change")) %>%
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
                                       "responsive")) %>%
-  column_spec(1, width = "8em") %>%
-  column_spec(2, width = "8em")
+    column_spec(1, width = "8em") %>%
+    column_spec(2, width = "8em")
+} else {
+  cat("Engagement Level not set.")
+}
 ```
 
 <!-- End Risk Engagement Level History -->
@@ -258,8 +262,8 @@ kbl(select(discussion_item, DISCUSSION, RESPONSIBLE_POC, poc_review_date),
 ::::::::: {.section-box}
 **Related Risks**
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-if(length(risk_rel_risk_item$risk_no) > 0) {
-  kbl(select(risk_rel_risk_item, related_risk_link, RELATED_RISK_CONCERN),
+if(length(rel_risk_risk_item$risk_no) > 0) {
+  kbl(select(rel_risk_risk_item, related_risk_link, RELATED_RISK_CONCERN),
       col.names = c("Number", "Description")) %>%
     kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
                                         "responsive"),

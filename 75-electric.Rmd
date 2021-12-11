@@ -1,9 +1,9 @@
 # Electric Barrier
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
-# Filter for the Entrainment Deterrent component
-entrain_risk <- filter(risk, COMPONENT == "Electric Dispersal Barrier" | 
-                             COMPONENT == "All")
+# Filter for the current feature
+entrain_risk <- filter(risk, FEATURE == "Electric Dispersal Barrier" | 
+                             FEATURE == "All")
 ```
 
 ## Summary
@@ -23,8 +23,8 @@ risk_register_table(entrain_risk)
 
 ## Project Timeline
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Project Timeline"}
-timeline(risk_df = filter(risk_time, COMPONENT == "Electric Dispersal Barrier" | 
-                                     COMPONENT == "All"), 
+timeline(risk_df = filter(risk_time, FEATURE == "Electric Dispersal Barrier" | 
+                                     FEATURE == "All"), 
          groups_df = risk_time_riskcategory,
          height = "700px",
          start = "2021-01-01",

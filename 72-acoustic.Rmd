@@ -1,9 +1,9 @@
 # Acoustic Deterrent
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
-# Filter for the Acoustic Fish Deterrent component
-acoustic_risk <- filter(risk, COMPONENT == "Acoustic Fish Deterrent" | 
-                              COMPONENT == "All")
+# Filter for the current feature
+acoustic_risk <- filter(risk, FEATURE == "Acoustic Fish Deterrent" | 
+                              FEATURE == "All")
 ```
 
 ## Summary
@@ -23,8 +23,8 @@ risk_register_table(acoustic_risk)
 
 ## Project Timeline
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Project Timeline"}
-timeline(risk_df = filter(risk_time, COMPONENT == "Acoustic Fish Deterrent" | 
-                                     COMPONENT == "All"), 
+timeline(risk_df = filter(risk_time, FEATURE == "Acoustic Fish Deterrent" | 
+                                     FEATURE == "All"), 
          groups_df = risk_time_riskcategory,
          height = "700px",
          start = "2021-01-01",
