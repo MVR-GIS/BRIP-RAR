@@ -67,13 +67,28 @@ knitr::opts_chunk$set(
   )
 ```
 
-```{r}
-risk_oracle <- read_csv(file = "data/RR_MAIN_REPORT_VIEW_20211126.csv")
-risk_rel_risk_oracle <- read_csv(file = "data/REL_RISK_RISK_MAIN_VIEW_20211126.csv")
-events_oracle <- read_csv(file = "data/EVENTS_EVW_20211126.csv")
-discussion_oracle <- read_csv(file = "data/R_DISC_LOG_MAIN_REPORT_VIEW_20211126.csv")
-action_oracle <- read_csv(file = "data/ACTION_REGISTER_EVW_20211126.csv")
-action_rel_risk_oracle <- read_csv(file = "data/REL_RISK_ACTION_MAIN_VIEW_20211126.csv")
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Manually export all views from MVR egis-db BrandonRoad to the data folder
+
+# Cleanup file names from Oracle export
+data_files_oracle <- list.files("data")
+data_files <- str_remove(data_files_oracle, "_DATA_VIEW")
+file.rename(from = paste0("data/", data_files_oracle),
+            to = paste0("data/", data_files))
+
+# Import Oracle tables
+risk_oracle              <- read_csv("data/RISK_MAIN_VIEW.csv")
+events_oracle            <- read_csv("data/EVENTS_MAIN_VIEW.csv")
+discussion_oracle        <- read_csv("data/DISCUSSION_LOG_MAIN_VIEW.csv")
+action_oracle            <- read_csv("data/ACTION_MAIN_VIEW.csv")
+decision_oracle          <- read_csv("data/DECISION_MAIN_VIEW.csv")
+
+rel_action_action_oracle <- read_csv("data/REL_ACTION_ACTION_MAIN_VIEW.csv")
+rel_dec_dec_oracle       <- read_csv("data/REL_DEC_DEC_MAIN_VIEW.csv")
+rel_risk_action_oracle   <- read_csv("data/REL_RISK_ACTION_MAIN_VIEW.csv")
+rel_risk_dec_oracle      <- read_csv("data/REL_RISK_DEC_MAIN_VIEW.csv")
+rel_risk_risk_oracle     <- read_csv("data/REL_RISK_RISK_MAIN_VIEW.csv")
+#rel_action_decision
 
 ```
 
@@ -82,7 +97,8 @@ action_rel_risk_oracle <- read_csv(file = "data/REL_RISK_ACTION_MAIN_VIEW_202111
 qa_email_address <- "Marisa.C.Lack@usace.army.mil"
 ```
 
-<!-- Wrangle Data -->
+
+<!-- Wrangle Risk/Actio/Decision Data -->
 ```{r wrangle-risk, echo=FALSE, warning=FALSE, message=FALSE}
 # Filter for "Active" records
 risk <- risk_oracle %>%
@@ -90,35 +106,30 @@ risk <- risk_oracle %>%
 
 # Convert date character fields to POSIXct and format format for date
 risk <- risk %>%
-  mutate(start_date      = lubridate::dmy_hms(START_DATE)) %>%
-  mutate(end_date        = lubridate::dmy_hms(END_DATE)) %>%
-  mutate(level_date      = lubridate::dmy_hms(LEVEL_DATE)) %>%
-  mutate(poc_review_date = lubridate::dmy_hms(POC_REVIEW_DATE))
+  mutate(start_date       = lubridate::dmy_hms(START_DATE),
+         end_date         = lubridate::dmy_hms(END_DATE),
+         level_date       = lubridate::dmy_hms(LEVEL_DATE), 
+         poc_review_date  = lubridate::dmy_hms(POC_REVIEW_DATE),
+         last_edited_date = lubridate::dmy_hms(LAST_EDITED_DATE))
 
-# Rename fields
+# Process assessment fields
 risk <- risk %>%
-  rename(cost_risk_color = CONDITIONAL_FORMATTING) %>%
-  rename(schedule_risk_color = CONDITIONAL_FORMATTING2)
+  rename(cost_risk_color     = CONDITIONAL_FORMATTING,
+         schedule_risk_color = CONDITIONAL_FORMATTING2,
+         efficacy_risk_color = CONDITIONAL_FORMATTING3) %>%
+  mutate(cost_risk_color     = tolower(cost_risk_color),
+         schedule_risk_color = tolower(schedule_risk_color),
+         efficacy_risk_color = tolower(efficacy_risk_color))
 
 # Set engagement level integer, risk_cat_code
 risk <- risk %>%
   mutate(eng_level = as.numeric(str_extract(ENG_LEVEL, "\\d")),
          risk_cat_code = str_extract(RISK_NO, "\\w+\\b"))
 
-# Ensure colors are lowercase
-risk$cost_risk_color     <- tolower(risk$cost_risk_color)
-risk$schedule_risk_color <- tolower(risk$schedule_risk_color)
-
-# Calculate efficacy_risk_color
-risk$efficacy_risk_color <- recode(risk$EFFICACY_RISK,
-                                   Low = "green",
-                                   Moderate = "orange",
-                                   High = "red")
-
-# Add efficacy_impact_per_project
+# Add efficacy_impact_per_project (not applicable, so set blank)
 risk$EFFICACY_IMPACT_PER_PROJECT <- ""
 
-# Convert factor variables to title case
+# Convert factor variables to title case for labeling
 risk$RISKCATEGORY <- toTitleCase(tolower(risk$RISKCATEGORY))
 
 # Cleanup risk number for sorting
@@ -128,8 +139,8 @@ risk <- format_id(risk, "RISK_NO")
 risk <- risk %>%
   select(!c(PDT_DISC_CONC, PDT_DISC_LIKELI_IMPACT,
             PDT_DISC_RISK_MANAG_STRATEGY, ACTION_ITEMS, LESSONS_LEARNED,
-            START_DATE, END_DATE, LEVEL_DATE, POC_REVIEW_DATE, 
-            FK_TABLE_ID))
+            START_DATE, END_DATE, LEVEL_DATE, POC_REVIEW_DATE, LAST_EDITED_DATE,
+            CORRELATION_TO_OTHER_RISKS, FK_TABLE_ID))
 
 # Create hyperlink to Risk_No
 risk <- id_link(risk, "risk_no")
@@ -147,7 +158,7 @@ risk <- risk %>%
   relocate(TIMING_OF_DELAY, .after = RISK_STRATEGY) %>%
   relocate(start_date, .after = CONCERNS) %>%
   relocate(end_date, .after = start_date) %>%
-  relocate(poc_review_date, .after = RESPONSIBLE_POC) %>%
+  relocate(poc_review_date, .after = TECHNICAL_POC) %>%
   relocate(eng_level, .after = ENG_LEVEL) %>%
   relocate(risk_cat_code, .after = RISKCATEGORY)
 
@@ -160,30 +171,11 @@ risk <- risk %>%
 #rm(risk_oracle)
 ```
 
-```{r wrangle-risk-related-risk, echo=FALSE, warning=FALSE, message=FALSE}
-# Filter for "Active" records
-risk_rel_risk <- risk_rel_risk_oracle %>%
-  filter(ACTIVE == "Yes")
-
-# Convert factor variables to title case
-risk_rel_risk$RELATED_RISK_CATEGORY <- toTitleCase(tolower(risk_rel_risk$RELATED_RISK_CATEGORY))
-
-# Cleanup id numbers for sorting
-risk_rel_risk <- format_id(risk_rel_risk, "RISK_NO")
-risk_rel_risk <- format_id(risk_rel_risk, "RELATED_RISK")
-
-# Create hyperlink to Related Risk
-risk_rel_risk <- id_link(risk_rel_risk, "related_risk")
-
-# Cleanup
-rm(risk_rel_risk_oracle)
-```
-
 ```{r wrangle-events, echo=FALSE, warning=FALSE, message=FALSE}
 # Set date fields
 events <- events_oracle %>%
-  mutate(level_date = dmy_hms(LEVEL_DATE)) %>%
-  mutate(level_date = formattable(level_date, format = "%Y-%m-%d"))
+  mutate(level_date = dmy_hms(LEVEL_DATE),
+         level_date = formattable(level_date, format = "%Y-%m-%d"))
 
 # Set engagement level integer field
 events <- events %>%
@@ -209,16 +201,12 @@ events <- events %>%
   arrange(TABLE_NAME, level_date)
 
 # Cleanup
-rm(events_oracle)
+#rm(events_oracle)
 ```
 
 ```{r wrangle-discussion, echo=FALSE, warning=FALSE, message=FALSE}
-# Filter for "Active" records
-discussion <- discussion_oracle %>%
-  filter(ACTIVE == "Yes")
-
 # Set date fields
-discussion <- discussion %>%
+discussion <- discussion_oracle %>%
   mutate(poc_review_date = lubridate::dmy_hms(POC_REVIEW_DATE))
 
 # Cleanup discussion number for sorting
@@ -226,7 +214,8 @@ discussion <- format_id(discussion, "FK_TABLE_ID")
 
 # Remove unused fields
 discussion <- discussion %>%
-  select(!c(POC_REVIEW_DATE))
+  select(!c(LOGGED_BY, LOG_DATE, CREATED_USER, CREATED_DATE, 
+            LAST_EDITED_USER, LAST_EDITED_DATE, POC_REVIEW_DATE, ACTIVE))
 
 # Reorder fields
 discussion <- discussion %>%
@@ -235,7 +224,7 @@ discussion <- discussion %>%
   relocate(poc_review_date, .after = RESPONSIBLE_POC)
 
 # Cleanup
-rm(discussion_oracle)
+#rm(discussion_oracle)
 ```
 
 ```{r wrangle-action, echo=FALSE, warning=FALSE, message=FALSE}
@@ -243,11 +232,17 @@ rm(discussion_oracle)
 action <- action_oracle %>%
   filter(ACTIVE == "Yes")
 
-# Convert date character fields to POSIXct and format format for date
+# Convert date character fields to POSIXct
 action <- action %>%
-  mutate(start_date      = lubridate::dmy_hms(START_DATE)) %>%
-  mutate(end_date        = lubridate::dmy_hms(END_DATE)) %>%
-  mutate(poc_review_date = lubridate::dmy_hms(POC_REVIEW_DATE))
+  mutate(start_date       = lubridate::dmy_hms(START_DATE),
+         end_date         = lubridate::dmy_hms(END_DATE),
+         poc_review_date  = lubridate::dmy_hms(POC_REVIEW_DATE),
+         level_date       = lubridate::dmy_hms(LEVEL_DATE),
+         last_edited_date = lubridate::dmy_hms(LAST_EDITED_DATE))
+
+# Set engagement level integer, risk_cat_code
+action <- action %>%
+  mutate(eng_level = as.numeric(str_extract(ENG_LEVEL, "\\d")))
 
 # Cleanup action number for sorting
 action <- format_id(action, "ACTION_NO")
@@ -258,13 +253,14 @@ action <- id_link(action, "action_no")
 # Remove unused fields
 action <- action %>%
   select(!c(START_DATE, END_DATE, POC_REVIEW_DATE,
-            CREATED_USER, CREATED_DATE, LAST_EDITED_USER, LAST_EDITED_DATE))
+            FK_TABLE_ID, LEVEL_DATE, LAST_EDITED_DATE))
 
 # Reorder fields
 action <- action %>%
   relocate(start_date, .after = ACTION) %>%
   relocate(end_date, .after = start_date) %>%
-  relocate(poc_review_date, .after = RESPONSIBLE_POC)
+  relocate(poc_review_date, .after = TECHNICAL_POC) %>%
+  relocate(eng_level, .after = ENG_LEVEL)
 
 # Remove duplicates and sort
 action <- action %>%
@@ -272,34 +268,167 @@ action <- action %>%
   arrange(action_no)
 
 # Cleanup
-rm(action_oracle)
+#rm(action_oracle)
 ```
 
-```{r wrangle-action-related-action, echo=FALSE, warning=FALSE, message=FALSE}
-# Relocate the ACTION columns to the beginning
-action_rel_risk <- action_rel_risk_oracle %>%
-  select(contains("ACTION"), everything())
+```{r wrangle-decision, echo=FALSE, warning=FALSE, message=FALSE}
+# Filter for "Active" records
+decision <- decision_oracle %>%
+  filter(ACTIVE == "Yes")
 
-# Convert factor variables to title case
-action_rel_risk$RISKCATEGORY <- toTitleCase(tolower(action_rel_risk$RISKCATEGORY))
+# Convert date character fields to POSIXct
+decision <- decision %>%
+  mutate(decision_date    = lubridate::dmy_hms(DECISION_DATE),
+         poc_review_date  = lubridate::dmy_hms(POC_REVIEW_DATE),
+         level_date       = lubridate::dmy_hms(LEVEL_DATE),
+         last_edited_date = lubridate::dmy_hms(LAST_EDITED_DATE))
 
-# Cleanup id fields for sorting
-action_rel_risk <- format_id(action_rel_risk, "ACTION_NO")
-action_rel_risk <- format_id(action_rel_risk, "RISK_NO")
+# Set engagement level integer, risk_cat_code
+decision <- decision %>%
+  mutate(eng_level = as.numeric(str_extract(ENG_LEVEL, "\\d")))
+
+# Cleanup action number for sorting
+decision <- format_id(decision, "DECISION_NO")
 
 # Create hyperlink
-action_rel_risk <- id_link(action_rel_risk, "risk_no")
+decision <- id_link(decision, "decision_no")
+
+# Remove unused fields
+decision <- decision %>%
+  select(!c(DECISION_DATE, POC_REVIEW_DATE,
+            FK_TABLE_ID, LEVEL_DATE, LAST_EDITED_DATE))
+
+# Reorder fields
+decision <- decision %>%
+  relocate(decision_date, .after = DECISION) %>%
+  relocate(poc_review_date, .after = TECHNICAL_POC) %>%
+  relocate(eng_level, .after = ENG_LEVEL)
+
+# Remove duplicates and sort
+decision <- decision %>%
+  distinct(decision_no, .keep_all = TRUE) %>%
+  arrange(decision_no)
 
 # Cleanup
-rm(action_rel_risk_oracle)
+#rm(decision_oracle)
 ```
 
+
+<!-- Wrangle Related Items -->
+```{r wrangle-rel-action-action, echo=FALSE, warning=FALSE, message=FALSE}
+# Filter for "Active" records
+rel_action_action <- rel_action_action_oracle %>%
+  filter(ACTION_ACTIVE == "Yes" & REL_ACTION_ACTIVE == "Yes")
+
+# Cleanup id numbers for sorting
+rel_action_action <- format_id(rel_action_action, "ACTION_NO")
+rel_action_action <- format_id(rel_action_action, "RELATED_ACTION")
+
+# Create hyperlink to related item
+rel_action_action <- id_link(rel_action_action, "related_action")
+
+# Reorder fields
+rel_action_action <- rel_action_action %>%
+  relocate(REL_ACTION_ACTIVE, .after = related_action_link)
+
+# Cleanup
+#rm(rel_action_action_oracle)
+```
+
+```{r wrangle-rel-dec-dec, echo=FALSE, warning=FALSE, message=FALSE}
+# Filter for "Active" records
+rel_dec_dec <- rel_dec_dec_oracle %>%
+  filter(DECISION_ACTIVE == "Yes" & REL_DEC_ACTIVE == "Yes")
+
+# Cleanup id numbers for sorting
+rel_dec_dec <- format_id(rel_dec_dec, "DECISION_NO")
+rel_dec_dec <- format_id(rel_dec_dec, "RELATED_DECISION")
+
+# Create hyperlink to related item
+rel_dec_dec <- id_link(rel_dec_dec, "related_decision")
+
+# Reorder fields
+rel_dec_dec <- rel_dec_dec %>%
+  relocate(REL_DEC_ACTIVE, .after = related_decision_link)
+
+# Cleanup
+#rm(rel_dec_dec_oracle)
+```
+
+```{r wrangle-rel-risk-action, echo=FALSE, warning=FALSE, message=FALSE}
+# Filter for "Active" records
+rel_risk_action <- rel_risk_action_oracle %>%
+  filter(RISK_ACTIVE == "Yes" & ACTION_ACTIVE == "Yes")
+
+# Cleanup id fields for sorting
+rel_risk_action <- format_id(rel_risk_action, "RISK_NO")
+rel_risk_action <- format_id(rel_risk_action, "ACTION_NO")
+
+# Create hyperlink
+rel_risk_action <- id_link(rel_risk_action, "risk_no")
+rel_risk_action <- id_link(rel_risk_action, "action_no")
+
+# Reorder fields
+rel_risk_action <- rel_risk_action %>%
+  relocate(ACTION_ACTIVE, .after = action_no_link)
+
+# Cleanup
+#rm(rel_risk_action_oracle)
+```
+
+```{r wrangle-rel-risk-dec, echo=FALSE, warning=FALSE, message=FALSE}
+# Filter for "Active" records
+rel_risk_dec <- rel_risk_dec_oracle %>%
+  filter(RISK_ACTIVE == "Yes" & DECISION_ACTIVE == "Yes")
+
+# Cleanup id fields for sorting
+rel_risk_dec <- format_id(rel_risk_dec, "RISK_NO")
+rel_risk_dec <- format_id(rel_risk_dec, "DECISION_NO")
+
+# Create hyperlink
+rel_risk_dec <- id_link(rel_risk_dec, "risk_no")
+rel_risk_dec <- id_link(rel_risk_dec, "decision_no")
+
+# Reorder fields
+rel_risk_dec <- rel_risk_dec %>%
+  relocate(DECISION_ACTIVE, .after = decision_no_link)
+
+# Cleanup
+#rm(rel_risk_dec_oracle)
+```
+
+```{r wrangle-rel-risk-risk, echo=FALSE, warning=FALSE, message=FALSE}
+# Filter for "Active" records
+rel_risk_risk <- rel_risk_risk_oracle %>%
+  filter(RISK_ACTIVE == "Yes" & REL_RISK_ACTIVE == "Yes")
+
+# Cleanup id numbers for sorting
+rel_risk_risk <- format_id(rel_risk_risk, "RISK_NO")
+rel_risk_risk <- format_id(rel_risk_risk, "RELATED_RISK")
+
+# Create hyperlink to Related Risk
+rel_risk_risk <- id_link(rel_risk_risk, "related_risk")
+
+# Reorder fields
+rel_risk_risk <- rel_risk_risk %>%
+  relocate(REL_RISK_ACTIVE, .after = related_risk_link)
+
+# Cleanup
+#rm(rel_risk_risk_oracle)
+```
+
+```{r wrangle-rel-action-dec, echo=FALSE, warning=FALSE, message=FALSE}
+
+```
+
+
+<!-- Create Timelines -->
 ```{r create_timevis_df, echo=FALSE, warning=FALSE, message=FALSE}
 # Create a timevis "data" data frame of risks
 risk_time <- risk %>%
   arrange(risk_no) %>%
   select(OBJECTID, risk_no, start_date, end_date, risk_cat_code, 
-         CONCERNS, COMPONENT, RESPONSIBLE_POC, eng_level) %>%
+         CONCERNS, FEATURE, TECHNICAL_POC, eng_level) %>%
   rename(id = OBJECTID) %>%
   rename(content = risk_no) %>%
   relocate(id, .before = content) %>%
