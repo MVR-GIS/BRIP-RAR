@@ -1,7 +1,7 @@
 # POC Reports
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
-pocs <- unique(risk$RESPONSIBLE_POC)
+pocs <- unique(risk$TECHNICAL_POC)
 ```
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
@@ -18,7 +18,7 @@ for(poc in pocs) {
   
   # Subset risks for the current POC
   poc_risk <- risk %>%
-    filter(RESPONSIBLE_POC == poc)
+    filter(TECHNICAL_POC == poc)
   
   # Set the heading level for risk items
   risk_heading_level <- 4
