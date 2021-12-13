@@ -168,7 +168,7 @@ risk <- risk %>%
   arrange(risk_no)
 
 # Cleanup
-#rm(risk_oracle)
+rm(risk_oracle)
 ```
 
 ```{r wrangle-events, echo=FALSE, warning=FALSE, message=FALSE}
@@ -201,7 +201,7 @@ events <- events %>%
   arrange(TABLE_NAME, level_date)
 
 # Cleanup
-#rm(events_oracle)
+rm(events_oracle)
 ```
 
 ```{r wrangle-discussion, echo=FALSE, warning=FALSE, message=FALSE}
@@ -224,7 +224,7 @@ discussion <- discussion %>%
   relocate(poc_review_date, .after = RESPONSIBLE_POC)
 
 # Cleanup
-#rm(discussion_oracle)
+rm(discussion_oracle)
 ```
 
 ```{r wrangle-action, echo=FALSE, warning=FALSE, message=FALSE}
@@ -268,7 +268,7 @@ action <- action %>%
   arrange(action_no)
 
 # Cleanup
-#rm(action_oracle)
+rm(action_oracle)
 ```
 
 ```{r wrangle-decision, echo=FALSE, warning=FALSE, message=FALSE}
@@ -310,7 +310,7 @@ decision <- decision %>%
   arrange(decision_no)
 
 # Cleanup
-#rm(decision_oracle)
+rm(decision_oracle)
 ```
 
 
@@ -332,7 +332,7 @@ rel_action_action <- rel_action_action %>%
   relocate(REL_ACTION_ACTIVE, .after = related_action_link)
 
 # Cleanup
-#rm(rel_action_action_oracle)
+rm(rel_action_action_oracle)
 ```
 
 ```{r wrangle-rel-dec-dec, echo=FALSE, warning=FALSE, message=FALSE}
@@ -352,7 +352,7 @@ rel_dec_dec <- rel_dec_dec %>%
   relocate(REL_DEC_ACTIVE, .after = related_decision_link)
 
 # Cleanup
-#rm(rel_dec_dec_oracle)
+rm(rel_dec_dec_oracle)
 ```
 
 ```{r wrangle-rel-risk-action, echo=FALSE, warning=FALSE, message=FALSE}
@@ -373,7 +373,7 @@ rel_risk_action <- rel_risk_action %>%
   relocate(ACTION_ACTIVE, .after = action_no_link)
 
 # Cleanup
-#rm(rel_risk_action_oracle)
+rm(rel_risk_action_oracle)
 ```
 
 ```{r wrangle-rel-risk-dec, echo=FALSE, warning=FALSE, message=FALSE}
@@ -394,7 +394,7 @@ rel_risk_dec <- rel_risk_dec %>%
   relocate(DECISION_ACTIVE, .after = decision_no_link)
 
 # Cleanup
-#rm(rel_risk_dec_oracle)
+rm(rel_risk_dec_oracle)
 ```
 
 ```{r wrangle-rel-risk-risk, echo=FALSE, warning=FALSE, message=FALSE}
@@ -414,7 +414,7 @@ rel_risk_risk <- rel_risk_risk %>%
   relocate(REL_RISK_ACTIVE, .after = related_risk_link)
 
 # Cleanup
-#rm(rel_risk_risk_oracle)
+rm(rel_risk_risk_oracle)
 ```
 
 ```{r wrangle-rel-action-dec, echo=FALSE, warning=FALSE, message=FALSE}
