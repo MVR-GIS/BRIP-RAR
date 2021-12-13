@@ -7,18 +7,26 @@
 risk_item <- risk %>%
   filter(risk_no == x)
 
-# Filter the events df for the current risk item
+# Filter events df for the current risk item
 events_item <- events %>%
   filter(TABLE_NAME == "RISK_REGISTER") %>%
   filter(fk_table_id == x)
 
-# Filter the discussion df for the current risk item
+# Filter discussion df for the current risk item
 discussion_item <- discussion %>%
   filter(TABLE_NAME == "RISK_REGISTER") %>%
   filter(fk_table_id == x)
 
-# Filter the related risks df for the current risk item
+# Filter related risks df for the current risk item
 rel_risk_risk_item <- rel_risk_risk %>%
+  filter(risk_no == x)
+
+# Filter related actions df for the current risk item
+rel_risk_action_item <- rel_risk_action %>%
+  filter(risk_no == x)
+
+# Filter related decisions df for the current risk item
+rel_risk_dec_item <- rel_risk_dec %>%
   filter(risk_no == x)
 ```
 
@@ -135,7 +143,7 @@ Risk Strategy
 `r risk_item$RISK_STRATEGY`
 :::
 ::: {.var-name}
-Component
+Feature
 :::
 ::: {.var-value}
 `r risk_item$FEATURE`
@@ -163,10 +171,10 @@ Timing of Delay
 <!-- Risk Attributes line 3 -->
 ::::: {.grid-5w-2h}
 ::: {.var-name}
-POC
+Tech. POC
 :::
 ::: {.var-value}
-`r risk_item$RESPONSIBLE_POC`
+`r risk_item$TECHNICAL_POC`
 :::
 ::: {.var-name}
 Last Review Date
@@ -271,12 +279,10 @@ if(length(rel_risk_risk_item$risk_no) > 0) {
                   position = "left") %>%
     column_spec(1, width = "10em")
 } else {
-  cat("No related risks.")
+  cat(" No related risks.")
 }
 ```
 
-
-<!-- End Related Risks -->
 :::::::::
 
 
@@ -289,14 +295,20 @@ if(length(rel_risk_risk_item$risk_no) > 0) {
 
 ::::::::: {.section-box}
 **Related Actions**
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+if(length(rel_risk_action_item$risk_no) > 0) {
+  kbl(select(rel_risk_action_item, action_no_link, ACTION),
+      col.names = c("Number", "Description")) %>%
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
+                                        "responsive"),
+                  full_width = TRUE, 
+                  position = "left") %>%
+    column_spec(1, width = "10em")
+} else {
+  cat(" No related actions.")
+}
+```
 
-<!-- Action table goes here -->
-
-:::::: {.white-box}
-`r cat(' ')`
-::::::
-
-<!-- End Related Actions -->
 :::::::::
 
 :::::: {.white-box}
@@ -306,13 +318,20 @@ if(length(rel_risk_risk_item$risk_no) > 0) {
 ::::::::: {.section-box}
 **Related Decisions**
 
-<!-- Decisions table goes here -->
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+if(length(rel_risk_dec_item$risk_no) > 0) {
+  kbl(select(rel_risk_dec_item, decision_no_link, DECISION),
+      col.names = c("Number", "Description")) %>%
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
+                                        "responsive"),
+                  full_width = TRUE, 
+                  position = "left") %>%
+    column_spec(1, width = "10em")
+} else {
+  cat(" No related decisions.")
+}
+```
 
-:::::: {.white-box}
-`r cat(' ')`
-::::::
-
-<!-- End Related Decisions -->
 :::::::::  
 
 <!-- End Response Plan -->
