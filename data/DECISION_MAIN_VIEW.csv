@@ -1,2 +1,6 @@
 "OBJECTID","DECISION_NO","DECISION","APPROVAL_STATUS","DECISION_DATE","RATIONALE","IMPLICATIONS","OUTCOMES","FEATURE","TECHNICAL_POC","POC_REVIEW_DATE","DISCIPLINE","ACTIVE","FK_TABLE_ID","ENG_LEVEL","LEVEL_DATE","LAST_EDITED_DATE"
-1,"TEST-1","","",,"","","","","",,"","Yes","TEST-1","Level 1",05-OCT-21 12.00.00.000000000 AM,05-OCT-21 07.41.00.000000000 PM
+,"","","",,"","","","","",,"","","TEST-1","Level 1",05-OCT-21 12.00.00.000000000 AM,
+321,"DEC-2","Make decision to proceed with left descending bank or right descending bank","",,"","","","","",,"","Yes","","",,13-DEC-21 11.29.27.000000000 PM
+1,"DEC-1","Decision to negotiate acceptable Project Partnership Agreement (PPA) language by Dec 2022","",,"","","","","",,"","Yes","","",,13-DEC-21 10.49.55.000000000 PM
+323,"DEC-4","Make decision to proceed with a construction schedule to minimize impacts to navigation","",,"","","","","",,"","Yes","","",,13-DEC-21 11.29.27.000000000 PM
+322,"DEC-3","Choose final site plan approach ","",,"","","","","",,"","Yes","","",,13-DEC-21 11.29.27.000000000 PM

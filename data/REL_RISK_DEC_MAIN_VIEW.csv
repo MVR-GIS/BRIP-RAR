@@ -1,1 +1,2 @@
-"RISK_OBID","RISK_NO","CONCERNS","RISK_ACTIVE","REL_OBID","REL_DES_OBID","DES_OBID","DECISION_OBID","DECISION_NO","DECISION","DECISION_ACTIVE"
+"RISK_OBID","RISK_NO","CONCERNS","RISK_ACTIVE","DECISION_OBID","DECISION_NO","DECISION","DECISION_ACTIVE"
+1619,"RE-1","Right descending bank may not be available for use","Yes",321,"DEC-2","Make decision to proceed with left descending bank or right descending bank","Yes"
