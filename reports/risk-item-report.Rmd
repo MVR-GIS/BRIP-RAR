@@ -144,6 +144,12 @@ End Date
 ::: {.var-value}
 `r risk_item$end_date`
 :::
+::: {.var-name}
+Status
+:::
+::: {.var-value}
+`r risk_item$MANAGEMENT_STATUS`
+:::
 ::::: 
 
 <!-- Risk Attributes line 2-->
@@ -183,6 +189,12 @@ Timing of Delay
 <!-- Risk Attributes line 3 -->
 ::::: {.grid-5w-2h}
 ::: {.var-name}
+Owner
+:::
+::: {.var-value}
+`r risk_item$OWNER`
+:::
+::: {.var-name}
 Tech. POC
 :::
 ::: {.var-value}
@@ -193,6 +205,12 @@ Last Review Date
 :::
 ::: {.var-value}
 `r risk_item$poc_review_date`
+:::
+::: {.var-name}
+Trend
+:::
+::: {.var-value}
+`r risk_item$TREND`
 :::
 :::::
 
