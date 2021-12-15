@@ -1,7 +1,7 @@
 <!-- Wrangle report data -->
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 # Set iterator variable for testing. Comment out in production. 
-#x <- "CA-001"
+# <- "PPM-001"
 
 # Filter the risks df for the current risk item
 risk_item <- risk %>%
@@ -28,6 +28,17 @@ rel_risk_action_item <- rel_risk_action %>%
 # Filter related decisions df for the current risk item
 rel_risk_dec_item <- rel_risk_dec %>%
   filter(risk_no == x)
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Calculate event duration in days
+events_item <- events_item %>%
+  mutate(level_end_date = lead(as.Date(level_date), n = 1, 
+                               default = current_date),
+         date_interval = lubridate::interval(as.Date(level_date), 
+                                             level_end_date),
+         duration_days = lubridate::time_length(date_interval, 
+                                                unit = "days"))
 ```
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
@@ -86,6 +97,7 @@ feedback_link <- paste0("mailto:", qa_email_address,
                          %0D%0A")
 ```
 
+<!-- Format report -->
 :::::::::::::: {.item-box}
 
 ::: {.right}
@@ -233,10 +245,12 @@ kbl(filter(risk_rating, variable != "Risk Color"),
 **Engagement Level History**
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 if(length(events_item$FK_TABLE_ID) > 0) {
-  kbl(select(events_item, ENG_LEVEL, level_date, DESCRIPTION),
-      col.names = c("Level", "Date", "Reason for level change")) %>%
+  kbl(select(events_item, ENG_LEVEL, level_date, DESCRIPTION, duration_days),
+      col.names = c("Level", "Date", "Reason for level change", "Duration (days)")) %>%
     kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
-                                      "responsive")) %>%
+                                      "responsive"),
+                  full_width = TRUE, 
+                  position = "left") %>%
     column_spec(1, width = "8em") %>%
     column_spec(2, width = "8em")
 } else {

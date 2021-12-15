@@ -95,6 +95,7 @@ rel_risk_risk_oracle     <- read_csv("data/REL_RISK_RISK_MAIN_VIEW.csv")
 <!-- Report Constants -->
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 qa_email_address <- "Marisa.C.Lack@usace.army.mil"
+current_date <- lubridate::today()
 ```
 
 
