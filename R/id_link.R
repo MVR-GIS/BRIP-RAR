@@ -9,10 +9,21 @@
 #' markdown link requirements.
 #'
 id_link <- function(df, id_field) {
-  # Extract and construct strings
+  # Determine df type (risk|action|decision, event|discussion)
   id_lower      <- tolower(id_field)
-  id_type       <- str_extract(id_lower, "risk|action|decision")
-  id_target     <- paste0("#", id_type, "-item-")
+
+  # Is risk|action|decision register? (risk_no|action_no|decision_no)
+  if(str_extract(id_lower, "risk|action|decision") %in% c("risk", "action",
+                                                          "decision")) {
+    df$id_type <- str_extract(id_lower, "risk|action|decision")
+  }
+  # Is event|discussion table? (fk_table_id)
+  if(str_extract(id_lower, "table") %in% c("table")) {
+    df$table_lower <- tolower(df$TABLE_NAME)
+    df$id_type <- str_extract(df$table_lower, "risk|action|decision")
+  }
+
+  df$id_target  <- paste0("#", df$id_type, "-item-")
   id_field_name <- paste0(id_field, "_link")
 
   # enquote the id_fields
@@ -24,11 +35,11 @@ id_link <- function(df, id_field) {
            id_link = str_c("[",
                            !!sym(quo_name(in_col)),
                            "](",
-                           id_target,
+                           df$id_target,
                            id_field_lower,
                            ")")) %>%
     rename(!!id_field_link := id_link) %>%
-    select(!c(id_field_lower)) %>%
+    select(!c(id_target, id_field_lower)) %>%
     relocate(!!id_field_link, .after = !!in_col)
 
   return(df)
