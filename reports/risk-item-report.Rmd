@@ -1,7 +1,7 @@
 <!-- Wrangle report data -->
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 # Set iterator variable for testing. Comment out in production. 
-# <- "PPM-001"
+# x <- "PPM-001"
 
 # Filter the risks df for the current risk item
 risk_item <- risk %>%
@@ -28,17 +28,6 @@ rel_risk_action_item <- rel_risk_action %>%
 # Filter related decisions df for the current risk item
 rel_risk_dec_item <- rel_risk_dec %>%
   filter(risk_no == x)
-```
-
-```{r, echo=FALSE, warning=FALSE, message=FALSE}
-# Calculate event duration in days
-events_item <- events_item %>%
-  mutate(level_end_date = lead(as.Date(level_date), n = 1, 
-                               default = current_date),
-         date_interval = lubridate::interval(as.Date(level_date), 
-                                             level_end_date),
-         duration_days = lubridate::time_length(date_interval, 
-                                                unit = "days"))
 ```
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
@@ -269,7 +258,7 @@ if(length(events_item$FK_TABLE_ID) > 0) {
                                       "responsive"),
                   full_width = TRUE, 
                   position = "left") %>%
-    column_spec(1, width = "8em") %>%
+    column_spec(1, width = "6em") %>%
     column_spec(2, width = "8em")
 } else {
   cat("Engagement Level not set.")
