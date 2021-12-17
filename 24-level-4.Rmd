@@ -2,31 +2,12 @@
 
 This report provides a targeted view for the Senior Executive Board (SEB). 
 
-```{r, echo=FALSE, warning=FALSE, message=FALSE}
-# Filter for the engineered channel component
-L4_risk <- filter(risk, eng_level == 4)
-```
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+# Set engagement level
+report_eng_level <- 4
 
-## Risks
-```{r, echo=FALSE, warning=FALSE, message=FALSE}
-risk_register_table(L4_risk)
-```
-
-## Summary
-```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=7, fig.height=9, out.width='100%', fig.cap = paste0("Risk Characteristics (n = ", length(unique(L4_risk$RISK_NO)), ")")}
-p1 <- percent_treemap(L4_risk, RISKCATEGORY, "Risk Categories")
-p2 <- percent_treemap(L4_risk, FEATURE, "Project Features")
-p3 <- percent_treemap(L4_risk, RISK_STRATEGY, "Risk Strategy")
-p4 <- percent_treemap(L4_risk, TIMING_OF_DELAY, "Timing of Delay")
-p5 <- percent_treemap(L4_risk, DISCIPLINE, "Discpline")
-grid.arrange(p1, p2, p3, p4, p5, nrow = 3, ncol = 2)
-```
-
-## Project Timeline
-```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Project Timeline"}
-timeline(risk_df = filter(risk_time, eng_level == 4), 
-         groups_df = risk_time_riskcategory,
-         height = "700px",
-         start = "2021-01-01",
-         end = "2025-01-01")
+# Call the level_report
+cat(knitr::knit_child("reports/level_report.Rmd",
+                  envir = environment(), 
+                  quiet = TRUE))
 ```
