@@ -55,6 +55,7 @@ source("R/percent_treemap.R")
 source("R/timeline.R")
 source("R/format_id.R")
 source("R/id_link.R")
+source("R/eng_level_history.R")
 ```
 
 <!-- chunk options -->
@@ -99,7 +100,7 @@ current_date <- lubridate::today()
 ```
 
 
-<!-- Wrangle Risk/Actio/Decision Data -->
+<!-- Wrangle Risk/Action/Decision Data -->
 ```{r wrangle-risk, echo=FALSE, warning=FALSE, message=FALSE}
 # Filter for "Active" records
 risk <- risk_oracle %>%
@@ -143,7 +144,7 @@ risk <- risk %>%
             START_DATE, END_DATE, LEVEL_DATE, POC_REVIEW_DATE, LAST_EDITED_DATE,
             CORRELATION_TO_OTHER_RISKS, FK_TABLE_ID))
 
-# Create hyperlink to Risk_No
+# Create hyperlink to risk_no
 risk <- id_link(risk, "risk_no")
 
 # Reorder fields
@@ -190,16 +191,31 @@ events <- events %>%
   select(!c(LEVEL_DATE, CREATED_USER, CREATED_DATE, 
             LAST_EDITED_USER, LAST_EDITED_DATE))
 
+# Create hyperlink to fk_table_id
+events <- id_link(events, "fk_table_id")
+
 # Reorder fields
 events <- events %>%
   relocate(fk_table_id, .after = FK_TABLE_ID) %>%
-  relocate(DESCRIPTION, .after = fk_table_id) %>%
+  relocate(fk_table_id_link, .after = fk_table_id) %>%
+  relocate(DESCRIPTION, .after = fk_table_id_link) %>%
   relocate(level_date, .after = ENG_LEVEL) %>%
   relocate(eng_level, .after = ENG_LEVEL)
 
 # Sort
 events <- events %>%
-  arrange(TABLE_NAME, level_date)
+  arrange(TABLE_NAME, fk_table_id, as.Date(level_date))
+
+# Calc event duration (days) within item types (risk/action/decision) and items
+events <- events %>% 
+  group_by(TABLE_NAME, fk_table_id) %>%
+  mutate(level_end_date = lead(as.Date(level_date), n = 1, 
+                               default = current_date),
+         date_interval = lubridate::interval(as.Date(level_date), 
+                                             level_end_date),
+         duration_days = lubridate::time_length(date_interval, 
+                                                unit = "days")) %>%
+  ungroup(TABLE_NAME, fk_table_id)
 
 # Cleanup
 rm(events_oracle)
