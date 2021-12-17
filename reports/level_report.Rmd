@@ -1,0 +1,52 @@
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Set report constants
+level_risk <- filter(risk, eng_level == report_eng_level)
+level_risk_count <- length(level_risk$risk_no)
+level_risks <- level_risk$risk_no
+level_items <- c(level_risks)
+```
+
+## Risks
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+if(level_risk_count > 0) {
+  risk_register_table(level_risk)
+}
+```
+
+`r if(level_risk_count == 0) {"No risks currently assigned to this engagement level."}`
+
+## Summary
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=7, fig.height=9, out.width='100%', fig.cap = paste0("Risk Characteristics (n = ", level_risk_count, ")")}
+if(level_risk_count > 0) {
+  p1 <- percent_treemap(level_risk, RISKCATEGORY, "Risk Categories")
+  p2 <- percent_treemap(level_risk, FEATURE, "Project Features")
+  p3 <- percent_treemap(level_risk, RISK_STRATEGY, "Risk Strategy")
+  p4 <- percent_treemap(level_risk, TIMING_OF_DELAY, "Timing of Delay")
+  p5 <- percent_treemap(level_risk, DISCIPLINE, "Discpline")
+  grid.arrange(p1, p2, p3, p4, p5, nrow = 3, ncol = 2)
+}
+```
+
+`r if(level_risk_count == 0) {"No risks currently assigned to this engagement level."}`
+
+## Project Timeline
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Project Timeline"}
+if(level_risk_count > 0) {
+timeline(risk_df = filter(risk_time, eng_level == report_eng_level), 
+         groups_df = risk_time_riskcategory,
+         height = "700px",
+         start = "2021-01-01",
+         end = "2025-01-01")
+}
+```
+
+`r if(level_risk_count == 0) {"No risks currently assigned to this engagement level."}`
+
+## Engagement Level History
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+if(level_risk_count > 0) {
+  eng_level_history(events, level_items)
+}
+```
+
+`r if(level_risk_count == 0) {"No risks currently assigned to this engagement level."}`
