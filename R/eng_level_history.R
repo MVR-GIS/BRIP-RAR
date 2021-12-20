@@ -1,5 +1,8 @@
 #' @title Engagement Level History Table
 #'
+#' @description Produces an engagement level history table of the input events
+#'   data frame.
+#'
 #' @param events_df  data frame; An events data frame
 #' @param items      character; A character vector of item identifiers
 #'
