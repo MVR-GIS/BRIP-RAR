@@ -25,7 +25,7 @@ risk_register_table <- function(risk) {
                   font_size = 12)
 
   # Group rows if records exist
-  if(length(risk$RISK_NO) > 1) {
+  if(length(risk$RISK_NO) >= 1) {
     risk_register <- risk_register %>%
     pack_rows(index = table(risk_df$RISKCATEGORY),
               indent = FALSE,
