@@ -1,0 +1,7 @@
+# Decision Register
+
+## All Decisions
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+decision_register_table(decision)
+```
+
