@@ -1,0 +1,268 @@
+<!-- Wrangle report data -->
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Set iterator variable for testing. Comment out in production. 
+# x <- "DEC-001"
+
+# Filter the decisions df for the current decision item
+decision_item <- decision %>%
+  filter(decision_no == x)
+
+# Filter events df for the current decision item
+events_item <- events %>%
+  filter(TABLE_NAME == "DECISION_REGISTER") %>%
+  filter(fk_table_id == x)
+
+# Filter discussion df for the current decision item
+discussion_item <- discussion %>%
+  filter(TABLE_NAME == "DECISION_REGISTER") %>%
+  filter(fk_table_id == x)
+
+# Filter related decisions df for the current decision item
+rel_dec_dec_item <- rel_dec_dec %>%
+  filter(decision_no == x)
+
+# Filter related actions df for the current decision item
+rel_dec_action_item <- rel_dec_action %>%
+  filter(decision_no == x)
+
+# Filter related risks df for the current decision item
+rel_risk_dec_item <- rel_risk_dec %>%
+  filter(decision_no == x)
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+decision_feedback_link <- paste0("mailto:", 
+                                 qa_email_address, 
+                                 "?subject=Decision Item: ", 
+                                 decision_item$decision_no,
+                                 "&body=Please describe the changes you would recommend for this decision item: %0D%0A
+                                 %0D%0A")
+```
+
+<!-- Decision Item -->
+:::::::::::::: {.item-box}
+
+::: {.right}
+[&circlearrowright;](`r decision_feedback_link`)
+:::
+
+::: {.header}
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+pandoc_header(text = decision_item$decision_no, 
+              level = decision_heading_level,
+              identifier = paste0(decision_identifier_prefix, "-",
+                                  str_to_lower(decision_item$decision_no)),
+              number = FALSE,
+              list = list_decision_item)
+```
+:::
+
+`r decision_item$DECISION`
+
+:::::::: {.section-box}
+<!-- Risk Attributes line 1 -->
+::::: {.grid-5w-2h}
+::: {.var-name}
+Approval Status
+:::
+::: {.var-value}
+`r decision_item$APPROVAL_STATUS`
+:::
+::: {.var-name}
+Decision Date
+:::
+::: {.var-value}
+`r decision_item$decision_date`
+:::
+::: {.var-name}
+Engagement Level
+:::
+::: {.var-value}
+`r decision_item$ENG_LEVEL`
+:::
+::: {.var-name}
+Feature
+:::
+::: {.var-value}
+`r decision_item$FEATURE`
+:::
+::: {.var-name}
+Discipline
+:::
+::: {.var-value}
+`r decision_item$DISCIPLINE`
+:::
+:::::
+
+<!-- Risk Attributes line 2 -->
+::::: {.grid-5w-2h}
+::: {.var-name}
+Technical POC
+:::
+::: {.var-value}
+`r decision_item$TECHNICAL_POC`
+:::
+::: {.var-name}
+Last Review Date
+:::
+::: {.var-value}
+`r decision_item$poc_review_date`
+:::
+:::::
+
+<!-- Risk Attributes line 3 -->
+::::: {.grid-5w-2h}
+::: {.var-name}
+Rationale
+:::
+::: {.var-value}
+`r decision_item$RATIONALE`
+:::
+:::::
+
+<!-- Risk Attributes line 4 -->
+::::: {.grid-5w-2h}
+::: {.var-name}
+Implications
+:::
+::: {.var-value}
+`r decision_item$IMPLICATIONS`
+:::
+:::::
+
+<!-- Risk Attributes line 5 -->
+::::: {.grid-5w-2h}
+::: {.var-name}
+Outcomes
+:::
+::: {.var-value}
+`r decision_item$OUTCOMES`
+:::
+:::::
+::::::::
+
+:::::: {.white-box}
+`r cat(' ')`
+::::::
+
+:::::::: {.section-box}
+**Engagement Level History**
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+if(length(events_item$FK_TABLE_ID) > 0) {
+  kbl(select(events_item, ENG_LEVEL, level_date, DESCRIPTION, duration_days),
+      col.names = c("Level", "Date", "Reason for level change", 
+                    "Duration (days)")) %>%
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
+                                      "responsive"),
+                  full_width = TRUE, 
+                  position = "left") %>%
+    column_spec(1, width = "6em") %>%
+    column_spec(2, width = "8em")
+} else {
+  cat("Engagement Level not set.")
+}
+```
+
+<!-- End Risk Engagement Level History -->
+::::::::  
+
+:::::: {.white-box}
+`r cat(' ')`
+::::::
+
+:::::::: {.section-box}  
+**Discussion Items**
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+if(length(discussion_item$fk_table_id) > 0) {
+kbl(select(discussion_item, DISCUSSION, RESPONSIBLE_POC, poc_review_date),
+    col.names = c("Discussion Topic", "POC", "Date")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
+                                      "responsive")) 
+} else {
+  cat(" No discussion items.")
+}
+```
+
+<!-- End Risk Discussion Items -->
+:::::::: 
+
+:::::: {.white-box}
+`r cat(' ')`
+::::::
+
+::::::::: {.section-box}
+**Related Decisions**
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+if(length(rel_dec_dec_item$related_decision_no) > 0) {
+  kbl(select(rel_dec_dec_item, related_decision_link, RELATED_DECISION),
+      col.names = c("Number", "Description")) %>%
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
+                                        "responsive"),
+                  full_width = TRUE, 
+                  position = "left") %>%
+    column_spec(1, width = "10em")
+} else {
+  cat(" No related decisions.")
+}
+```
+
+:::::::::  
+
+:::::: {.white-box}
+`r cat(' ')`
+::::::
+
+:::::::::::: {.section-box}
+**Response Plan**
+
+::::::::: {.section-box}
+**Related Actions**
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+if(length(rel_dec_action_item$action_no) > 0) {
+  kbl(select(rel_dec_action_item, action_no_link, ACTION),
+      col.names = c("Number", "Description")) %>%
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
+                                        "responsive"),
+                  full_width = TRUE, 
+                  position = "left") %>%
+    column_spec(1, width = "10em")
+} else {
+  cat(" No related actions.")
+}
+```
+
+:::::::::
+
+:::::: {.white-box}
+`r cat(' ')`
+::::::
+
+::::::::: {.section-box}
+**Related Risks**
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+if(length(rel_risk_dec_item$risk_no) > 0) {
+  kbl(select(rel_risk_dec_item, risk_no_link, CONCERNS),
+      col.names = c("Number", "Description")) %>%
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
+                                        "responsive"),
+                  full_width = TRUE, 
+                  position = "left") %>%
+    column_spec(1, width = "10em")
+} else {
+  cat(" No related risks.")
+}
+```
+
+:::::::::
+
+<!-- End Response Plan -->
+::::::::::::  
+
+
+<!-- End Decision Item -->
+:::::::::::::: 
+
+:::::: {.white-box}
+`r cat(' ')`
+::::::
