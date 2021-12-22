@@ -1,7 +1,7 @@
 <!-- Wrangle report data -->
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 # Set iterator variable for testing. Comment out in production. 
-# x <- "PPM-001"
+#x <- "TR-023"
 
 # Filter the risks df for the current risk item
 risk_item <- risk %>%
@@ -77,6 +77,9 @@ risk_rating <- efficacy_risk %>%
   select(variable, efficacy) %>%
   inner_join(select(cost_schedule_risk, variable, cost, schedule),
              by = "variable")
+
+# Replace any NA values with ""
+risk_rating[is.na(risk_rating)] <- ""
 ```
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
