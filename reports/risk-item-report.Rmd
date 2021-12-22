@@ -83,17 +83,19 @@ risk_rating[is.na(risk_rating)] <- ""
 ```
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
-feedback_link <- paste0("mailto:", qa_email_address, 
-                        "?subject=Risk Item: ", risk_item$risk_no,
-                        "&body=Please describe the changes you would recommend for this risk item: %0D%0A
-                         %0D%0A")
+risk_feedback_link <- paste0("mailto:", 
+                             qa_email_address, 
+                             "?subject=Risk Item: ", 
+                             risk_item$risk_no,
+                             "&body=Please describe the changes you would recommend for this risk item: %0D%0A
+                             %0D%0A")
 ```
 
 <!-- Format report -->
 :::::::::::::: {.item-box}
 
 ::: {.right}
-[&circlearrowright;](`r feedback_link`)
+[&circlearrowright;](`r risk_feedback_link`)
 :::
 
 ::: {.header}
@@ -256,7 +258,8 @@ kbl(filter(risk_rating, variable != "Risk Color"),
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 if(length(events_item$FK_TABLE_ID) > 0) {
   kbl(select(events_item, ENG_LEVEL, level_date, DESCRIPTION, duration_days),
-      col.names = c("Level", "Date", "Reason for level change", "Duration (days)")) %>%
+      col.names = c("Level", "Date", "Reason for level change", 
+                    "Duration (days)")) %>%
     kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
                                       "responsive"),
                   full_width = TRUE, 
@@ -294,7 +297,7 @@ kbl(select(discussion_item, DISCUSSION, RESPONSIBLE_POC, poc_review_date),
 ::::::::: {.section-box}
 **Related Risks**
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-if(length(rel_risk_risk_item$risk_no) > 0) {
+if(length(rel_risk_risk_item$related_risk) > 0) {
   kbl(select(rel_risk_risk_item, related_risk_link, RELATED_RISK_CONCERN),
       col.names = c("Number", "Description")) %>%
     kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
@@ -320,7 +323,7 @@ if(length(rel_risk_risk_item$risk_no) > 0) {
 ::::::::: {.section-box}
 **Related Actions**
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-if(length(rel_risk_action_item$risk_no) > 0) {
+if(length(rel_risk_action_item$action_no) > 0) {
   kbl(select(rel_risk_action_item, action_no_link, ACTION),
       col.names = c("Number", "Description")) %>%
     kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
@@ -343,7 +346,7 @@ if(length(rel_risk_action_item$risk_no) > 0) {
 **Related Decisions**
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-if(length(rel_risk_dec_item$risk_no) > 0) {
+if(length(rel_risk_dec_item$decision_no) > 0) {
   kbl(select(rel_risk_dec_item, decision_no_link, DECISION),
       col.names = c("Number", "Description")) %>%
     kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
