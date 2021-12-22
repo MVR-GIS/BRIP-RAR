@@ -87,11 +87,10 @@ decision_oracle          <- read_csv("data/DECISION_MAIN_VIEW.csv")
 
 rel_action_action_oracle <- read_csv("data/REL_ACTION_ACTION_MAIN_VIEW.csv")
 rel_dec_dec_oracle       <- read_csv("data/REL_DEC_DEC_MAIN_VIEW.csv")
+rel_dec_action_oracle    <- read_csv("data/REL_DEC_ACTION_MAIN_VIEW.csv")
 rel_risk_action_oracle   <- read_csv("data/REL_RISK_ACTION_MAIN_VIEW.csv")
 rel_risk_dec_oracle      <- read_csv("data/REL_RISK_DEC_MAIN_VIEW.csv")
 rel_risk_risk_oracle     <- read_csv("data/REL_RISK_RISK_MAIN_VIEW.csv")
-#rel_action_decision
-
 ```
 
 <!-- Report Constants -->
@@ -106,6 +105,10 @@ current_date <- lubridate::today()
 # Filter for "Active" records
 risk <- risk_oracle %>%
   filter(ACTIVE == "Yes")
+
+# Remove test data
+risk <- risk %>%
+  filter(!(str_extract(tolower(RISK_NO), "test") %in% "test"))
 
 # Convert date character fields to POSIXct and format format for date
 risk <- risk %>%
@@ -143,7 +146,7 @@ risk <- risk %>%
   select(!c(PDT_DISC_CONC, PDT_DISC_LIKELI_IMPACT,
             PDT_DISC_RISK_MANAG_STRATEGY, ACTION_ITEMS, LESSONS_LEARNED,
             START_DATE, END_DATE, LEVEL_DATE, POC_REVIEW_DATE, LAST_EDITED_DATE,
-            CORRELATION_TO_OTHER_RISKS, FK_TABLE_ID))
+            FK_TABLE_ID))
 
 # Create hyperlink to risk_no
 risk <- id_link(risk, "risk_no")
@@ -167,8 +170,8 @@ risk <- risk %>%
 
 # Remove duplicates and sort
 risk <- risk %>%
-  distinct(risk_no, .keep_all = TRUE) %>%
-  arrange(risk_no)
+  arrange(risk_no, desc(level_date)) %>%                  # get the latest level
+  distinct(risk_no, .keep_all = TRUE)
 
 # Cleanup
 rm(risk_oracle)
@@ -353,6 +356,27 @@ rel_action_action <- rel_action_action %>%
 rm(rel_action_action_oracle)
 ```
 
+```{r wrangle-rel-dec-actionc, echo=FALSE, warning=FALSE, message=FALSE}
+# Filter for "Active" records
+rel_dec_action <- rel_dec_action_oracle %>%
+  filter(DECISION_ACTIVE == "Yes" & ACTION_ACTIVE == "Yes")
+
+# Cleanup id numbers for sorting
+rel_dec_action <- format_id(rel_dec_action, "DECISION_NO")
+rel_dec_action <- format_id(rel_dec_action, "ACTION_NO")
+
+# Create hyperlinks
+rel_dec_action <- id_link(rel_dec_action, "decision_no")
+rel_dec_action <- id_link(rel_dec_action, "action_no")
+
+# Reorder fields
+rel_dec_action <- rel_dec_action %>%
+  relocate(ACTION_ACTIVE, .after = action_no_link)
+
+# Cleanup
+rm(rel_dec_action_oracle)
+```
+
 ```{r wrangle-rel-dec-dec, echo=FALSE, warning=FALSE, message=FALSE}
 # Filter for "Active" records
 rel_dec_dec <- rel_dec_dec_oracle %>%
@@ -434,11 +458,6 @@ rel_risk_risk <- rel_risk_risk %>%
 # Cleanup
 rm(rel_risk_risk_oracle)
 ```
-
-```{r wrangle-rel-action-dec, echo=FALSE, warning=FALSE, message=FALSE}
-
-```
-
 
 <!-- Create Timelines -->
 ```{r create_timevis_df, echo=FALSE, warning=FALSE, message=FALSE}
