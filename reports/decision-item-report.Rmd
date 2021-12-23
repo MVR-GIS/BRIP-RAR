@@ -149,15 +149,8 @@ Outcomes
 **Engagement Level History**
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 if(length(events_item$FK_TABLE_ID) > 0) {
-  kbl(select(events_item, ENG_LEVEL, level_date, DESCRIPTION, duration_days),
-      col.names = c("Level", "Date", "Reason for level change", 
-                    "Duration (days)")) %>%
-    kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
-                                      "responsive"),
-                  full_width = TRUE, 
-                  position = "left") %>%
-    column_spec(1, width = "6em") %>%
-    column_spec(2, width = "8em")
+  eng_level_history(events_item, events_item$fk_table_id,
+                    show_item_link = FALSE)
 } else {
   cat("Engagement Level not set.")
 }
@@ -174,10 +167,7 @@ if(length(events_item$FK_TABLE_ID) > 0) {
 **Discussion Items**
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 if(length(discussion_item$fk_table_id) > 0) {
-kbl(select(discussion_item, DISCUSSION, RESPONSIBLE_POC, poc_review_date),
-    col.names = c("Discussion Topic", "POC", "Date")) %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
-                                      "responsive")) 
+  discussion_table(discussion_item, discussion_item$fk_table_id)
 } else {
   cat(" No discussion items.")
 }
@@ -192,7 +182,6 @@ kbl(select(discussion_item, DISCUSSION, RESPONSIBLE_POC, poc_review_date),
 
 ::::::::: {.section-box}
 **Related Decisions**
-
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 if(length(rel_dec_dec_item$related_decision_no) > 0) {
   kbl(select(rel_dec_dec_item, related_decision_link, RELATED_DECISION),
