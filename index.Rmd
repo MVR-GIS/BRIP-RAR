@@ -57,6 +57,7 @@ source("R/timeline.R")
 source("R/format_id.R")
 source("R/id_link.R")
 source("R/eng_level_history.R")
+source("R/discussion_table.R")
 ```
 
 <!-- chunk options -->
