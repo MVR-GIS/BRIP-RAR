@@ -42,7 +42,7 @@ eng_level_history <- function(events_df, items, show_item_link = TRUE) {
   # Conditionally style the table
   if(show_item_link) {
     eng_level_table %>%
-      column_spec(1, width = "6em") %>%
+      column_spec(1, width = "8em") %>%
       column_spec(2, width = "8em")
   }
 
@@ -51,9 +51,9 @@ eng_level_history <- function(events_df, items, show_item_link = TRUE) {
       pack_rows(index = table(events_level$id_type),
                 indent = FALSE,
                 label_row_css = "background-color: #dad8d8; color: #000000;") %>%
-      column_spec(1, width = "6em") %>%
-      column_spec(2, width = "4em") %>%
-      column_spec(3, width = "6em")
+      column_spec(1, width = "8em") %>%
+      column_spec(2, width = "6em") %>%
+      column_spec(3, width = "8em")
   }
 
   return(eng_level_table)
