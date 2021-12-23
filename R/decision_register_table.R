@@ -3,7 +3,7 @@
 #' @description Produces a decision register table of the input decision
 #'   data frame.
 #'
-#' @param decision   data frame; A data frame of risks.
+#' @param decision   data frame; A data frame of decisions.
 #'
 #' @return A kable table styled for reporting.
 #'
