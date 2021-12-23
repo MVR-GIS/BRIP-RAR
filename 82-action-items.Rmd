@@ -1,0 +1,23 @@
+# Action Items
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+# Set the heading level for items
+action_heading_level <- 2
+action_identifier_prefix <- "action-item"
+list_action_item <- TRUE
+
+# Iterate through items and produce an item-report for each item.
+action_item_reports <- lapply(action$action_no, function(x) {
+  knitr::knit_child("reports/action-item-report.Rmd", 
+                    envir = environment(), 
+                    quiet = TRUE)
+})
+
+# Add page break divs
+page_break_div <- paste(" ", "::: {.page-break}", ":::", " ", sep = "\n")
+page_breaks <- rep(page_break_div, 
+                   length(action$action_no))
+
+# Expand the list of reports
+cat(unlist(action_item_reports), sep = page_breaks)
+```
