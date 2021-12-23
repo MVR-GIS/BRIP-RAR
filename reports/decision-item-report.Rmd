@@ -31,6 +31,14 @@ rel_risk_dec_item <- rel_risk_dec %>%
 ```
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Create rationale, implications, outcomes table
+rationale <- decision_item %>%
+  select(RATIONALE, IMPLICATIONS, OUTCOMES) %>%
+  pivot_longer(cols = everything()) %>%
+  mutate(name = str_to_title(str_to_lower(name)))
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 decision_feedback_link <- paste0("mailto:", 
                                  qa_email_address, 
                                  "?subject=Decision Item: ", 
@@ -110,35 +118,15 @@ Last Review Date
 :::
 :::::
 
-<!-- Risk Attributes line 3 -->
-::::: {.grid-5w-2h}
-::: {.var-name}
-Rationale
-:::
-::: {.var-value}
-`r decision_item$RATIONALE`
-:::
-:::::
-
-<!-- Risk Attributes line 4 -->
-::::: {.grid-5w-2h}
-::: {.var-name}
-Implications
-:::
-::: {.var-value}
-`r decision_item$IMPLICATIONS`
-:::
-:::::
-
-<!-- Risk Attributes line 5 -->
-::::: {.grid-5w-2h}
-::: {.var-name}
-Outcomes
-:::
-::: {.var-value}
-`r decision_item$OUTCOMES`
-:::
-:::::
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Display rationale table
+kbl(rationale, col.names = NULL) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
+                                      "responsive"),
+                full_width = FALSE, 
+                position = "left") %>%
+  column_spec(1, bold = TRUE, width = "5em", border_right = TRUE)
+```
 ::::::::
 
 :::::: {.white-box}
