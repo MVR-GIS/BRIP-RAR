@@ -1,0 +1,134 @@
+# Make a connection from R to Oracle
+Making a connection from R to Oracle requires drivers that are provided by Oracle in the form of the Oracle Instant Client. 
+
+## Install the Oracle Instant Client
+* Browse to the [Oracle Instant Client Downloads](https://www.oracle.com/database/technologies/instant-client/downloads.html) page. 
+* Choose the Microsoft Windows (x64) platform. 
+* For the latest version, download the Oracle Instant Client "Basic Package", "SDK Package", and "ODBC Package" .zip archives. 
+* Copy the downloaded .zip archives to the `C:\oracle64` folder. 
+* First unarchive the Basic Package .zip into the `C:\oracle64` folder using the 7-Zip "Extract Here" option. The .zip archive contains a sub folder containing the Oracle Instant Client files for that version. The structure of this folder should look like this `C:\oracle64\instantclient_21_3` for version 21.3.
+* Repeat this process for the SDK Package and the ODBC Package. These two packages will simply add files and sub folders to the folder created by the Basic Package. 
+
+### Add the Oracle Instant Client to the `PATH`
+Adding the Oracle Instant Client to the path allows apps to find the install directory. 
+
+* In the Windows search bar, type "environment", and select the "Edit environment variables for your account" settings dialog. 
+* In the "Environment Variables" dialog box, in the upper section labeled "User variables for <Your Account>", select the "PATH" variable, and click the "Edit..." button. 
+* In the "Edit environmental variable" dialog, click the "New" button, and copy and paste the path the the Oracle Instant Client install directory you created above. Click the "OK" button. 
+
+### Add Oracle system/user variables
+Follow these instructions to create the `ORACLE_HOME`, `OCI_INC`, and `OCI_LIB64` user variables. Specifying these variables allows Oracle to find its specific components. 
+
+* In the "Environment Variables" dialog box, in the upper section labeled "User variables for <Your Account>", click the "New" button. 
+* In the "Variable name:" text box type `ORACLE_HOME` and in the "Variable value:" text box copy-paste the path to the Oracle Instant Client (e.g., `C:/oracle64/instantclient_21_3`). 
+* In the "Variable name:" text box type `OCI_INC` and in the "Variable value:" text box copy-paste the path to the Oracle Instant Client (e.g., `C:/oracle64/instantclient_21_3/sdk/include`). 
+* In the "Variable name:" text box type `OCI_LIB64` and in the "Variable value:" text box copy-paste the path to the Oracle Instant Client (e.g., `C:/oracle64/instantclient_21_3`). 
+
+### Set R environment variables (optional)
+As an alternative to setting the system/user environmental variables, you can specify within an R environment where to find the Oracle Instant Client by adding the following chunk to your R project. This chunk is not required if you have set the system/user environment variables. 
+
+```{r}
+Sys.setenv(
+  'ORACLE_HOME' = 'C:/oracle64/instantclient_21_3',
+  'OCI_INC'     = 'C:/oracle64/instantclient_21_3/sdk/include',
+  'OCI_LIB64'   = 'C:/oracle64/instantclient_21_3'
+  )
+```
+
+
+## Install the `ROracle` package
+[ROracle](https://www.oracle.com/database/technologies/appdev/roracle.html) is an open source Oracle developed and maintained R package available on CRAN. Requires Oracle Instant Client (lighter) or Oracle Database Client (heavier). Supposedly faster than RJDBC or RODBC. 
+
+However, for the past several years, the `ROracle` package takes a little extra work to get it installed. Follow these instructions for installation. 
+
+```{r}
+install.packages("ROracle")
+```
+
+You will prompted to build the package as it is currently only available as a source package for recent R versions. Since at least 2018, during install you will get the following error:
+
+```
+/mingw64/bin/gcc  -I"C:/PROGRA~1/R/R-41~1.0/include" -DNDEBUG -I./oci         -O2 -Wall  -std=gnu99 -mfpmath=sse -msse2 -mstackrealign  -c rodbi.c -o rodbi.o
+In file included from rooci.h:75,
+                 from rodbi.c:181:
+./oci/oci.h:801:10: fatal error: ociver.h: No such file or directory
+ #include <ociver.h>
+          ^~~~~~~~~~
+compilation terminated.
+```
+
+As identified in this [stackoverflow post](https://stackoverflow.com/questions/52215350/roracle-package-installation-failure), it appears that this error is caused by not having admin rights to the R install folder. This post identifies two workarounds. Only the second workaround will work without admin rights. The second workaround modifies the source package to prevent copying files to the R install directory. Follow these instructions to apply the workaround:
+
+* Repeat the install using the code below, this time saving the source package to the `ROracle` folder in the current working directory. 
+
+```{r}
+install.packages("ROracle", destdir = "ROracle")
+```
+
+* The install will fail again, but this time the source package has been saved to the `ROracle` folder. 
+* Decompress the `.tar.gz` and then unarchive the `.tar` file. You will then be left with an `ROracle` folder inside the `ROracle` folder in your working directory. 
+* Open the `..\ROracle\ROracle\configure.win` file in RStudio. 
+* Add the following line to the end of the file: `cp ${ROCI_INC}/ociver.h ./src/oci`. Then save and close the file. 
+* Delete the downloaded `ROracle*.tar.gz` file(s) from the `\ROracle` folder. 
+* In a terminal window, change to your working directory (e.g., `cd C:\Users\<your account>\<project folder>`). Then change to the ROracle source directory (i.e., `cd ROracle`). 
+* Run the install command on your updated package folder: `R CMD INSTALL ROracle`
+
+### Test the `ROracle` install
+```{r}
+library(DBI)
+library(ROracle)
+```
+
+```{r}
+user_name <- "BrandonRoad"
+pass_word <- rstudioapi::askForPassword()
+```
+
+```{r}
+drv  <- DBI::dbDriver("Oracle")
+host <- "egis-db"
+port <- "1521"
+sid  <- "B5SDEDP1"
+connect_string <- paste0(
+  "(DESCRIPTION=",
+  "(ADDRESS=(PROTOCOL=tcp)(HOST=", host, ")(PORT=", port, "))",
+  "(CONNECT_DATA=(SID=", sid, ")))")
+ 
+con_roracle <- ROracle::dbConnect(drv, 
+                                  username = user_name, 
+                                  password = pass_word,
+                                  dbname   = connect_string)
+```
+
+```{r}
+risk_main <- ROracle::dbReadTable(con_roracle, "RISK_MAIN_VIEW")
+```
+
+
+## Oracle ODBC
+Requires an administrator to run the `odbc_install.exe` file to install the Oracle ODBC driver. This makes the Oracle ODBC driver available within the Windows "ODBC Data Source Administrator" app's "Drivers" tab. The Oracle driver previously supplied by Microsoft has been removed from recent version fo Windows.
+
+```{r}
+odbc::odbcListDrivers()
+```
+
+
+```{r, eval=FALSE}
+# Doesn't work
+# Reinstall Oracle ODBC Client for 21.3 to verify
+con_odbc <- DBI::dbConnect(odbc::odbc(),
+                           driver   = "Oracle in instantclient_19_8",
+                           database = sid,
+                           uid      = user_name,
+                           pwd      = pass_word,
+                           host     = host,
+                           port     = port)
+```
+
+## RODBC
+
+```{r}
+library(RODBC)
+```
+
+
