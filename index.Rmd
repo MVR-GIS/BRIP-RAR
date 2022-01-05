@@ -62,6 +62,7 @@ source("R/eng_level_history.R")
 source("R/discussion_table.R")
 source("R/related_block_table.R")
 source("R/remove_test_records.R")
+source("R/convert_date.R")
 ```
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
@@ -87,6 +88,13 @@ rel_dec_action_oracle    <- read_csv("data/REL_DEC_ACTION_MAIN_VIEW.csv")
 rel_risk_action_oracle   <- read_csv("data/REL_RISK_ACTION_MAIN_VIEW.csv")
 rel_risk_dec_oracle      <- read_csv("data/REL_RISK_DEC_MAIN_VIEW.csv")
 rel_risk_risk_oracle     <- read_csv("data/REL_RISK_RISK_MAIN_VIEW.csv")
+
+# Convert date fields to POSITct
+risk_oracle       <- convert_date(risk_oracle)
+events_oracle     <- convert_date(events_oracle)
+discussion_oracle <- convert_date(discussion_oracle)
+action_oracle     <- convert_date(action_oracle)
+decision_oracle   <- convert_date(decision_oracle)
 ```
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
@@ -113,17 +121,28 @@ con_roracle <- ROracle::dbConnect(drv,
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 # Import tables from Oracle
-risk_oracle              <- ROracle::dbReadTable(con_roracle, "RISK_MAIN_VIEW")
-events_oracle            <- ROracle::dbReadTable(con_roracle, "EVENTS_MAIN_VIEW")
-discussion_oracle        <- ROracle::dbReadTable(con_roracle, "DISCUSSION_LOG_MAIN_VIEW")
-action_oracle            <- ROracle::dbReadTable(con_roracle, "ACTION_MAIN_VIEW")
-decision_oracle          <- ROracle::dbReadTable(con_roracle, "DECISION_MAIN_VIEW")
-rel_action_action_oracle <- ROracle::dbReadTable(con_roracle, "REL_ACTION_ACTION_MAIN_VIEW")
-rel_dec_dec_oracle       <- ROracle::dbReadTable(con_roracle, "REL_DEC_DEC_MAIN_VIEW")
-rel_dec_action_oracle    <- ROracle::dbReadTable(con_roracle, "REL_DEC_ACTION_MAIN_VIEW")
-rel_risk_action_oracle   <- ROracle::dbReadTable(con_roracle, "REL_RISK_ACTION_MAIN_VIEW")
-rel_risk_dec_oracle      <- ROracle::dbReadTable(con_roracle, "REL_RISK_DEC_MAIN_VIEW")
-rel_risk_risk_oracle     <- ROracle::dbReadTable(con_roracle, "REL_RISK_RISK_MAIN_VIEW")
+risk_oracle              <- ROracle::dbReadTable(con_roracle, 
+                                                 "RISK_MAIN_VIEW")
+events_oracle            <- ROracle::dbReadTable(con_roracle, 
+                                                 "EVENTS_MAIN_VIEW")
+discussion_oracle        <- ROracle::dbReadTable(con_roracle, 
+                                                 "DISCUSSION_LOG_MAIN_VIEW")
+action_oracle            <- ROracle::dbReadTable(con_roracle, 
+                                                 "ACTION_MAIN_VIEW")
+decision_oracle          <- ROracle::dbReadTable(con_roracle, 
+                                                 "DECISION_MAIN_VIEW")
+rel_action_action_oracle <- ROracle::dbReadTable(con_roracle, 
+                                                 "REL_ACTION_ACTION_MAIN_VIEW")
+rel_dec_dec_oracle       <- ROracle::dbReadTable(con_roracle, 
+                                                 "REL_DEC_DEC_MAIN_VIEW")
+rel_dec_action_oracle    <- ROracle::dbReadTable(con_roracle, 
+                                                 "REL_DEC_ACTION_MAIN_VIEW")
+rel_risk_action_oracle   <- ROracle::dbReadTable(con_roracle, 
+                                                 "REL_RISK_ACTION_MAIN_VIEW")
+rel_risk_dec_oracle      <- ROracle::dbReadTable(con_roracle, 
+                                                 "REL_RISK_DEC_MAIN_VIEW")
+rel_risk_risk_oracle     <- ROracle::dbReadTable(con_roracle, 
+                                                 "REL_RISK_RISK_MAIN_VIEW")
 
 # Disconnect from the database
 ROracle::dbDisconnect(con_roracle)
@@ -146,13 +165,10 @@ risk <- risk_oracle %>%
 # Remove test data
 risk <- remove_test_records(risk, "RISK_NO")
 
-# Convert date character fields to POSIXct and format format for date
+# Rename date fields
 risk <- risk %>%
-  mutate(start_date       = lubridate::dmy_hms(START_DATE),
-         end_date         = lubridate::dmy_hms(END_DATE),
-         level_date       = lubridate::dmy_hms(LEVEL_DATE), 
-         poc_review_date  = lubridate::dmy_hms(POC_REVIEW_DATE),
-         last_edited_date = lubridate::dmy_hms(LAST_EDITED_DATE))
+  rename_with(.fn = str_to_lower, 
+              .cols = ends_with("_date"))
 
 # Process assessment fields
 risk <- risk %>%
@@ -189,7 +205,9 @@ risk <- id_link(risk, "risk_no")
 
 # Reorder fields
 risk <- risk %>%
-  relocate(CONCERNS, .after = RISK_NO) %>%
+  relocate(risk_no, .after = RISK_NO) %>%
+  relocate(risk_no_link, .after = risk_no) %>%
+  relocate(CONCERNS, .after = risk_no_link) %>%
   relocate(COST_RISK, .after = COST_IMPACT_PER_PROJECT) %>%
   relocate(cost_risk_color,  .after = COST_RISK) %>%
   relocate(SCHEDULE_RISK, .after = SCHEDULE_IMPACT_PER_PROJECT) %>%
@@ -214,10 +232,13 @@ risk <- risk %>%
 ```
 
 ```{r wrangle-events, echo=FALSE, warning=FALSE, message=FALSE}
-# Set date fields
-events <- events_oracle %>%
-  mutate(level_date = dmy_hms(LEVEL_DATE),
-         level_date = formattable(level_date, format = "%Y-%m-%d"))
+# Remove test records
+events <- remove_test_records(events_oracle, "FK_TABLE_ID") 
+
+# Rename date fields
+events <- events %>%
+  rename_with(.fn = str_to_lower, 
+              .cols = ends_with("_date"))
 
 # Set engagement level integer field
 events <- events %>%
@@ -262,9 +283,13 @@ rm(events_oracle)
 ```
 
 ```{r wrangle-discussion, echo=FALSE, warning=FALSE, message=FALSE}
-# Set date fields
-discussion <- discussion_oracle %>%
-  mutate(poc_review_date = lubridate::dmy_hms(POC_REVIEW_DATE))
+# Remove test records
+discussion <- remove_test_records(discussion_oracle, "FK_TABLE_ID")
+
+# Rename date fields
+discussion <- discussion %>%
+  rename_with(.fn = str_to_lower, 
+              .cols = ends_with("_date"))
 
 # Cleanup discussion number for sorting
 discussion <- format_id(discussion, "FK_TABLE_ID")
@@ -285,17 +310,17 @@ rm(discussion_oracle)
 ```
 
 ```{r wrangle-action, echo=FALSE, warning=FALSE, message=FALSE}
+# Remove test records
+action <- remove_test_records(action_oracle, "ACTION_NO")
+
 # Filter for "Active" records
-action <- action_oracle %>%
+action <- action %>%
   filter(ACTIVE == "Yes")
 
-# Convert date character fields to POSIXct
+# Rename date fields
 action <- action %>%
-  mutate(start_date       = lubridate::dmy_hms(START_DATE),
-         end_date         = lubridate::dmy_hms(END_DATE),
-         poc_review_date  = lubridate::dmy_hms(POC_REVIEW_DATE),
-         level_date       = lubridate::dmy_hms(LEVEL_DATE),
-         last_edited_date = lubridate::dmy_hms(LAST_EDITED_DATE))
+  rename_with(.fn = str_to_lower, 
+              .cols = ends_with("_date"))
 
 # Set engagement level integer, risk_cat_code
 action <- action %>%
@@ -329,16 +354,17 @@ rm(action_oracle)
 ```
 
 ```{r wrangle-decision, echo=FALSE, warning=FALSE, message=FALSE}
+# Remove test records
+decision <- remove_test_records(decision_oracle, "DECISION_NO")
+
 # Filter for "Active" records
-decision <- decision_oracle %>%
+decision <- decision %>%
   filter(ACTIVE == "Yes")
 
-# Convert date character fields to POSIXct
+# Rename date fields
 decision <- decision %>%
-  mutate(decision_date    = lubridate::dmy_hms(DECISION_DATE),
-         poc_review_date  = lubridate::dmy_hms(POC_REVIEW_DATE),
-         level_date       = lubridate::dmy_hms(LEVEL_DATE),
-         last_edited_date = lubridate::dmy_hms(LAST_EDITED_DATE))
+  rename_with(.fn = str_to_lower, 
+              .cols = ends_with("_date"))
 
 # Set engagement level integer, risk_cat_code
 decision <- decision %>%
@@ -373,8 +399,12 @@ rm(decision_oracle)
 
 <!-- Wrangle Related Items -->
 ```{r wrangle-rel-action-action, echo=FALSE, warning=FALSE, message=FALSE}
+# Remove test records
+rel_action_action <- remove_test_records(rel_action_action_oracle, "ACTION_NO")
+rel_action_action <- remove_test_records(rel_action_action, "RELATED_ACTION")
+
 # Filter for "Active" records
-rel_action_action <- rel_action_action_oracle %>%
+rel_action_action <- rel_action_action %>%
   filter(ACTION_ACTIVE == "Yes" & REL_ACTION_ACTIVE == "Yes")
 
 # Cleanup id numbers for sorting
@@ -393,8 +423,12 @@ rm(rel_action_action_oracle)
 ```
 
 ```{r wrangle-rel-dec-actionc, echo=FALSE, warning=FALSE, message=FALSE}
+# Remove test records
+rel_dec_action <- remove_test_records(rel_dec_action_oracle, "DECISION_NO")
+rel_dec_action <- remove_test_records(rel_dec_action, "ACTION_NO")
+
 # Filter for "Active" records
-rel_dec_action <- rel_dec_action_oracle %>%
+rel_dec_action <- rel_dec_action %>%
   filter(DECISION_ACTIVE == "Yes" & ACTION_ACTIVE == "Yes")
 
 # Cleanup id numbers for sorting
@@ -414,8 +448,12 @@ rm(rel_dec_action_oracle)
 ```
 
 ```{r wrangle-rel-dec-dec, echo=FALSE, warning=FALSE, message=FALSE}
+# Remove test records
+rel_dec_dec <- remove_test_records(rel_dec_dec_oracle, "DECISION_NO")
+rel_dec_dec <- remove_test_records(rel_dec_dec, "RELATED_DECISION")
+
 # Filter for "Active" records
-rel_dec_dec <- rel_dec_dec_oracle %>%
+rel_dec_dec <- rel_dec_dec %>%
   filter(DECISION_ACTIVE == "Yes" & REL_DEC_ACTIVE == "Yes")
 
 # Cleanup id numbers for sorting
@@ -434,8 +472,12 @@ rm(rel_dec_dec_oracle)
 ```
 
 ```{r wrangle-rel-risk-action, echo=FALSE, warning=FALSE, message=FALSE}
+# Remove test records
+rel_risk_action <- remove_test_records(rel_risk_action_oracle, "RISK_NO")
+rel_risk_action <- remove_test_records(rel_risk_action, "ACTION_NO")
+
 # Filter for "Active" records
-rel_risk_action <- rel_risk_action_oracle %>%
+rel_risk_action <- rel_risk_action %>%
   filter(RISK_ACTIVE == "Yes" & ACTION_ACTIVE == "Yes")
 
 # Cleanup id fields for sorting
@@ -455,8 +497,12 @@ rm(rel_risk_action_oracle)
 ```
 
 ```{r wrangle-rel-risk-dec, echo=FALSE, warning=FALSE, message=FALSE}
+# Remove test records
+rel_risk_dec <- remove_test_records(rel_risk_dec_oracle, "RISK_NO")
+rel_risk_dec <- remove_test_records(rel_risk_dec, "DECISION_NO")
+
 # Filter for "Active" records
-rel_risk_dec <- rel_risk_dec_oracle %>%
+rel_risk_dec <- rel_risk_dec %>%
   filter(RISK_ACTIVE == "Yes" & DECISION_ACTIVE == "Yes")
 
 # Cleanup id fields for sorting
@@ -476,8 +522,12 @@ rm(rel_risk_dec_oracle)
 ```
 
 ```{r wrangle-rel-risk-risk, echo=FALSE, warning=FALSE, message=FALSE}
+# Remove test records
+rel_risk_risk <- remove_test_records(rel_risk_risk_oracle, "RISK_NO")
+rel_risk_risk <- remove_test_records(rel_risk_risk, "RELATED_RISK")
+
 # Filter for "Active" records
-rel_risk_risk <- rel_risk_risk_oracle %>%
+rel_risk_risk <- rel_risk_risk %>%
   filter(RISK_ACTIVE == "Yes" & REL_RISK_ACTIVE == "Yes")
 
 # Cleanup id numbers for sorting
