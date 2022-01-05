@@ -14,6 +14,8 @@
 "TR-11","No","EN-1","The assumption made during the feasibility study was the site could be used for construction with some remediation. Environmental site investigation may result in unusable site or high cost.","Yes"
 "TR-11","No","RE-1","Right descending bank may not be available for use","Yes"
 "TR-11","No","TR-6h","Utilities, Footprint, Operations, Location (RDB vs LDB)","No"
+"TR-17","Yes","TR-19","Need to establish a baseline to measure against the 15 min delay time (study assumption). 15 min. may not be accurate and the barriers may not be as effective as in the feasibility report.","Yes"
+"TR-19","Yes","TR-17","Balance of water between hydro power and flushing lock may be difficult.","Yes"
 "TR-6e","Yes","TR-6g","Navigation delays during construction","Yes"
 "TR-6f","Yes","RE-1","Right descending bank may not be available for use","Yes"
 "TR-6g","Yes","TR-6e","Navigation delays during operations","Yes"
