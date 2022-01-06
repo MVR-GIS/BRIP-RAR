@@ -38,6 +38,9 @@ library(knitr)
 library(rmarkdown)
 library(rlang)
 library(lubridate)
+library(DBI)
+library(ROracle)
+library(keyring)
 library(tools)
 library(kableExtra)
 library(pander)
@@ -64,6 +67,7 @@ source("R/related_block_table.R")
 source("R/remove_test_records.R")
 source("R/convert_date.R")
 ```
+
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
 # Manually export all views from MVR egis-db BrandonRoad to the data folder
@@ -98,9 +102,12 @@ decision_oracle   <- convert_date(decision_oracle)
 ```
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
-# Set Oracle username and password
+# Use the `keyring` package to save the database username and password in the 
+# system credential store
+key_service <- "egis-db-brandonroad"
 user_name <- "BrandonRoad"
-pass_word <- rstudioapi::askForPassword()
+# Set once on each computer prior to building book
+# keyring::key_set(service = key_service, username = user_name)
 
 # Make Oracle connection
 drv  <- DBI::dbDriver("Oracle")
@@ -114,7 +121,7 @@ connect_string <- paste0(
  
 con_roracle <- ROracle::dbConnect(drv, 
                                   username = user_name, 
-                                  password = pass_word,
+                                  password = key_get(key_service, user_name),
                                   dbname   = connect_string)
 ```
 
@@ -197,7 +204,6 @@ risk <- format_id(risk, "RISK_NO")
 risk <- risk %>%
   select(!c(PDT_DISC_CONC, PDT_DISC_LIKELI_IMPACT,
             PDT_DISC_RISK_MANAG_STRATEGY, ACTION_ITEMS, LESSONS_LEARNED,
-            START_DATE, END_DATE, LEVEL_DATE, POC_REVIEW_DATE, LAST_EDITED_DATE,
             FK_TABLE_ID))
 
 # Create hyperlink to risk_no
@@ -249,8 +255,7 @@ events <- format_id(events, "FK_TABLE_ID")
 
 # Remove unused fields
 events <- events %>%
-  select(!c(LEVEL_DATE, CREATED_USER, CREATED_DATE, 
-            LAST_EDITED_USER, LAST_EDITED_DATE))
+  select(!c(CREATED_USER, LAST_EDITED_USER))
 
 # Create hyperlink to fk_table_id
 events <- id_link(events, "fk_table_id")
@@ -279,7 +284,7 @@ events <- events %>%
   ungroup(TABLE_NAME, fk_table_id)
 
 # Cleanup
-rm(events_oracle)
+#rm(events_oracle)
 ```
 
 ```{r wrangle-discussion, echo=FALSE, warning=FALSE, message=FALSE}
@@ -296,8 +301,7 @@ discussion <- format_id(discussion, "FK_TABLE_ID")
 
 # Remove unused fields
 discussion <- discussion %>%
-  select(!c(LOGGED_BY, LOG_DATE, CREATED_USER, CREATED_DATE, 
-            LAST_EDITED_USER, LAST_EDITED_DATE, POC_REVIEW_DATE, ACTIVE))
+  select(!c(LOGGED_BY, CREATED_USER, LAST_EDITED_USER, ACTIVE))
 
 # Reorder fields
 discussion <- discussion %>%
@@ -306,7 +310,7 @@ discussion <- discussion %>%
   relocate(poc_review_date, .after = RESPONSIBLE_POC)
 
 # Cleanup
-rm(discussion_oracle)
+#rm(discussion_oracle)
 ```
 
 ```{r wrangle-action, echo=FALSE, warning=FALSE, message=FALSE}
@@ -334,8 +338,7 @@ action <- id_link(action, "action_no")
 
 # Remove unused fields
 action <- action %>%
-  select(!c(START_DATE, END_DATE, POC_REVIEW_DATE,
-            FK_TABLE_ID, LEVEL_DATE, LAST_EDITED_DATE))
+  select(!c(FK_TABLE_ID))
 
 # Reorder fields
 action <- action %>%
@@ -350,7 +353,7 @@ action <- action %>%
   arrange(action_no)
 
 # Cleanup
-rm(action_oracle)
+#rm(action_oracle)
 ```
 
 ```{r wrangle-decision, echo=FALSE, warning=FALSE, message=FALSE}
@@ -378,8 +381,7 @@ decision <- id_link(decision, "decision_no")
 
 # Remove unused fields
 decision <- decision %>%
-  select(!c(DECISION_DATE, POC_REVIEW_DATE,
-            FK_TABLE_ID, LEVEL_DATE, LAST_EDITED_DATE))
+  select(!c(FK_TABLE_ID))
 
 # Reorder fields
 decision <- decision %>%
@@ -393,7 +395,7 @@ decision <- decision %>%
   arrange(decision_no)
 
 # Cleanup
-rm(decision_oracle)
+#rm(decision_oracle)
 ```
 
 
@@ -419,7 +421,7 @@ rel_action_action <- rel_action_action %>%
   relocate(REL_ACTION_ACTIVE, .after = related_action_link)
 
 # Cleanup
-rm(rel_action_action_oracle)
+#rm(rel_action_action_oracle)
 ```
 
 ```{r wrangle-rel-dec-actionc, echo=FALSE, warning=FALSE, message=FALSE}
@@ -444,7 +446,7 @@ rel_dec_action <- rel_dec_action %>%
   relocate(ACTION_ACTIVE, .after = action_no_link)
 
 # Cleanup
-rm(rel_dec_action_oracle)
+#rm(rel_dec_action_oracle)
 ```
 
 ```{r wrangle-rel-dec-dec, echo=FALSE, warning=FALSE, message=FALSE}
@@ -468,7 +470,7 @@ rel_dec_dec <- rel_dec_dec %>%
   relocate(REL_DEC_ACTIVE, .after = related_decision_link)
 
 # Cleanup
-rm(rel_dec_dec_oracle)
+#rm(rel_dec_dec_oracle)
 ```
 
 ```{r wrangle-rel-risk-action, echo=FALSE, warning=FALSE, message=FALSE}
@@ -493,7 +495,7 @@ rel_risk_action <- rel_risk_action %>%
   relocate(ACTION_ACTIVE, .after = action_no_link)
 
 # Cleanup
-rm(rel_risk_action_oracle)
+#rm(rel_risk_action_oracle)
 ```
 
 ```{r wrangle-rel-risk-dec, echo=FALSE, warning=FALSE, message=FALSE}
@@ -518,7 +520,7 @@ rel_risk_dec <- rel_risk_dec %>%
   relocate(DECISION_ACTIVE, .after = decision_no_link)
 
 # Cleanup
-rm(rel_risk_dec_oracle)
+#rm(rel_risk_dec_oracle)
 ```
 
 ```{r wrangle-rel-risk-risk, echo=FALSE, warning=FALSE, message=FALSE}
@@ -542,7 +544,7 @@ rel_risk_risk <- rel_risk_risk %>%
   relocate(REL_RISK_ACTIVE, .after = related_risk_link)
 
 # Cleanup
-rm(rel_risk_risk_oracle)
+#rm(rel_risk_risk_oracle)
 ```
 
 <!-- Create Timelines -->
