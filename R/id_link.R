@@ -2,11 +2,19 @@
 #'
 #' @description Adds a markdown hyperlink target based on the id_field.
 #'
+#' @export
+#'
 #' @param df         data frame; data frame containing the field to be created
 #' @param id_field   character; id field
 #'
 #' @return The input data frame with a new field formatted according to
 #' markdown link requirements.
+#'
+#' @examples
+#'
+#' @importFrom rlang enquo sym quo_name
+#' @importFrom dplyr mutate select relocate
+#' @importFrom stringr str_extract str_to_lower
 #'
 id_link <- function(df, id_field) {
   # Add id_type field
@@ -15,7 +23,7 @@ id_link <- function(df, id_field) {
 
   # Determine df type (risk|action|decision, event|discussion), if records exist
   if(length(df[,1] > 0)) {
-    id_lower <- tolower(id_field)
+    id_lower <- str_to_lower(id_field)
 
     ## Is risk|action|decision register? (risk_no|action_no|decision_no)
     if(str_extract(id_lower, "risk|action|decision") %in% c("risk", "action",
@@ -24,7 +32,7 @@ id_link <- function(df, id_field) {
     }
     ## Is event|discussion table? (fk_table_id)
     if(str_extract(id_lower, "table") %in% c("table")) {
-      table_lower <- tolower(df$TABLE_NAME)
+      table_lower <- str_to_lower(df$TABLE_NAME)
       df$id_type <- str_extract(table_lower, "risk|action|decision")
     }
   }
@@ -45,11 +53,11 @@ id_link <- function(df, id_field) {
   # Create the links (if records in table)
   if(length(df[,1] > 0)) {
     df <- df %>%
-      mutate(id_field_lower = tolower(!!sym(quo_name(in_col))),
+      mutate(id_field_lower = str_to_lower(!!sym(quo_name(in_col))),
              id_link = str_c("[",
                              !!sym(quo_name(in_col)),
                              "](",
-                             df$id_target,
+                             id_target,
                              id_field_lower,
                              ")")) %>%
       mutate(!!id_field_link := id_link) %>%
