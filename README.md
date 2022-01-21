@@ -35,4 +35,4 @@ Check out the [NEWS](News.md) for details on the latest updates.
 ***
 
 ## Read the Report
-Read the report here: [Brandon Road Interbasin Project Risk Analysis Report]https://main.d2tmzs5n6kdoxm.amplifyapp.com/index.html)
+Read the report here: [Brandon Road Interbasin Project Risk Analysis Report](https://main.d2tmzs5n6kdoxm.amplifyapp.com/index.html)
