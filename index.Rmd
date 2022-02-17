@@ -107,7 +107,7 @@ decision_oracle   <- convert_date(decision_oracle)
 key_service <- "egis-db-brandonroad"
 user_name <- "BrandonRoad"
 # Set once on each computer prior to building book
-# keyring::key_set(service = key_service, username = user_name)
+#keyring::key_set(service = key_service, username = user_name)
 
 # Make Oracle connection
 drv  <- DBI::dbDriver("Oracle")
