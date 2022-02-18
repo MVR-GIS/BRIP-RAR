@@ -215,6 +215,23 @@ Trend
 `r cat(' ')`
 ::::::
 
+:::::::: {.section-box}  
+**Discussion Items**
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+if(length(discussion_item$fk_table_id) > 0) {
+  discussion_table(discussion_item, discussion_item$fk_table_id)
+} else {
+  cat(" No discussion items.")
+}
+```
+
+<!-- End Risk Discussion Items -->
+:::::::: 
+
+:::::: {.white-box}
+`r cat(' ')`
+::::::
+
 :::::::: {.section-box}
 **Efficacy-Cost-Schedule Rating**  
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
@@ -266,23 +283,6 @@ if(length(events_item$fk_table_id) > 0) {
 
 <!-- End Risk Engagement Level History -->
 ::::::::  
-
-:::::: {.white-box}
-`r cat(' ')`
-::::::
-
-:::::::: {.section-box}  
-**Discussion Items**
-```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-if(length(discussion_item$fk_table_id) > 0) {
-  discussion_table(discussion_item, discussion_item$fk_table_id)
-} else {
-  cat(" No discussion items.")
-}
-```
-
-<!-- End Risk Discussion Items -->
-:::::::: 
 
 :::::: {.white-box}
 `r cat(' ')`
