@@ -270,24 +270,6 @@ kbl(filter(risk_rating, variable != "Risk Color"),
 `r cat(' ')`
 ::::::
 
-:::::::: {.section-box}
-**Engagement Level History**
-```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-if(length(events_item$fk_table_id) > 0) {
-  eng_level_history(events_item, events_item$fk_table_id,
-                    show_item_link = FALSE)
-} else {
-  cat("Engagement Level not set.")
-}
-```
-
-<!-- End Risk Engagement Level History -->
-::::::::  
-
-:::::: {.white-box}
-`r cat(' ')`
-::::::
-
 ::::::::: {.section-box}
 **Related Risks**
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
@@ -357,6 +339,24 @@ if(length(rel_risk_dec_item$decision_no) > 0) {
 
 <!-- End Response Plan -->
 ::::::::::::  
+
+:::::: {.white-box}
+`r cat(' ')`
+::::::
+
+:::::::: {.section-box}
+**Engagement Level History**
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+if(length(events_item$fk_table_id) > 0) {
+  eng_level_history(events_item, events_item$fk_table_id,
+                    show_item_link = FALSE)
+} else {
+  cat("Engagement Level not set.")
+}
+```
+
+<!-- End Risk Engagement Level History -->
+::::::::  
 
 <!-- End Risk Item -->
 :::::::::::::: 
