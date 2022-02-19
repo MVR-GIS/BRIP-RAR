@@ -232,6 +232,23 @@ if(length(discussion_item$fk_table_id) > 0) {
 `r cat(' ')`
 ::::::
 
+:::::::: {.section-box}  
+**Impact and Outcome**
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+if(!is.na(risk_item$IMPACT) | !is.na(risk_item$OUTCOME)) {
+  impact_outcome_table(risk_item)
+} else {
+  cat(" No Impacts or Outcomes specified.")
+}
+```
+
+<!-- End Impact and Outcome Section -->
+:::::::: 
+
+:::::: {.white-box}
+`r cat(' ')`
+::::::
+
 :::::::: {.section-box}
 **Efficacy-Cost-Schedule Rating**  
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}

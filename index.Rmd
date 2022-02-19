@@ -66,6 +66,7 @@ source("R/discussion_table.R")
 source("R/related_block_table.R")
 source("R/remove_test_records.R")
 source("R/convert_date.R")
+source("R/impact_outcome_table.R")
 ```
 
 
