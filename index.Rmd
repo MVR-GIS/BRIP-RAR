@@ -668,7 +668,7 @@ igraph::V(relate_igraph)$size  <- igraph::degree(relate_igraph)*5
 # Identify blocks of related items
 relate_igraph_simp <- igraph::simplify(relate_igraph, 
                                        remove.multiple = TRUE,
-                                       remove.loops = FALSE)
+                                       remove.loops = TRUE)
 itemBlocks <- igraph::cohesive_blocks(relate_igraph_simp)
 
 # Extract of items within each block
