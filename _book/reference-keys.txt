@@ -1,10 +1,10 @@
 fig:unnamed-chunk-1
 fig:unnamed-chunk-9
 fig:unnamed-chunk-10
-fig:unnamed-chunk-50
 fig:unnamed-chunk-51
-fig:unnamed-chunk-60
+fig:unnamed-chunk-52
 fig:unnamed-chunk-61
+fig:unnamed-chunk-62
 fig:unnamed-chunk-19
 fig:unnamed-chunk-21
 fig:unnamed-chunk-23
@@ -81,6 +81,8 @@ summary-10
 risks-10
 project-timeline-11
 engineering-evaluation-report
+risk-table
+risk-details
 poc-reports-1
 risk-items
 action-items
