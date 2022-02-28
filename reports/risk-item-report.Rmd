@@ -98,7 +98,7 @@ risk_feedback_link <- paste0("mailto:",
 [&circlearrowright;](`r risk_feedback_link`)
 :::
 
-::: {.header}
+::: {.highlight}
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 pandoc_header(text = risk_item$risk_no, 
               level = risk_heading_level,
