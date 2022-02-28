@@ -1,13 +1,18 @@
 # Engineering Evaluation Report
 
-```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-# Subset risks for the current POC
+## Risk Table
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Subset risks for the current report
 risk_eer <- risk %>%
   filter(str_detect(TAGS, "#EER"))
 
+risk_register_table(risk_high)
+```
 
+## Risk Details
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 # Set the heading level for risk items
-risk_heading_level <- 2
+risk_heading_level <- 3
 risk_identifier_prefix <- "eer-risk-item"
 list_risk_item <- TRUE
 
