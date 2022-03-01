@@ -677,7 +677,7 @@ blocks_df <- as.data.frame(t(sapply(itemBlocks$blocks, as_ids)))
 block_list <- list()
 
 for(i in 2:length(colnames(blocks_df))) {
-  block_item <- data.frame(block_no = paste("Block", i - 1),
+  block_item <- data.frame(block_no = paste("Group", i - 1),
                            item_id = unlist(blocks_df[[i]]))
   block_list[[i]] <- block_item
 }
