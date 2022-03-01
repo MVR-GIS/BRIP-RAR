@@ -13,6 +13,7 @@ eng_level_history <- function(events_df, items, show_item_link = TRUE) {
   # Pre-process the data
   events_level <- events_df %>%
     mutate(id_type = str_to_title(id_type)) %>%
+    mutate(level_date = as_date(level_date)) %>%
     filter(fk_table_id %in% items)
 
   if(show_item_link) {

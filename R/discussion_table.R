@@ -12,7 +12,8 @@
 discussion_table <- function(discussion_df, items) {
   # pre-process the data
   discussion_level <- discussion_df %>%
-    select(DISCUSSION, RESPONSIBLE_POC, poc_review_date)
+    select(DISCUSSION, RESPONSIBLE_POC, poc_review_date) %>%
+    mutate(poc_review_date = as_date(poc_review_date))
 
   col_names <- c("Discussion Topic", "POC", "Date")
 

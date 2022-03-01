@@ -9,7 +9,8 @@
 #'
 decision_register_table <- function(decision) {
   dec_df <- decision %>%
-    select(decision_no_link, DECISION, APPROVAL_STATUS, decision_date)
+    select(decision_no_link, DECISION, APPROVAL_STATUS, decision_date) %>%
+    mutate(decision_date = as_date(decision_date))
 
   # Create the unstyled kable
   decision_register <- kbl(dec_df,
