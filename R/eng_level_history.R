@@ -44,7 +44,8 @@ eng_level_history <- function(events_df, items, show_item_link = TRUE) {
   if(show_item_link) {
     eng_level_table %>%
       column_spec(1, width = "8em") %>%
-      column_spec(2, width = "8em")
+      column_spec(2, width = "8em") %>%
+      column_spec(3, width = "8em")
   }
 
   if(!show_item_link) {
@@ -53,7 +54,7 @@ eng_level_history <- function(events_df, items, show_item_link = TRUE) {
                 indent = FALSE,
                 label_row_css = "background-color: #dad8d8; color: #000000;") %>%
       column_spec(1, width = "8em") %>%
-      column_spec(2, width = "6em") %>%
+      column_spec(2, width = "8em") %>%
       column_spec(3, width = "8em")
   }
 

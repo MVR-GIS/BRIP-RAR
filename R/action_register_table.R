@@ -23,7 +23,9 @@ action_register_table <- function(action) {
   # Group rows if records exist
   if(length(action_df$action_no) >= 1) {
     action_register <- action_register %>%
-      column_spec(1, width = "7em")
+      column_spec(1, width = "7em") %>%
+      column_spec(3, width = "6em") %>%
+      column_spec(4, width = "6em")
   }
 
   return(action_register)

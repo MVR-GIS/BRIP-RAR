@@ -24,7 +24,8 @@ discussion_table <- function(discussion_df, items) {
                                         "responsive"),
                   full_width = TRUE,
                   position = "left",
-                  font_size = 12)
+                  font_size = 12) %>%
+    column_spec(3, width = "6em")
 
   return(discussion_table)
 }

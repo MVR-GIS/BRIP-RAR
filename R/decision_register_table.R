@@ -23,7 +23,8 @@ decision_register_table <- function(decision) {
   # Group rows if records exist
   if(length(dec_df$decision_no) >= 1) {
     decision_register <- decision_register %>%
-    column_spec(1, width = "7em")
+    column_spec(1, width = "7em") %>%
+    column_spec(4, width = "6em")
   }
 
   return(decision_register)

@@ -30,7 +30,6 @@ This report using the following architecture:
 knitr::include_graphics(path = "diagrams/cloud_arch-workflow.drawio.svg")
 ```
 
-
 <!-- Libraries -->
 ```{r library, echo=FALSE, warning=FALSE, message=FALSE}
 library(tidyverse)
