@@ -130,13 +130,13 @@ Engagement Level
 Start Date
 :::
 ::: {.var-value}
-`r risk_item$start_date`
+`r as_date(risk_item$start_date)`
 :::
 ::: {.var-name}
 End Date
 :::
 ::: {.var-value}
-`r risk_item$end_date`
+`r as_date(risk_item$end_date)`
 :::
 ::: {.var-name}
 Status
@@ -198,7 +198,7 @@ Tech. POC
 Last Review Date
 :::
 ::: {.var-value}
-`r risk_item$poc_review_date`
+`r as_date(risk_item$poc_review_date)`
 :::
 ::: {.var-name}
 Trend
