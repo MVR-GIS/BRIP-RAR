@@ -48,6 +48,7 @@ library(treemapify)
 library(gridExtra)
 library(formattable)
 library(igraph)
+library(edgebundleR)
 ```
 
 ```{r source, echo=FALSE, warning=FALSE, message=FALSE}
