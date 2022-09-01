@@ -72,7 +72,7 @@ source("R/impact_outcome_table.R")
 
 <!-- Report Constants -->
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
-qa_email_address <- "Marisa.C.Lack@usace.army.mil,Casey.I.Lewis@usace.army.mil"
+qa_email_address <- "Casey.I.Lewis@usace.army.mil"
 current_date <- lubridate::today()
 ```
 
