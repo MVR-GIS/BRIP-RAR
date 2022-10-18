@@ -31,7 +31,7 @@ knitr::include_graphics(path = "diagrams/cloud_arch-workflow.drawio.svg")
 ```
 
 <!-- Libraries -->
-```{r library, echo=FALSE, warning=FALSE, message=FALSE}
+```{r library, include=FALSE}
 library(tidyverse)
 library(knitr)
 library(rmarkdown)
@@ -51,7 +51,7 @@ library(igraph)
 library(edgebundleR)
 ```
 
-```{r source, echo=FALSE, warning=FALSE, message=FALSE}
+```{r source, include=FALSE}
 source("R/risk_register_table.R")
 source("R/decision_register_table.R")
 source("R/action_register_table.R")
@@ -71,13 +71,13 @@ source("R/impact_outcome_table.R")
 
 
 <!-- Report Constants -->
-```{r, echo=FALSE, warning=FALSE, message=FALSE}
+```{r, include=FALSE}
 qa_email_address <- "Casey.I.Lewis@usace.army.mil"
 current_date <- lubridate::today()
 ```
 
 
-```{r, echo=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
+```{r, include=FALSE, eval=FALSE}
 # Manually export all views from MVR egis-db BrandonRoad to the data folder
 # Not needed if connecting directly to db (see below)
 
@@ -109,7 +109,7 @@ action_oracle     <- convert_date(action_oracle)
 decision_oracle   <- convert_date(decision_oracle)
 ```
 
-```{r, echo=FALSE, warning=FALSE, message=FALSE}
+```{r, include=FALSE}
 # Use the `keyring` package to save the database username and password in the 
 # system credential store
 key_service <- "egis-db-brandonroad"
@@ -135,7 +135,7 @@ con_roracle <- ROracle::dbConnect(drv,
 ```
 
 
-```{r, echo=FALSE, warning=FALSE, message=FALSE}
+```{r, include=FALSE}
 # Import tables from Oracle
 risk_oracle              <- ROracle::dbReadTable(con_roracle, 
                                                  "RISK_MAIN_VIEW")
@@ -166,7 +166,7 @@ ROracle::dbDisconnect(con_roracle)
 
 
 <!-- Wrangle Risk/Action/Decision Data -->
-```{r wrangle-risk, echo=FALSE, warning=FALSE, message=FALSE}
+```{r wrangle-risk, include=FALSE}
 # Filter for "Active" records
 risk <- risk_oracle %>%
   filter(ACTIVE == "Yes")
@@ -239,7 +239,7 @@ risk <- risk %>%
 #rm(risk_oracle)
 ```
 
-```{r wrangle-events, echo=FALSE, warning=FALSE, message=FALSE}
+```{r wrangle-events, include=FALSE}
 # Remove test records
 events <- remove_test_records(events_oracle, "FK_TABLE_ID") 
 
@@ -289,7 +289,7 @@ events <- events %>%
 #rm(events_oracle)
 ```
 
-```{r wrangle-discussion, echo=FALSE, warning=FALSE, message=FALSE}
+```{r wrangle-discussion, include=FALSE}
 # Remove test records
 discussion <- remove_test_records(discussion_oracle, "FK_TABLE_ID")
 
@@ -315,7 +315,7 @@ discussion <- discussion %>%
 #rm(discussion_oracle)
 ```
 
-```{r wrangle-action, echo=FALSE, warning=FALSE, message=FALSE}
+```{r wrangle-action, include=FALSE}
 # Remove test records
 action <- remove_test_records(action_oracle, "ACTION_NO")
 
@@ -358,7 +358,7 @@ action <- action %>%
 #rm(action_oracle)
 ```
 
-```{r wrangle-decision, echo=FALSE, warning=FALSE, message=FALSE}
+```{r wrangle-decision, include=FALSE}
 # Remove test records
 decision <- remove_test_records(decision_oracle, "DECISION_NO")
 
@@ -402,7 +402,7 @@ decision <- decision %>%
 
 
 <!-- Wrangle Related Items -->
-```{r wrangle-rel-action-action, echo=FALSE, warning=FALSE, message=FALSE}
+```{r wrangle-rel-action-action, include=FALSE}
 # Remove test records
 rel_action_action <- remove_test_records(rel_action_action_oracle, "ACTION_NO")
 rel_action_action <- remove_test_records(rel_action_action, "RELATED_ACTION")
@@ -426,7 +426,7 @@ rel_action_action <- rel_action_action %>%
 #rm(rel_action_action_oracle)
 ```
 
-```{r wrangle-rel-dec-actionc, echo=FALSE, warning=FALSE, message=FALSE}
+```{r wrangle-rel-dec-actionc, include=FALSE}
 # Remove test records
 rel_dec_action <- remove_test_records(rel_dec_action_oracle, "DECISION_NO")
 rel_dec_action <- remove_test_records(rel_dec_action, "ACTION_NO")
@@ -451,7 +451,7 @@ rel_dec_action <- rel_dec_action %>%
 #rm(rel_dec_action_oracle)
 ```
 
-```{r wrangle-rel-dec-dec, echo=FALSE, warning=FALSE, message=FALSE}
+```{r wrangle-rel-dec-dec, include=FALSE}
 # Remove test records
 rel_dec_dec <- remove_test_records(rel_dec_dec_oracle, "DECISION_NO")
 rel_dec_dec <- remove_test_records(rel_dec_dec, "RELATED_DECISION")
@@ -475,7 +475,7 @@ rel_dec_dec <- rel_dec_dec %>%
 #rm(rel_dec_dec_oracle)
 ```
 
-```{r wrangle-rel-risk-action, echo=FALSE, warning=FALSE, message=FALSE}
+```{r wrangle-rel-risk-action, include=FALSE}
 # Remove test records
 rel_risk_action <- remove_test_records(rel_risk_action_oracle, "RISK_NO")
 rel_risk_action <- remove_test_records(rel_risk_action, "ACTION_NO")
@@ -500,7 +500,7 @@ rel_risk_action <- rel_risk_action %>%
 #rm(rel_risk_action_oracle)
 ```
 
-```{r wrangle-rel-risk-dec, echo=FALSE, warning=FALSE, message=FALSE}
+```{r wrangle-rel-risk-dec, include=FALSE}
 # Remove test records
 rel_risk_dec <- remove_test_records(rel_risk_dec_oracle, "RISK_NO")
 rel_risk_dec <- remove_test_records(rel_risk_dec, "DECISION_NO")
@@ -525,7 +525,7 @@ rel_risk_dec <- rel_risk_dec %>%
 #rm(rel_risk_dec_oracle)
 ```
 
-```{r wrangle-rel-risk-risk, echo=FALSE, warning=FALSE, message=FALSE}
+```{r wrangle-rel-risk-risk, include=FALSE}
 # Remove test records
 rel_risk_risk <- remove_test_records(rel_risk_risk_oracle, "RISK_NO")
 rel_risk_risk <- remove_test_records(rel_risk_risk, "RELATED_RISK")
@@ -550,7 +550,7 @@ rel_risk_risk <- rel_risk_risk %>%
 ```
 
 <!-- Create Timelines -->
-```{r create_timevis_df, echo=FALSE, warning=FALSE, message=FALSE}
+```{r create_timevis_df, include=FALSE}
 # Create a timevis "data" data frame of risks
 risk_time <- risk %>%
   arrange(risk_no) %>%
@@ -576,7 +576,7 @@ risk_time_riskcategory <- risk %>%
   distinct(id, content, .keep_all = TRUE)
 ```
 
-```{r create-items, echo=FALSE, warning=FALSE, message=FALSE}
+```{r create-items, include=FALSE}
 # Create a df of all items (risks, actions, decisions)
 risk_items <- risk %>%
   select(risk_no, risk_no_link, CONCERNS, id_type, 
@@ -603,7 +603,7 @@ items <- bind_rows(risk_items, action_items, decision_items)
 rm(risk_items, action_items, decision_items)
 ```
 
-```{r create-relations, echo=FALSE, warning=FALSE, message=FALSE}
+```{r create-relations, include=FALSE}
 # Create a df of all relationships
 rel_a_a <- rel_action_action %>%
   select(action_no, related_action) %>%
@@ -654,7 +654,7 @@ relations <- bind_rows(rel_a_a, rel_d_a, rel_d_d, rel_r_a, rel_r_d, rel_r_r) %>%
 rm(rel_a_a, rel_d_a, rel_d_d, rel_r_a, rel_r_d, rel_r_r)
 ```
 
-```{r network-analysis, echo=FALSE, warning=FALSE, message=FALSE}
+```{r network-analysis, include=FALSE}
 # Create the igraph object for network analysis
 relate_igraph <- igraph::graph_from_data_frame(d = relations, 
                                                vertices = items, 
@@ -724,7 +724,7 @@ rm(blocks_df, block_list, blocks, adjacent_items, adj_df, adj_list, adj_items,
    adj_count, item_degree)
 ```
 
-```{r, echo=FALSE, warning=FALSE, message=FALSE}
+```{r dendrogram, include=FALSE}
 # Create dendrogram
 eb <- cluster_edge_betweenness(relate_igraph)
 #plot_dendrogram(eb)
