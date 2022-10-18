@@ -241,9 +241,9 @@ risk <- risk %>%
 ```
 
 ```{r write-risk, include=FALSE}
-write_csv(risk,
-          file = "download/risk.csv",
-          quote = "all")
+risk %>%
+  select(!c(OBJECTID, risk_no_link)) %>%
+  write_csv(file = "download/risk.csv", quote = "all")
 ```
 
 
