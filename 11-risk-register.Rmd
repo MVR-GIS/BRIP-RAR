@@ -14,6 +14,16 @@ risk_register_table(risk_high)
 risk_register_table(risk)
 ```
 
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+risk %>%
+  download_file(path = "download/risk.csv",
+                output_name = "risk",
+                button_label = "Download data",
+                button_type = "warning",
+                has_icon = FALSE)
+```
+
+
 ## Related Items
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 # Create hierarchical edge bundle plot

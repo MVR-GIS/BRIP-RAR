@@ -49,6 +49,7 @@ library(gridExtra)
 library(formattable)
 library(igraph)
 library(edgebundleR)
+library(downloadthis)
 ```
 
 ```{r source, include=FALSE}
@@ -238,6 +239,13 @@ risk <- risk %>%
 # Cleanup
 #rm(risk_oracle)
 ```
+
+```{r write-risk, include=FALSE}
+write_csv(risk,
+          file = "download/risk.csv",
+          quote = "all")
+```
+
 
 ```{r wrangle-events, include=FALSE}
 # Remove test records
