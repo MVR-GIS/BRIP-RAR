@@ -1,6 +1,7 @@
 # Risk Register
 
 ## High Risks
+High risk items are assessed with high Efficacy, Cost, or Schedule risk. 
 ```{r high-risk-register-table, echo=FALSE, warning=FALSE, message=FALSE}
 risk_high <- filter(risk, COST_RISK == "HIGH" | 
                           SCHEDULE_RISK == "High" |
@@ -9,18 +10,25 @@ risk_high <- filter(risk, COST_RISK == "HIGH" |
 risk_register_table(risk_high)
 ```
 
-## All Risks
-```{r risk-register-table, echo=FALSE, warning=FALSE, message=FALSE}
-risk_register_table(risk)
+## Open Risks
+Risk items are considered "open" if they are still highly relevant for ongoing team consideration (Status = Open). 
+```{r open-risk-table, echo=FALSE, warning=FALSE, message=FALSE}
+risk_register_table(filter(risk, MANAGEMENT_STATUS == "Open"))
 ```
 
-```{r echo=FALSE, warning=FALSE, message=FALSE}
+```{r download-risk, echo=FALSE, warning=FALSE, message=FALSE}
 risk %>%
   download_file(path = "download/risk.csv",
                 output_name = "risk",
                 button_label = "Download data",
                 button_type = "warning",
                 has_icon = FALSE)
+```
+
+## Closed Risks
+Risk items are considered "closed" if they are no longer highly relevant for ongoing team consideration (Status = Closed). 
+```{r closed-risk-table, echo=FALSE, warning=FALSE, message=FALSE}
+risk_register_table(filter(risk, MANAGEMENT_STATUS == "Closed"))
 ```
 
 
