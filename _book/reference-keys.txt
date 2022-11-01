@@ -1,11 +1,10 @@
 fig:unnamed-chunk-1
-fig:unnamed-chunk-8
-fig:unnamed-chunk-9
-fig:unnamed-chunk-50
-fig:unnamed-chunk-51
-fig:unnamed-chunk-60
-fig:unnamed-chunk-61
-fig:unnamed-chunk-18
+fig:unnamed-chunk-10
+fig:unnamed-chunk-11
+fig:unnamed-chunk-52
+fig:unnamed-chunk-53
+fig:unnamed-chunk-62
+fig:unnamed-chunk-63
 fig:unnamed-chunk-20
 fig:unnamed-chunk-22
 fig:unnamed-chunk-24
@@ -17,6 +16,7 @@ fig:unnamed-chunk-34
 fig:unnamed-chunk-36
 fig:unnamed-chunk-38
 fig:unnamed-chunk-40
+fig:unnamed-chunk-42
 project
 architecture
 risk-register
