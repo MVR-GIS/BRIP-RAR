@@ -4,9 +4,8 @@
 High risk items are assessed with high Efficacy, Cost, or Schedule risk. 
 
 ```{r high-risk, echo=FALSE, warning=FALSE, message=FALSE}
-risk_high <- filter(risk, COST_RISK == "HIGH" | 
-                          SCHEDULE_RISK == "High" |
-                          EFFICACY_RISK == "High")
+risk_high <- risk %>%
+   filter(COST_RISK == "HIGH" | SCHEDULE_RISK == "High" | EFFICACY_RISK == "High")
 ```
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE, fig.width=7, fig.height=2, out.width='100%'}
@@ -19,12 +18,18 @@ risk_register_table(risk_high)
 
 ## Open Risks
 Risk items are considered "open" if they are still highly relevant for ongoing team consideration (Status = Open). 
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+risk_open <- risk %>%
+  filter(MANAGEMENT_STATUS == "Open")
+```
+
 ```{r echo=FALSE, warning=FALSE, message=FALSE, fig.width=7, fig.height=2, out.width='100%'}
-risk_pies(filter(risk, MANAGEMENT_STATUS == "Open"))
+risk_pies(risk_open)
 ```
 
 ```{r open-risk-table, echo=FALSE, warning=FALSE, message=FALSE}
-risk_register_table(filter(risk, MANAGEMENT_STATUS == "Open"))
+risk_register_table(risk_open)
 ```
 
 ```{r download-risk, echo=FALSE, warning=FALSE, message=FALSE}
