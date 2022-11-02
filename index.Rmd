@@ -78,39 +78,6 @@ qa_email_address <- "Casey.I.Lewis@usace.army.mil"
 current_date <- lubridate::today()
 ```
 
-
-```{r, include=FALSE, eval=FALSE}
-# Manually export all views from MVR egis-db BrandonRoad to the data folder
-# Not needed if connecting directly to db (see below)
-
-# Cleanup file names from Oracle export
-data_files_oracle <- list.files("data")
-data_files <- str_remove(data_files_oracle, "_DATA_VIEW")
-file.rename(from = paste0("data/", data_files_oracle),
-            to = paste0("data/", data_files))
-
-# Import Oracle tables
-risk_oracle              <- read_csv("data/RISK_MAIN_VIEW.csv")
-events_oracle            <- read_csv("data/EVENTS_MAIN_VIEW.csv")
-discussion_oracle        <- read_csv("data/DISCUSSION_LOG_MAIN_VIEW.csv")
-action_oracle            <- read_csv("data/ACTION_MAIN_VIEW.csv")
-decision_oracle          <- read_csv("data/DECISION_MAIN_VIEW.csv")
-
-rel_action_action_oracle <- read_csv("data/REL_ACTION_ACTION_MAIN_VIEW.csv")
-rel_dec_dec_oracle       <- read_csv("data/REL_DEC_DEC_MAIN_VIEW.csv")
-rel_dec_action_oracle    <- read_csv("data/REL_DEC_ACTION_MAIN_VIEW.csv")
-rel_risk_action_oracle   <- read_csv("data/REL_RISK_ACTION_MAIN_VIEW.csv")
-rel_risk_dec_oracle      <- read_csv("data/REL_RISK_DEC_MAIN_VIEW.csv")
-rel_risk_risk_oracle     <- read_csv("data/REL_RISK_RISK_MAIN_VIEW.csv")
-
-# Convert date fields to POSITct
-risk_oracle       <- convert_date(risk_oracle)
-events_oracle     <- convert_date(events_oracle)
-discussion_oracle <- convert_date(discussion_oracle)
-action_oracle     <- convert_date(action_oracle)
-decision_oracle   <- convert_date(decision_oracle)
-```
-
 ```{r, include=FALSE}
 # Use the `keyring` package to save the database username and password in the 
 # system credential store
