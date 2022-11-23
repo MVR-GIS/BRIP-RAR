@@ -402,7 +402,7 @@ rel_action_action <- rel_action_action %>%
 #rm(rel_action_action_oracle)
 ```
 
-```{r wrangle-rel-dec-actionc, include=FALSE}
+```{r wrangle-rel-dec-action, include=FALSE}
 # Remove test records
 rel_dec_action <- remove_test_records(rel_dec_action_oracle, "DECISION_NO")
 rel_dec_action <- remove_test_records(rel_dec_action, "ACTION_NO")
