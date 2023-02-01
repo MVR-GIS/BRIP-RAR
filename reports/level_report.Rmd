@@ -18,11 +18,11 @@ if(level_risk_count > 0) {
 ## Summary
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=7, fig.height=9, out.width='100%', fig.cap = paste0("Risk Characteristics (n = ", level_risk_count, ")")}
 if(level_risk_count > 0) {
-  p1 <- percent_treemap(level_risk, RISKCATEGORY, "Risk Categories")
-  p2 <- percent_treemap(level_risk, FEATURE, "Project Features")
-  p3 <- percent_treemap(level_risk, RISK_STRATEGY, "Risk Strategy")
-  p4 <- percent_treemap(level_risk, TIMING_OF_DELAY, "Timing of Delay")
-  p5 <- percent_treemap(level_risk, DISCIPLINE, "Discpline")
+  p1 <- rarr::percent_treemap(level_risk, RISKCATEGORY, "Risk Categories")
+  p2 <- rarr::percent_treemap(level_risk, FEATURE, "Project Features")
+  p3 <- rarr::percent_treemap(level_risk, RISK_STRATEGY, "Risk Strategy")
+  p4 <- rarr::percent_treemap(level_risk, TIMING_OF_DELAY, "Timing of Delay")
+  p5 <- rarr::percent_treemap(level_risk, DISCIPLINE, "Discpline")
   grid.arrange(p1, p2, p3, p4, p5, nrow = 3, ncol = 2)
 }
 ```
@@ -32,7 +32,7 @@ if(level_risk_count > 0) {
 ## Project Timeline
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Project Timeline"}
 if(level_risk_count > 0) {
-timeline(risk_df = filter(risk_time, eng_level == report_eng_level), 
+rarr::timeline(risk_df = filter(risk_time, eng_level == report_eng_level), 
          groups_df = risk_time_riskcategory,
          height = "700px",
          start = "2021-01-01",
@@ -45,7 +45,7 @@ timeline(risk_df = filter(risk_time, eng_level == report_eng_level),
 ## Engagement Level History
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 if(level_risk_count > 0) {
-  eng_level_history(events, level_items)
+  rarr::eng_level_history(events, level_items)
 }
 ```
 

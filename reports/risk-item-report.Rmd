@@ -100,7 +100,7 @@ risk_feedback_link <- paste0("mailto:",
 
 ::: {.highlight}
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-pandoc_header(text = risk_item$risk_no, 
+rarr::pandoc_header(text = risk_item$risk_no, 
               level = risk_heading_level,
               identifier = paste0(risk_identifier_prefix, "-",
                                   str_to_lower(risk_item$risk_no)),
@@ -219,7 +219,7 @@ Trend
 **Discussion Items**
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 if(length(discussion_item$fk_table_id) > 0) {
-  discussion_table(discussion_item, discussion_item$fk_table_id)
+  rarr::discussion_table(discussion_item, discussion_item$fk_table_id)
 } else {
   cat(" No discussion items.")
 }
@@ -236,7 +236,7 @@ if(length(discussion_item$fk_table_id) > 0) {
 **Impact and Outcome**
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 if(!is.na(risk_item$IMPACT) | !is.na(risk_item$OUTCOME)) {
-  impact_outcome_table(risk_item)
+  rarr::create_impact_outcome_table(risk_item)
 } else {
   cat(" No Impacts or Outcomes specified.")
 }
@@ -365,7 +365,7 @@ if(length(rel_risk_dec_item$decision_no) > 0) {
 **Engagement Level History**
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 if(length(events_item$fk_table_id) > 0) {
-  eng_level_history(events_item, events_item$fk_table_id,
+  rarr::eng_level_history(events_item, events_item$fk_table_id,
                     show_item_link = FALSE)
 } else {
   cat("Engagement Level not set.")

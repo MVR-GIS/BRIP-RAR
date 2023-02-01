@@ -55,21 +55,21 @@ library(rarr)
 
 ```{r source, include=FALSE}
 #source("R/risk_register_table.R")
-source("R/decision_register_table.R")
-source("R/action_register_table.R")
-source("R/atx_header.R")
-source("R/pandoc_header.R")
-source("R/percent_treemap.R")
-source("R/timeline.R")
-source("R/format_id.R")
-source("R/id_link.R")
-source("R/eng_level_history.R")
-source("R/discussion_table.R")
-source("R/related_block_table.R")
-source("R/remove_test_records.R")
-source("R/convert_date.R")
-source("R/impact_outcome_table.R")
-source("R/risk_pies.R")
+#source("R/decision_register_table.R")
+#source("R/action_register_table.R")
+#source("R/atx_header.R")
+#source("R/pandoc_header.R")
+#source("R/percent_treemap.R")
+#source("R/timeline.R")
+#source("R/format_id.R")
+#source("R/id_link.R")
+#source("R/eng_level_history.R")
+#source("R/discussion_table.R")
+#source("R/related_block_table.R")
+#source("R/remove_test_records.R")
+# remove me???source("R/convert_date.R")
+#source("R/impact_outcome_table.R")
+#source("R/risk_pies.R")
 ```
 
 
@@ -142,7 +142,7 @@ risk <- risk_oracle %>%
   filter(ACTIVE == "Yes")
 
 # Remove test data
-risk <- remove_test_records(risk, "RISK_NO")
+risk <- rarr::remove_test_records(risk, "RISK_NO")
 
 # Rename date fields
 risk <- risk %>%
@@ -170,7 +170,7 @@ risk$EFFICACY_IMPACT_PER_PROJECT <- ""
 risk$RISKCATEGORY <- toTitleCase(tolower(risk$RISKCATEGORY))
 
 # Cleanup risk number for sorting
-risk <- format_id(risk, "RISK_NO")
+risk <- rarr::format_id(risk, "RISK_NO")
 
 # Remove unused fields
 risk <- risk %>%
@@ -179,7 +179,7 @@ risk <- risk %>%
             FK_TABLE_ID))
 
 # Create hyperlink to risk_no
-risk <- id_link(risk, "risk_no")
+risk <- rarr::id_link(risk, "risk_no")
 
 # Reorder fields
 risk <- risk %>%
@@ -218,7 +218,7 @@ risk %>%
 
 ```{r wrangle-events, include=FALSE}
 # Remove test records
-events <- remove_test_records(events_oracle, "FK_TABLE_ID") 
+events <- rarr::remove_test_records(events_oracle, "FK_TABLE_ID") 
 
 # Rename date fields
 events <- events %>%
@@ -230,14 +230,14 @@ events <- events %>%
   mutate(eng_level = as.numeric(str_extract(ENG_LEVEL, "\\d")))
 
 # Cleanup risk number for sorting
-events <- format_id(events, "FK_TABLE_ID")
+events <- rarr::format_id(events, "FK_TABLE_ID")
 
 # Remove unused fields
 events <- events %>%
   select(!c(CREATED_USER, LAST_EDITED_USER))
 
 # Create hyperlink to fk_table_id
-events <- id_link(events, "fk_table_id")
+events <- rarr::id_link(events, "fk_table_id")
 
 # Reorder fields
 events <- events %>%
@@ -268,7 +268,7 @@ events <- events %>%
 
 ```{r wrangle-discussion, include=FALSE}
 # Remove test records
-discussion <- remove_test_records(discussion_oracle, "FK_TABLE_ID")
+discussion <- rarr::remove_test_records(discussion_oracle, "FK_TABLE_ID")
 
 # Rename date fields
 discussion <- discussion %>%
@@ -276,7 +276,7 @@ discussion <- discussion %>%
               .cols = ends_with("_date"))
 
 # Cleanup discussion number for sorting
-discussion <- format_id(discussion, "FK_TABLE_ID")
+discussion <- rarr::format_id(discussion, "FK_TABLE_ID")
 
 # Remove unused fields
 discussion <- discussion %>%
@@ -294,7 +294,7 @@ discussion <- discussion %>%
 
 ```{r wrangle-action, include=FALSE}
 # Remove test records
-action <- remove_test_records(action_oracle, "ACTION_NO")
+action <- rarr::remove_test_records(action_oracle, "ACTION_NO")
 
 # Filter for "Active" records
 action <- action %>%
@@ -310,10 +310,10 @@ action <- action %>%
   mutate(eng_level = as.numeric(str_extract(ENG_LEVEL, "\\d")))
 
 # Cleanup action number for sorting
-action <- format_id(action, "ACTION_NO")
+action <- rarr::format_id(action, "ACTION_NO")
 
 # Create hyperlink
-action <- id_link(action, "action_no")
+action <- rarr::id_link(action, "action_no")
 
 # Remove unused fields
 action <- action %>%
@@ -337,7 +337,7 @@ action <- action %>%
 
 ```{r wrangle-decision, include=FALSE}
 # Remove test records
-decision <- remove_test_records(decision_oracle, "DECISION_NO")
+decision <- rarr::remove_test_records(decision_oracle, "DECISION_NO")
 
 # Filter for "Active" records
 decision <- decision %>%
@@ -353,10 +353,10 @@ decision <- decision %>%
   mutate(eng_level = as.numeric(str_extract(ENG_LEVEL, "\\d")))
 
 # Cleanup action number for sorting
-decision <- format_id(decision, "DECISION_NO")
+decision <- rarr::format_id(decision, "DECISION_NO")
 
 # Create hyperlink
-decision <- id_link(decision, "decision_no")
+decision <- rarr::id_link(decision, "decision_no")
 
 # Remove unused fields
 decision <- decision %>%
@@ -381,19 +381,19 @@ decision <- decision %>%
 <!-- Wrangle Related Items -->
 ```{r wrangle-rel-action-action, include=FALSE}
 # Remove test records
-rel_action_action <- remove_test_records(rel_action_action_oracle, "ACTION_NO")
-rel_action_action <- remove_test_records(rel_action_action, "RELATED_ACTION")
+rel_action_action <- rarr::remove_test_records(rel_action_action_oracle, "ACTION_NO")
+rel_action_action <- rarr::remove_test_records(rel_action_action, "RELATED_ACTION")
 
 # Filter for "Active" records
 rel_action_action <- rel_action_action %>%
   filter(ACTION_ACTIVE == "Yes" & REL_ACTION_ACTIVE == "Yes")
 
 # Cleanup id numbers for sorting
-rel_action_action <- format_id(rel_action_action, "ACTION_NO")
-rel_action_action <- format_id(rel_action_action, "RELATED_ACTION")
+rel_action_action <- rarr::format_id(rel_action_action, "ACTION_NO")
+rel_action_action <- rarr::format_id(rel_action_action, "RELATED_ACTION")
 
 # Create hyperlink to related item
-rel_action_action <- id_link(rel_action_action, "related_action")
+rel_action_action <- rarr::id_link(rel_action_action, "related_action")
 
 # Reorder fields
 rel_action_action <- rel_action_action %>%
@@ -405,20 +405,20 @@ rel_action_action <- rel_action_action %>%
 
 ```{r wrangle-rel-dec-action, include=FALSE}
 # Remove test records
-rel_dec_action <- remove_test_records(rel_dec_action_oracle, "DECISION_NO")
-rel_dec_action <- remove_test_records(rel_dec_action, "ACTION_NO")
+rel_dec_action <- rarr::remove_test_records(rel_dec_action_oracle, "DECISION_NO")
+rel_dec_action <- rarr::remove_test_records(rel_dec_action, "ACTION_NO")
 
 # Filter for "Active" records
 rel_dec_action <- rel_dec_action %>%
   filter(DECISION_ACTIVE == "Yes" & ACTION_ACTIVE == "Yes")
 
 # Cleanup id numbers for sorting
-rel_dec_action <- format_id(rel_dec_action, "DECISION_NO")
-rel_dec_action <- format_id(rel_dec_action, "ACTION_NO")
+rel_dec_action <- rarr::format_id(rel_dec_action, "DECISION_NO")
+rel_dec_action <- rarr::format_id(rel_dec_action, "ACTION_NO")
 
 # Create hyperlinks
-rel_dec_action <- id_link(rel_dec_action, "decision_no")
-rel_dec_action <- id_link(rel_dec_action, "action_no")
+rel_dec_action <- rarr::id_link(rel_dec_action, "decision_no")
+rel_dec_action <- rarr::id_link(rel_dec_action, "action_no")
 
 # Reorder fields
 rel_dec_action <- rel_dec_action %>%
@@ -430,19 +430,19 @@ rel_dec_action <- rel_dec_action %>%
 
 ```{r wrangle-rel-dec-dec, include=FALSE}
 # Remove test records
-rel_dec_dec <- remove_test_records(rel_dec_dec_oracle, "DECISION_NO")
-rel_dec_dec <- remove_test_records(rel_dec_dec, "RELATED_DECISION")
+rel_dec_dec <- rarr::remove_test_records(rel_dec_dec_oracle, "DECISION_NO")
+rel_dec_dec <- rarr::remove_test_records(rel_dec_dec, "RELATED_DECISION")
 
 # Filter for "Active" records
 rel_dec_dec <- rel_dec_dec %>%
   filter(DECISION_ACTIVE == "Yes" & REL_DEC_ACTIVE == "Yes")
 
 # Cleanup id numbers for sorting
-rel_dec_dec <- format_id(rel_dec_dec, "DECISION_NO")
-rel_dec_dec <- format_id(rel_dec_dec, "RELATED_DECISION")
+rel_dec_dec <- rarr::format_id(rel_dec_dec, "DECISION_NO")
+rel_dec_dec <- rarr::format_id(rel_dec_dec, "RELATED_DECISION")
 
 # Create hyperlink to related item
-rel_dec_dec <- id_link(rel_dec_dec, "related_decision")
+rel_dec_dec <- rarr::id_link(rel_dec_dec, "related_decision")
 
 # Reorder fields
 rel_dec_dec <- rel_dec_dec %>%
@@ -454,20 +454,20 @@ rel_dec_dec <- rel_dec_dec %>%
 
 ```{r wrangle-rel-risk-action, include=FALSE}
 # Remove test records
-rel_risk_action <- remove_test_records(rel_risk_action_oracle, "RISK_NO")
-rel_risk_action <- remove_test_records(rel_risk_action, "ACTION_NO")
+rel_risk_action <- rarr::remove_test_records(rel_risk_action_oracle, "RISK_NO")
+rel_risk_action <- rarr::remove_test_records(rel_risk_action, "ACTION_NO")
 
 # Filter for "Active" records
 rel_risk_action <- rel_risk_action %>%
   filter(RISK_ACTIVE == "Yes" & ACTION_ACTIVE == "Yes")
 
 # Cleanup id fields for sorting
-rel_risk_action <- format_id(rel_risk_action, "RISK_NO")
-rel_risk_action <- format_id(rel_risk_action, "ACTION_NO")
+rel_risk_action <- rarr::format_id(rel_risk_action, "RISK_NO")
+rel_risk_action <- rarr::format_id(rel_risk_action, "ACTION_NO")
 
 # Create hyperlink
-rel_risk_action <- id_link(rel_risk_action, "risk_no")
-rel_risk_action <- id_link(rel_risk_action, "action_no")
+rel_risk_action <- rarr::id_link(rel_risk_action, "risk_no")
+rel_risk_action <- rarr::id_link(rel_risk_action, "action_no")
 
 # Reorder fields
 rel_risk_action <- rel_risk_action %>%
@@ -479,20 +479,20 @@ rel_risk_action <- rel_risk_action %>%
 
 ```{r wrangle-rel-risk-dec, include=FALSE}
 # Remove test records
-rel_risk_dec <- remove_test_records(rel_risk_dec_oracle, "RISK_NO")
-rel_risk_dec <- remove_test_records(rel_risk_dec, "DECISION_NO")
+rel_risk_dec <- rarr::remove_test_records(rel_risk_dec_oracle, "RISK_NO")
+rel_risk_dec <- rarr::remove_test_records(rel_risk_dec, "DECISION_NO")
 
 # Filter for "Active" records
 rel_risk_dec <- rel_risk_dec %>%
   filter(RISK_ACTIVE == "Yes" & DECISION_ACTIVE == "Yes")
 
 # Cleanup id fields for sorting
-rel_risk_dec <- format_id(rel_risk_dec, "RISK_NO")
-rel_risk_dec <- format_id(rel_risk_dec, "DECISION_NO")
+rel_risk_dec <- rarr::format_id(rel_risk_dec, "RISK_NO")
+rel_risk_dec <- rarr::format_id(rel_risk_dec, "DECISION_NO")
 
 # Create hyperlink
-rel_risk_dec <- id_link(rel_risk_dec, "risk_no")
-rel_risk_dec <- id_link(rel_risk_dec, "decision_no")
+rel_risk_dec <- rarr::id_link(rel_risk_dec, "risk_no")
+rel_risk_dec <- rarr::id_link(rel_risk_dec, "decision_no")
 
 # Reorder fields
 rel_risk_dec <- rel_risk_dec %>%
@@ -504,19 +504,19 @@ rel_risk_dec <- rel_risk_dec %>%
 
 ```{r wrangle-rel-risk-risk, include=FALSE}
 # Remove test records
-rel_risk_risk <- remove_test_records(rel_risk_risk_oracle, "RISK_NO")
-rel_risk_risk <- remove_test_records(rel_risk_risk, "RELATED_RISK")
+rel_risk_risk <- rarr::remove_test_records(rel_risk_risk_oracle, "RISK_NO")
+rel_risk_risk <- rarr::remove_test_records(rel_risk_risk, "RELATED_RISK")
 
 # Filter for "Active" records
 rel_risk_risk <- rel_risk_risk %>%
   filter(RISK_ACTIVE == "Yes" & REL_RISK_ACTIVE == "Yes")
 
 # Cleanup id numbers for sorting
-rel_risk_risk <- format_id(rel_risk_risk, "RISK_NO")
-rel_risk_risk <- format_id(rel_risk_risk, "RELATED_RISK")
+rel_risk_risk <- rarr::format_id(rel_risk_risk, "RISK_NO")
+rel_risk_risk <- rarr::format_id(rel_risk_risk, "RELATED_RISK")
 
 # Create hyperlink to Related Risk
-rel_risk_risk <- id_link(rel_risk_risk, "related_risk")
+rel_risk_risk <- rarr::id_link(rel_risk_risk, "related_risk")
 
 # Reorder fields
 rel_risk_risk <- rel_risk_risk %>%

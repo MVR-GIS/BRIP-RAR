@@ -2,6 +2,6 @@
 
 ## All Actions
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
-action_register_table(action)
+rarr::action_register_table(action)
 ```
 

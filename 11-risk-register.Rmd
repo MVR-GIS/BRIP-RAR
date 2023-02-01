@@ -9,7 +9,7 @@ risk_high <- risk %>%
 ```
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE, fig.width=7, fig.height=2, out.width='100%'}
-risk_pies(risk_high)
+rarr::risk_pies(risk_high)
 ```
 
 ```{r high-risk-register-table, echo=FALSE, warning=FALSE, message=FALSE}
@@ -25,7 +25,7 @@ risk_open <- risk %>%
 ```
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE, fig.width=7, fig.height=2, out.width='100%'}
-risk_pies(risk_open)
+rarr::risk_pies(risk_open)
 ```
 
 ```{r open-risk-table, echo=FALSE, warning=FALSE, message=FALSE}
@@ -59,23 +59,23 @@ edgebundleR::edgebundle(relate_igraph,
 
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Cohesive Blocks Related Items"}
-related_blocks_table(related_blocks)
+rarr::related_blocks_table(related_blocks)
 ```
 
 
 ## Summary Statistics
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=7, fig.height=9, out.width='100%', fig.cap = paste0("Risk Characteristics (n = ", length(unique(risk$RISK_NO)), ")")}
-p1 <- percent_treemap(risk, RISKCATEGORY, "Risk Categories")
-p2 <- percent_treemap(risk, FEATURE, "Project Features")
-p3 <- percent_treemap(risk, RISK_STRATEGY, "Risk Strategy")
-p4 <- percent_treemap(risk, TIMING_OF_DELAY, "Timing of Delay")
-p5 <- percent_treemap(risk, DISCIPLINE, "Discpline")
+p1 <- rarr::percent_treemap(risk, RISKCATEGORY, "Risk Categories")
+p2 <- rarr::percent_treemap(risk, FEATURE, "Project Features")
+p3 <- rarr::percent_treemap(risk, RISK_STRATEGY, "Risk Strategy")
+p4 <- rarr::percent_treemap(risk, TIMING_OF_DELAY, "Timing of Delay")
+p5 <- rarr::percent_treemap(risk, DISCIPLINE, "Discpline")
 grid.arrange(p1, p2, p3, p4, p5, nrow = 3, ncol = 2)
 ```
 
 ## Project Timeline
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Project Timeline"}
-timeline(risk_df = risk_time, 
+rarr::timeline(risk_df = risk_time, 
          groups_df = risk_time_riskcategory,
          height = "700px",
          start = "2021-01-01",

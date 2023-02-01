@@ -7,12 +7,12 @@ pocs <- unique(risk$TECHNICAL_POC)
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 for(poc in pocs) {
   # Create POC header
-  pandoc_header(poc, level = 2, number = FALSE, list = TRUE)
+  rarr::pandoc_header(poc, level = 2, number = FALSE, list = TRUE)
   
   # Create Risk header
   poc_identifier <- str_replace_all(poc, "[ /]", "-")
   poc_identifier <- paste0(poc_identifier, "-risk-items")
-  pandoc_header("Risk Items", level = 3, 
+  rarr::pandoc_header("Risk Items", level = 3, 
                 identifier = poc_identifier,
                 number = FALSE, list = FALSE)
   

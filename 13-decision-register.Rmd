@@ -2,6 +2,6 @@
 
 ## All Decisions
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
-decision_register_table(decision)
+rarr::decision_register_table(decision)
 ```
 

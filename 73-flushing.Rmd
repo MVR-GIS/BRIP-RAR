@@ -8,10 +8,10 @@ flushing_risk <- filter(risk, FEATURE == "Flushing Lock" |
 
 ## Summary
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=7, fig.height=5, out.width='100%', fig.cap = paste0("Risk Characteristics (n = ", length(unique(flushing_risk$RISK_NO)), ")")}
-p1 <- percent_treemap(flushing_risk, RISKCATEGORY, "Risk Categories")
-p3 <- percent_treemap(flushing_risk, RISK_STRATEGY, "Risk Strategy")
-p4 <- percent_treemap(flushing_risk, TIMING_OF_DELAY, "Timing of Delay")
-p5 <- percent_treemap(flushing_risk, DISCIPLINE, "Discpline")
+p1 <- rarr::percent_treemap(flushing_risk, RISKCATEGORY, "Risk Categories")
+p3 <- rarr::percent_treemap(flushing_risk, RISK_STRATEGY, "Risk Strategy")
+p4 <- rarr::percent_treemap(flushing_risk, TIMING_OF_DELAY, "Timing of Delay")
+p5 <- rarr::percent_treemap(flushing_risk, DISCIPLINE, "Discpline")
 grid.arrange(p1, p3, p4, p5, nrow = 2, ncol = 2)
 ```
 
@@ -23,7 +23,7 @@ rarr::risk_register_table(flushing_risk)
 
 ## Project Timeline
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Project Timeline"}
-timeline(risk_df = filter(risk_time, FEATURE == "Flushing Lock" | 
+rarr::timeline(risk_df = filter(risk_time, FEATURE == "Flushing Lock" | 
                                      FEATURE == "All"), 
          groups_df = risk_time_riskcategory,
          height = "700px",

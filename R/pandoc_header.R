@@ -29,7 +29,7 @@ pandoc_header <- function (text,
   if (!is.logical(list)) { stop("list must be logical") }
 
   # Add ATX-style markdown header to text of header
-  header <- paste(atx_header(level), text)
+  header <- paste(rarr::atx_header(level), text)
 
   # Add html anchor target hash to identifier
   ident_attribute <- ifelse(is.na(identifier), "",

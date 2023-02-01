@@ -48,7 +48,7 @@ action_feedback_link <- paste0("mailto:",
 
 ::: {.header}
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-pandoc_header(text = action_item$action_no, 
+rarr::pandoc_header(text = action_item$action_no, 
               level = action_heading_level,
               identifier = paste0(action_identifier_prefix, "-",
                                   str_to_lower(action_item$action_no)),
@@ -125,7 +125,7 @@ Last Review Date
 **Engagement Level History**
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 if(length(events_item$FK_TABLE_ID) > 0) {
-  eng_level_history(events_item, events_item$fk_table_id, 
+  rarr::eng_level_history(events_item, events_item$fk_table_id, 
                     show_item_link = FALSE)
 } else {
   cat("Engagement Level not set.")
@@ -143,7 +143,7 @@ if(length(events_item$FK_TABLE_ID) > 0) {
 **Discussion Items**
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 if(length(discussion_item$fk_table_id) > 0) {
-  discussion_table(discussion_item, discussion_item$fk_table_id)
+  rarr::discussion_table(discussion_item, discussion_item$fk_table_id)
 } else {
   cat(" No discussion items.")
 }
