@@ -13,7 +13,7 @@ risk_pies(risk_high)
 ```
 
 ```{r high-risk-register-table, echo=FALSE, warning=FALSE, message=FALSE}
-risk_register_table(risk_high)
+rarr::risk_register_table(risk_high)
 ```
 
 ## Open Risks
@@ -29,7 +29,7 @@ risk_pies(risk_open)
 ```
 
 ```{r open-risk-table, echo=FALSE, warning=FALSE, message=FALSE}
-risk_register_table(risk_open)
+rarr::risk_register_table(risk_open)
 ```
 
 ```{r download-risk, echo=FALSE, warning=FALSE, message=FALSE}
@@ -44,7 +44,7 @@ risk %>%
 ## Closed Risks
 Risk items are considered "closed" if they are no longer highly relevant for ongoing team consideration (Status = Closed). 
 ```{r closed-risk-table, echo=FALSE, warning=FALSE, message=FALSE}
-risk_register_table(filter(risk, MANAGEMENT_STATUS == "Closed"))
+rarr::risk_register_table(filter(risk, MANAGEMENT_STATUS == "Closed"))
 ```
 
 

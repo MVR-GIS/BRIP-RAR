@@ -6,7 +6,7 @@
 risk_eer <- risk %>%
   filter(str_detect(TAGS, "#EER"))
 
-risk_register_table(risk_eer)
+rarr::risk_register_table(risk_eer)
 ```
 
 ## Risk Details

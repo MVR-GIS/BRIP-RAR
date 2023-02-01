@@ -18,7 +18,7 @@ grid.arrange(p1, p3, p4, p5, nrow = 2, ncol = 2)
 ## Risks
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 # Create the table
-risk_register_table(acoustic_risk)
+rarr::risk_register_table(acoustic_risk)
 ```
 
 ## Project Timeline

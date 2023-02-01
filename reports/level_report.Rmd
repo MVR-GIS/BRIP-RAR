@@ -9,7 +9,7 @@ level_items <- c(level_risks)
 ## Risks
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 if(level_risk_count > 0) {
-  risk_register_table(level_risk)
+  rarr::risk_register_table(level_risk)
 }
 ```
 
