@@ -137,76 +137,7 @@ ROracle::dbDisconnect(con_roracle)
 
 <!-- Wrangle Risk/Action/Decision Data -->
 ```{r wrangle-risk, include=FALSE}
-# Filter for "Active" records
-risk <- risk_oracle %>%
-  filter(ACTIVE == "Yes")
-
-# Remove test data
-risk <- rarr::remove_test_records(risk, "RISK_NO")
-
-# Rename date fields
-risk <- risk %>%
-  rename_with(.fn = str_to_lower, 
-              .cols = ends_with("_date"))
-
-# Process assessment fields
-risk <- risk %>%
-  rename(cost_risk_color     = CONDITIONAL_FORMATTING,
-         schedule_risk_color = CONDITIONAL_FORMATTING2,
-         efficacy_risk_color = CONDITIONAL_FORMATTING3) %>%
-  mutate(cost_risk_color     = tolower(cost_risk_color),
-         schedule_risk_color = tolower(schedule_risk_color),
-         efficacy_risk_color = tolower(efficacy_risk_color))
-
-# Set engagement level integer, risk_cat_code
-risk <- risk %>%
-  mutate(eng_level = as.numeric(str_extract(ENG_LEVEL, "\\d")),
-         risk_cat_code = str_extract(RISK_NO, "\\w+\\b"))
-
-# Add efficacy_impact_per_project (not applicable, so set blank)
-risk$EFFICACY_IMPACT_PER_PROJECT <- ""
-
-# Convert factor variables to title case for labeling
-risk$RISKCATEGORY <- toTitleCase(tolower(risk$RISKCATEGORY))
-
-# Cleanup risk number for sorting
-risk <- rarr::format_id(risk, "RISK_NO")
-
-# Remove unused fields
-risk <- risk %>%
-  select(!c(PDT_DISC_CONC, PDT_DISC_LIKELI_IMPACT,
-            PDT_DISC_RISK_MANAG_STRATEGY, ACTION_ITEMS, LESSONS_LEARNED,
-            FK_TABLE_ID))
-
-# Create hyperlink to risk_no
-risk <- rarr::id_link(risk, "risk_no")
-
-# Reorder fields
-risk <- risk %>%
-  relocate(risk_no, .after = RISK_NO) %>%
-  relocate(risk_no_link, .after = risk_no) %>%
-  relocate(CONCERNS, .after = risk_no_link) %>%
-  relocate(COST_RISK, .after = COST_IMPACT_PER_PROJECT) %>%
-  relocate(cost_risk_color,  .after = COST_RISK) %>%
-  relocate(SCHEDULE_RISK, .after = SCHEDULE_IMPACT_PER_PROJECT) %>%
-  relocate(schedule_risk_color, .after = SCHEDULE_RISK) %>%
-  relocate(EFFICACY_IMPACT, .after = EFFICACY_LIKELIHOOD) %>%
-  relocate(EFFICACY_IMPACT_PER_PROJECT, .after = EFFICACY_IMPACT) %>%
-  relocate(efficacy_risk_color, .after = EFFICACY_RISK) %>%
-  relocate(TIMING_OF_DELAY, .after = RISK_STRATEGY) %>%
-  relocate(start_date, .after = CONCERNS) %>%
-  relocate(end_date, .after = start_date) %>%
-  relocate(poc_review_date, .after = TECHNICAL_POC) %>%
-  relocate(eng_level, .after = ENG_LEVEL) %>%
-  relocate(risk_cat_code, .after = RISKCATEGORY)
-
-# Remove duplicates and sort
-risk <- risk %>%
-  arrange(risk_no, desc(level_date)) %>%                  # get the latest level
-  distinct(risk_no, .keep_all = TRUE)
-
-# Cleanup
-#rm(risk_oracle)
+risk<-rarr::wrangle_risk(risk_oracle)
 ```
 
 ```{r write-risk, include=FALSE}
@@ -217,418 +148,76 @@ risk %>%
 
 
 ```{r wrangle-events, include=FALSE}
-# Remove test records
-events <- rarr::remove_test_records(events_oracle, "FK_TABLE_ID") 
-
-# Rename date fields
-events <- events %>%
-  rename_with(.fn = str_to_lower, 
-              .cols = ends_with("_date"))
-
-# Set engagement level integer field
-events <- events %>%
-  mutate(eng_level = as.numeric(str_extract(ENG_LEVEL, "\\d")))
-
-# Cleanup risk number for sorting
-events <- rarr::format_id(events, "FK_TABLE_ID")
-
-# Remove unused fields
-events <- events %>%
-  select(!c(CREATED_USER, LAST_EDITED_USER))
-
-# Create hyperlink to fk_table_id
-events <- rarr::id_link(events, "fk_table_id")
-
-# Reorder fields
-events <- events %>%
-  relocate(fk_table_id, .after = FK_TABLE_ID) %>%
-  relocate(fk_table_id_link, .after = fk_table_id) %>%
-  relocate(DESCRIPTION, .after = fk_table_id_link) %>%
-  relocate(level_date, .after = ENG_LEVEL) %>%
-  relocate(eng_level, .after = ENG_LEVEL)
-
-# Sort
-events <- events %>%
-  arrange(TABLE_NAME, fk_table_id, as.Date(level_date))
-
-# Calc event duration (days) within item types (risk/action/decision) and items
-events <- events %>% 
-  group_by(TABLE_NAME, fk_table_id) %>%
-  mutate(level_end_date = lead(as.Date(level_date), n = 1, 
-                               default = current_date),
-         date_interval = lubridate::interval(as.Date(level_date), 
-                                             level_end_date),
-         duration_days = lubridate::time_length(date_interval, 
-                                                unit = "days")) %>%
-  ungroup(TABLE_NAME, fk_table_id)
-
-# Cleanup
-#rm(events_oracle)
+events<-rarr::wrangle_events(events_oracle)
 ```
 
 ```{r wrangle-discussion, include=FALSE}
-# Remove test records
-discussion <- rarr::remove_test_records(discussion_oracle, "FK_TABLE_ID")
+discussion<-rarr::wrangle_discussion(discussion_oracle)
 
-# Rename date fields
-discussion <- discussion %>%
-  rename_with(.fn = str_to_lower, 
-              .cols = ends_with("_date"))
-
-# Cleanup discussion number for sorting
-discussion <- rarr::format_id(discussion, "FK_TABLE_ID")
-
-# Remove unused fields
-discussion <- discussion %>%
-  select(!c(LOGGED_BY, CREATED_USER, LAST_EDITED_USER, ACTIVE))
-
-# Reorder fields
-discussion <- discussion %>%
-  relocate(fk_table_id, .after = FK_TABLE_ID) %>%
-  relocate(RESPONSIBLE_POC, .after = DISCUSSION) %>%
-  relocate(poc_review_date, .after = RESPONSIBLE_POC)
-
-# Cleanup
-#rm(discussion_oracle)
 ```
 
 ```{r wrangle-action, include=FALSE}
-# Remove test records
-action <- rarr::remove_test_records(action_oracle, "ACTION_NO")
+action<-rarr::wrangle_action(action_oracle)
 
-# Filter for "Active" records
-action <- action %>%
-  filter(ACTIVE == "Yes")
-
-# Rename date fields
-action <- action %>%
-  rename_with(.fn = str_to_lower, 
-              .cols = ends_with("_date"))
-
-# Set engagement level integer, risk_cat_code
-action <- action %>%
-  mutate(eng_level = as.numeric(str_extract(ENG_LEVEL, "\\d")))
-
-# Cleanup action number for sorting
-action <- rarr::format_id(action, "ACTION_NO")
-
-# Create hyperlink
-action <- rarr::id_link(action, "action_no")
-
-# Remove unused fields
-action <- action %>%
-  select(!c(FK_TABLE_ID))
-
-# Reorder fields
-action <- action %>%
-  relocate(start_date, .after = ACTION) %>%
-  relocate(end_date, .after = start_date) %>%
-  relocate(poc_review_date, .after = TECHNICAL_POC) %>%
-  relocate(eng_level, .after = ENG_LEVEL)
-
-# Remove duplicates and sort
-action <- action %>%
-  distinct(action_no, .keep_all = TRUE) %>%
-  arrange(action_no)
-
-# Cleanup
-#rm(action_oracle)
 ```
 
 ```{r wrangle-decision, include=FALSE}
-# Remove test records
-decision <- rarr::remove_test_records(decision_oracle, "DECISION_NO")
+decision<-rarr::wrangle_decision(decision_oracle)
 
-# Filter for "Active" records
-decision <- decision %>%
-  filter(ACTIVE == "Yes")
-
-# Rename date fields
-decision <- decision %>%
-  rename_with(.fn = str_to_lower, 
-              .cols = ends_with("_date"))
-
-# Set engagement level integer, risk_cat_code
-decision <- decision %>%
-  mutate(eng_level = as.numeric(str_extract(ENG_LEVEL, "\\d")))
-
-# Cleanup action number for sorting
-decision <- rarr::format_id(decision, "DECISION_NO")
-
-# Create hyperlink
-decision <- rarr::id_link(decision, "decision_no")
-
-# Remove unused fields
-decision <- decision %>%
-  select(!c(FK_TABLE_ID))
-
-# Reorder fields
-decision <- decision %>%
-  relocate(decision_date, .after = DECISION) %>%
-  relocate(poc_review_date, .after = TECHNICAL_POC) %>%
-  relocate(eng_level, .after = ENG_LEVEL)
-
-# Remove duplicates and sort
-decision <- decision %>%
-  distinct(decision_no, .keep_all = TRUE) %>%
-  arrange(decision_no)
-
-# Cleanup
-#rm(decision_oracle)
 ```
 
 
 <!-- Wrangle Related Items -->
 ```{r wrangle-rel-action-action, include=FALSE}
-# Remove test records
-rel_action_action <- rarr::remove_test_records(rel_action_action_oracle, "ACTION_NO")
-rel_action_action <- rarr::remove_test_records(rel_action_action, "RELATED_ACTION")
+rel_action_action<-rarr::wrangle_rel_action_action(rel_action_action_oracle)
 
-# Filter for "Active" records
-rel_action_action <- rel_action_action %>%
-  filter(ACTION_ACTIVE == "Yes" & REL_ACTION_ACTIVE == "Yes")
-
-# Cleanup id numbers for sorting
-rel_action_action <- rarr::format_id(rel_action_action, "ACTION_NO")
-rel_action_action <- rarr::format_id(rel_action_action, "RELATED_ACTION")
-
-# Create hyperlink to related item
-rel_action_action <- rarr::id_link(rel_action_action, "related_action")
-
-# Reorder fields
-rel_action_action <- rel_action_action %>%
-  relocate(REL_ACTION_ACTIVE, .after = related_action_link)
-
-# Cleanup
-#rm(rel_action_action_oracle)
 ```
 
 ```{r wrangle-rel-dec-action, include=FALSE}
-# Remove test records
-rel_dec_action <- rarr::remove_test_records(rel_dec_action_oracle, "DECISION_NO")
-rel_dec_action <- rarr::remove_test_records(rel_dec_action, "ACTION_NO")
+rel_dec_action <- rarr::wrangle_rel_dec_action(rel_dec_action_oracle)
 
-# Filter for "Active" records
-rel_dec_action <- rel_dec_action %>%
-  filter(DECISION_ACTIVE == "Yes" & ACTION_ACTIVE == "Yes")
-
-# Cleanup id numbers for sorting
-rel_dec_action <- rarr::format_id(rel_dec_action, "DECISION_NO")
-rel_dec_action <- rarr::format_id(rel_dec_action, "ACTION_NO")
-
-# Create hyperlinks
-rel_dec_action <- rarr::id_link(rel_dec_action, "decision_no")
-rel_dec_action <- rarr::id_link(rel_dec_action, "action_no")
-
-# Reorder fields
-rel_dec_action <- rel_dec_action %>%
-  relocate(ACTION_ACTIVE, .after = action_no_link)
-
-# Cleanup
-#rm(rel_dec_action_oracle)
 ```
 
 ```{r wrangle-rel-dec-dec, include=FALSE}
-# Remove test records
-rel_dec_dec <- rarr::remove_test_records(rel_dec_dec_oracle, "DECISION_NO")
-rel_dec_dec <- rarr::remove_test_records(rel_dec_dec, "RELATED_DECISION")
+rel_dec_dec<- rarr::wrangle_rel_dec_dec(rel_dec_dec_oracle)
 
-# Filter for "Active" records
-rel_dec_dec <- rel_dec_dec %>%
-  filter(DECISION_ACTIVE == "Yes" & REL_DEC_ACTIVE == "Yes")
-
-# Cleanup id numbers for sorting
-rel_dec_dec <- rarr::format_id(rel_dec_dec, "DECISION_NO")
-rel_dec_dec <- rarr::format_id(rel_dec_dec, "RELATED_DECISION")
-
-# Create hyperlink to related item
-rel_dec_dec <- rarr::id_link(rel_dec_dec, "related_decision")
-
-# Reorder fields
-rel_dec_dec <- rel_dec_dec %>%
-  relocate(REL_DEC_ACTIVE, .after = related_decision_link)
-
-# Cleanup
-#rm(rel_dec_dec_oracle)
 ```
 
 ```{r wrangle-rel-risk-action, include=FALSE}
-# Remove test records
-rel_risk_action <- rarr::remove_test_records(rel_risk_action_oracle, "RISK_NO")
-rel_risk_action <- rarr::remove_test_records(rel_risk_action, "ACTION_NO")
+rel_risk_action<-rarr::wrangle_rel_risk_action(rel_risk_action_oracle)
 
-# Filter for "Active" records
-rel_risk_action <- rel_risk_action %>%
-  filter(RISK_ACTIVE == "Yes" & ACTION_ACTIVE == "Yes")
-
-# Cleanup id fields for sorting
-rel_risk_action <- rarr::format_id(rel_risk_action, "RISK_NO")
-rel_risk_action <- rarr::format_id(rel_risk_action, "ACTION_NO")
-
-# Create hyperlink
-rel_risk_action <- rarr::id_link(rel_risk_action, "risk_no")
-rel_risk_action <- rarr::id_link(rel_risk_action, "action_no")
-
-# Reorder fields
-rel_risk_action <- rel_risk_action %>%
-  relocate(ACTION_ACTIVE, .after = action_no_link)
-
-# Cleanup
-#rm(rel_risk_action_oracle)
 ```
 
 ```{r wrangle-rel-risk-dec, include=FALSE}
-# Remove test records
-rel_risk_dec <- rarr::remove_test_records(rel_risk_dec_oracle, "RISK_NO")
-rel_risk_dec <- rarr::remove_test_records(rel_risk_dec, "DECISION_NO")
+rel_risk_dec<- rarr::wrangle_rel_risk_dec(rel_risk_dec_oracle)
 
-# Filter for "Active" records
-rel_risk_dec <- rel_risk_dec %>%
-  filter(RISK_ACTIVE == "Yes" & DECISION_ACTIVE == "Yes")
-
-# Cleanup id fields for sorting
-rel_risk_dec <- rarr::format_id(rel_risk_dec, "RISK_NO")
-rel_risk_dec <- rarr::format_id(rel_risk_dec, "DECISION_NO")
-
-# Create hyperlink
-rel_risk_dec <- rarr::id_link(rel_risk_dec, "risk_no")
-rel_risk_dec <- rarr::id_link(rel_risk_dec, "decision_no")
-
-# Reorder fields
-rel_risk_dec <- rel_risk_dec %>%
-  relocate(DECISION_ACTIVE, .after = decision_no_link)
-
-# Cleanup
-#rm(rel_risk_dec_oracle)
 ```
 
 ```{r wrangle-rel-risk-risk, include=FALSE}
-# Remove test records
-rel_risk_risk <- rarr::remove_test_records(rel_risk_risk_oracle, "RISK_NO")
-rel_risk_risk <- rarr::remove_test_records(rel_risk_risk, "RELATED_RISK")
+rel_risk_risk<-rarr::wrangle_rel_risk_risk(rel_risk_risk_oracle)
 
-# Filter for "Active" records
-rel_risk_risk <- rel_risk_risk %>%
-  filter(RISK_ACTIVE == "Yes" & REL_RISK_ACTIVE == "Yes")
-
-# Cleanup id numbers for sorting
-rel_risk_risk <- rarr::format_id(rel_risk_risk, "RISK_NO")
-rel_risk_risk <- rarr::format_id(rel_risk_risk, "RELATED_RISK")
-
-# Create hyperlink to Related Risk
-rel_risk_risk <- rarr::id_link(rel_risk_risk, "related_risk")
-
-# Reorder fields
-rel_risk_risk <- rel_risk_risk %>%
-  relocate(REL_RISK_ACTIVE, .after = related_risk_link)
-
-# Cleanup
-#rm(rel_risk_risk_oracle)
 ```
 
 <!-- Create Timelines -->
 ```{r create_timevis_df, include=FALSE}
 # Create a timevis "data" data frame of risks
-risk_time <- risk %>%
-  arrange(risk_no) %>%
-  select(OBJECTID, risk_no, start_date, end_date, risk_cat_code, 
-         CONCERNS, FEATURE, TECHNICAL_POC, eng_level) %>%
-  rename(id = OBJECTID) %>%
-  rename(content = risk_no) %>%
-  relocate(id, .before = content) %>%
-  rename(start = start_date) %>%
-  rename(end = end_date) %>%
-  rename(title = CONCERNS) %>%
-  relocate(title, .after = content) %>%
-  mutate(group = as.numeric(factor(risk_cat_code))) %>%
-  relocate(group, .after = end)
+risk_time <- rarr::wrangle_risk_time(risk)
 
 # Create a timevis "group" data frame to group risks by unique Risk Categories
-risk_time_riskcategory <- risk %>%
-  select(risk_cat_code, RISKCATEGORY) %>%
-  mutate(id = as.numeric(factor(risk_cat_code))) %>%
-  rename(content = risk_cat_code) %>%
-  rename(title = RISKCATEGORY) %>%
-  relocate(id, .before = content) %>%
-  distinct(id, content, .keep_all = TRUE)
+risk_time_riskcategory <- rarr::wrangle_risk_time_riskcat(risk) 
+
 ```
 
 ```{r create-items, include=FALSE}
 # Create a df of all items (risks, actions, decisions)
-risk_items <- risk %>%
-  select(risk_no, risk_no_link, CONCERNS, id_type, 
-         FEATURE, DISCIPLINE) %>%
-  rename(item_id = risk_no,
-         item_link = risk_no_link,
-         description = CONCERNS)
+items <- rarr::create_items(risk, action, decision)
 
-action_items <- action %>%
-  select(action_no, action_no_link, ACTION, id_type, 
-         FEATURE, DISCIPLINE) %>%
-  rename(item_id = action_no,
-         item_link = action_no_link,
-         description = ACTION)
-
-decision_items <- decision %>%
-  select(decision_no, decision_no_link, DECISION, id_type, 
-         FEATURE, DISCIPLINE) %>%
-  rename(item_id = decision_no,
-         item_link = decision_no_link,
-         description = DECISION)
-
-items <- bind_rows(risk_items, action_items, decision_items)
-rm(risk_items, action_items, decision_items)
 ```
 
 ```{r create-relations, include=FALSE}
 # Create a df of all relationships
-rel_a_a <- rel_action_action %>%
-  select(action_no, related_action) %>%
-  rename(from = action_no,
-         to = related_action) %>%
-  mutate(id_type_1 = "action",
-         id_type_2 = "action")
-  
-rel_d_a <- rel_dec_action %>%
-  select(decision_no, action_no) %>%
-  rename(from = decision_no,
-         to = action_no) %>%
-  mutate(id_type_1 = "decision",
-         id_type_2 = "action")
+relations<-rarr::create_relations(rel_action_action, rel_dec_action, rel_dec_dec,                          rel_risk_action,rel_risk_dec,rel_risk_risk)
 
-rel_d_d <- rel_dec_dec %>%
-  select(decision_no, related_decision) %>%
-  rename(from = decision_no,
-         to = related_decision) %>%
-  mutate(id_type_1 = "decision",
-         id_type_2 = "decision")
-
-rel_r_a <- rel_risk_action %>%
-  select(risk_no, action_no) %>%
-  rename(from = risk_no,
-         to = action_no) %>%
-  mutate(id_type_1 = "risk",
-         id_type_2 = "action")
-
-rel_r_d <- rel_risk_dec %>%
-  select(risk_no, decision_no) %>%
-  rename(from = risk_no,
-         to = decision_no) %>%
-  mutate(id_type_1 = "risk",
-         id_type_2 = "decision")
-
-rel_r_r <- rel_risk_risk %>%
-  select(risk_no, related_risk) %>%
-  rename(from = risk_no,
-         to = related_risk) %>%
-  mutate(id_type_1 = "risk",
-         id_type_2 = "risk")
-
-relations <- bind_rows(rel_a_a, rel_d_a, rel_d_d, rel_r_a, rel_r_d, rel_r_r) %>%
-  drop_na()
-
-# Cleanup
-rm(rel_a_a, rel_d_a, rel_d_d, rel_r_a, rel_r_d, rel_r_r)
 ```
 
 ```{r network-analysis, include=FALSE}
@@ -637,68 +226,8 @@ relate_igraph <- igraph::graph_from_data_frame(d = relations,
                                                vertices = items, 
                                                directed = FALSE)
 
-# Set vertex colors and size
-clr <- as.factor(V(relate_igraph)$id_type)
-levels(clr) <- c("#D55E00", "#E69F00", "#0072B2")
-igraph::V(relate_igraph)$color <- as.character(clr)
-igraph::V(relate_igraph)$size  <- igraph::degree(relate_igraph)*5
+related_blocks<-rarr::network_analysis(relate_igraph, items)
 
-# Identify blocks of related items
-relate_igraph_simp <- igraph::simplify(relate_igraph, 
-                                       remove.multiple = TRUE,
-                                       remove.loops = TRUE)
-itemBlocks <- igraph::cohesive_blocks(relate_igraph_simp)
-
-# Extract of items within each block
-blocks_df <- as.data.frame(t(sapply(itemBlocks$blocks, as_ids)))
-
-block_list <- list()
-
-for(i in 2:length(colnames(blocks_df))) {
-  block_item <- data.frame(block_no = paste("Group", i - 1),
-                           item_id = unlist(blocks_df[[i]]))
-  block_list[[i]] <- block_item
-}
-
-blocks <- bind_rows(block_list)
-
-# Calculate count of related items for each item
-adjacent_items <- igraph::as_adj_list(relate_igraph_simp)
-adj_df <- as.data.frame(t(sapply(adjacent_items, as_ids)))
-
-adj_list <- list()
-
-for(i in 1:length(colnames(adj_df))) {
-  if(length(adj_df[[i]][[1]]) > 0) { 
-    adj_item <- data.frame(item_id = colnames(adj_df)[[i]],
-                           rel_item_id = adj_df[[i]][[1]])
-    adj_list[[i]] <- adj_item
-  }
-}
-
-adj_items <- bind_rows(adj_list)
-
-adj_count <- adj_items %>%
-  group_by(item_id) %>%
-  summarise(adj_count = n())
-
-# Calculate item centrality - degree
-item_degree <- stack(igraph::degree(relate_igraph))
-item_degree <- item_degree %>%
-  mutate(item_id = as.character(ind)) %>%
-  rename(degree = values) %>%
-  relocate(item_id, .before = degree) %>%
-  select(c(!ind))
-
-# Join blocks to items to add key attributes
-related_blocks <- blocks %>%
-  left_join(item_degree, by = c("item_id" = "item_id")) %>%
-  left_join(adj_count, by = c("item_id" = "item_id")) %>%
-  left_join(items, by = c("item_id" = "item_id")) %>%
-  arrange(block_no, desc(degree))
-
-rm(blocks_df, block_list, blocks, adjacent_items, adj_df, adj_list, adj_items, 
-   adj_count, item_degree)
 ```
 
 ```{r dendrogram, include=FALSE}
