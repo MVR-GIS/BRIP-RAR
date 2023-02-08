@@ -67,7 +67,6 @@ library(rarr)
 #source("R/discussion_table.R")
 #source("R/related_block_table.R")
 #source("R/remove_test_records.R")
-# remove me???source("R/convert_date.R")
 #source("R/impact_outcome_table.R")
 #source("R/risk_pies.R")
 ```
